@@ -1,24 +1,17 @@
 import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
+import PrivateRouteGeneral from './Routes/PrivateRouteGeneral';
+import GeneralLayout from './Routes/Layouts/GeneralLayout';
+import AgendaCitas from './Citas/AgendaCitas';
+import AtenderCita from './Citas/AtenderCita'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <PrivateRouteGeneral exact path = '/' component = {AgendaCitas} layout = {GeneralLayout} />
+      <PrivateRouteGeneral exact path = '/atenderCita' component = {AtenderCita} layout = {GeneralLayout} />
+    </BrowserRouter>
   );
 }
 
