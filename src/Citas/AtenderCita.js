@@ -1,7 +1,5 @@
 import React from 'react';
 import '../App.css';
-import 'react-agenda/build/styles.css';
-import 'react-datetime/css/react-datetime.css';
 import { Button, Typography } from 'antd';
 import { Link } from 'react-router-dom';
 

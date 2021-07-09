@@ -1,14 +1,13 @@
 import React from 'react';
-import '../App.css';
-import 'react-agenda/build/styles.css';
-import 'react-datetime/css/react-datetime.css';
-import { Button, Typography } from 'antd';
+import BigCalendar from 'react-big-calendar-like-google';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
-import { ReactAgenda, ReactAgendaCtrl, guid, Modal } from 'react-agenda';
-const { Title } = Typography;
+import 'react-big-calendar-like-google/lib/css/react-big-calendar.css';
+//import './style.less';
+BigCalendar.setLocalizer(
+  BigCalendar.momentLocalizer(moment)
+);
 
-require('moment/locale/fr.js'); // this is important for traduction purpose
+require('moment/locale/es-us.js'); // this is important for traduction purpose
 
 var colors = {
   'color-1': "rgba(102, 195, 131 , 1)",
@@ -18,233 +17,155 @@ var colors = {
   "color-5": "rgba(170, 59, 123, 1)"
 }
 
-var now = new Date();
+const events = [
+  {
+    'title': 'All Day Event very long title',
+    'bgColor': '#ff7f50',
+    'allDay': true,
+    'start': new Date(2015, 3, 0),
+    'end': new Date(2015, 3, 1)
+  },
+  {
+    'title': 'Long Event',
+    'start': new Date(2015, 3, 7),
+    'end': new Date(2015, 3, 10)
+  },
 
-var items = [
   {
-    _id: guid(),
-    name: 'Meeting , dev staff!',
-    startDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 0),
-    endDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0),
-    classes: 'color-1 color-4'
+    'title': 'DTS STARTS',
+    'bgColor': '#dc143c',
+    'start': new Date(2016, 2, 13, 0, 0, 0),
+    'end': new Date(2016, 2, 20, 0, 0, 0)
   },
-  {
-    _id: guid(),
-    name: 'Working lunch , Holly',
-    startDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 11, 0),
-    endDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 13, 0),
-    classes: 'color-2'
-  },
-  {
-    _id: guid(),
-    name: 'Conference , plaza',
-    startDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 11, 0),
-    endDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 14, 30),
-    classes: 'color-4'
-  },
-  {
-    _id: 'event-4',
-    name: 'Customers issues review',
-    startDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2, 10, 0),
-    endDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2, 15, 0),
-    classes: 'color-3'
 
+  {
+    'title': 'DTS ENDS',
+    'bgColor': '#ff8c00',
+    'start': new Date(2016, 10, 6, 0, 0, 0),
+    'end': new Date(2016, 10, 13, 0, 0, 0)
+  },
+
+  {
+    'title': 'Some Event',
+    'bgColor': '#9932cc',
+    'start': new Date(2015, 3, 9, 0, 0, 0),
+    'end': new Date(2015, 3, 9, 0, 0, 0)
   },
   {
-    _id: 'event-5',
-    name: 'Group activity',
-    startDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 3, 10, 0),
-    endDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 3, 16, 30),
-    classes: 'color-4'
+    'title': 'Conference',
+    'bgColor': '#e9967a',
+    'start': new Date(2015, 3, 11),
+    'end': new Date(2015, 3, 13),
+    desc: 'Big conference for important people'
   },
   {
-    _id: 'event-6',
-    name: 'Fun Day !',
-    startDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 9, 14),
-    endDateTime: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 17),
-    classes: 'color-3'
+    'title': 'Meeting',
+    'bgColor': '#8fbc8f',
+    'start': new Date(2015, 3, 12, 10, 30, 0, 0),
+    'end': new Date(2015, 3, 12, 12, 30, 0, 0),
+    desc: 'Pre-meeting meeting, to prepare for the meeting'
+  },
+  {
+    'title': 'Lunch',
+    'bgColor': '#cd5c5c',
+    'start': new Date(2015, 3, 12, 12, 0, 0, 0),
+    'end': new Date(2015, 3, 12, 13, 0, 0, 0),
+    desc: 'Power lunch'
+  },
+  {
+    'title': 'Happy Hour',
+    'start': new Date(2015, 3, 12, 12, 0, 0, 0),
+    'end': new Date(2015, 3, 12, 13, 0, 0, 0),
+    desc: 'Power lunch happy hour'
+  },
+  {
+    'title': 'Meeting',
+    'bgColor': '#da70d6',
+    'start': new Date(2015, 3, 12, 14, 0, 0, 0),
+    'end': new Date(2015, 3, 12, 15, 0, 0, 0)
+  },
+  {
+    'title': 'Happy Hour',
+    'bgColor': '#eee8aa',
+    'start': new Date(2015, 3, 17, 17, 0, 0, 0),
+    'end': new Date(2015, 3, 17, 17, 30, 0, 0),
+    desc: 'Most important meal of the day'
+  },
+  {
+    'title': 'Dinner',
+    'bgColor': '#98fb98',
+    'start': new Date(2015, 3, 15, 20, 0, 0, 0),
+    'end': new Date(2015, 3, 15, 21, 0, 0, 0)
+  },
+  {
+    'title': 'Birthday Party',
+    'bgColor': '#afeeee',
+    'start': new Date(2015, 3, 13, 7, 0, 0),
+    'end': new Date(2015, 3, 13, 10, 30, 0)
+  },
+  {
+    'title': 'Birthday Party 2',
+    'bgColor': '#db7093',
+    'start': new Date(2015, 3, 13, 7, 0, 0),
+    'end': new Date(2015, 3, 13, 10, 30, 0)
+  },
+  {
+    'title': 'Birthday Party 3',
+    'bgColor': '#cd853f',
+    'start': new Date(2015, 3, 13, 7, 0, 0),
+    'end': new Date(2015, 3, 13, 10, 30, 0)
+  },
+  {
+    'title': 'Late Night Event',
+    'bgColor': '#b0e0e6',
+    'start': new Date(2015, 3, 17, 19, 30, 0),
+    'end': new Date(2015, 3, 18, 2, 0, 0)
+  },
+  {
+    'title': 'Multi-day Event',
+    'start': new Date(2015, 3, 20, 19, 30, 0),
+    'end': new Date(2015, 3, 22, 2, 0, 0)
   }
-];
+]
+
 
 export default class AgendaCitas extends React.Component {
   constructor(props) {
     super(props);
 
-
-
     this.state = {
-      items: [],
-      selected: [],
-      cellHeight: (60 / 4),
-      showModal: false,
-      locale: "fr",
-      rowsPerHour: 4,
-      numberOfDays: 4,
-      startDate: new Date()
+
     }
-    this.handleRangeSelection = this.handleRangeSelection.bind(this)
-    this.handleItemEdit = this.handleItemEdit.bind(this)
-    this.zoomIn = this.zoomIn.bind(this)
-    this.zoomOut = this.zoomOut.bind(this)
-    this._openModal = this._openModal.bind(this)
-    this._closeModal = this._closeModal.bind(this)
-    this.addNewEvent = this.addNewEvent.bind(this)
-    this.removeEvent = this.removeEvent.bind(this)
-    this.editEvent = this.editEvent.bind(this)
-    this.changeView = this.changeView.bind(this)
-    this.handleCellSelection = this.handleCellSelection.bind(this)
+
 
   }
 
   componentDidMount() {
-
-    this.setState({ items: items })
-
-
   }
 
-
-  componentWillReceiveProps(next, last) {
-    if (next.items) {
-
-      this.setState({ items: next.items })
-    }
-  }
-  handleItemEdit(item, openModal) {
-
-    if (item && openModal === true) {
-      this.setState({ selected: [item] })
-      return this._openModal();
-    }
-
-
-
-  }
-  handleCellSelection(item, openModal) {
-
-    if (this.state.selected && this.state.selected[0] === item) {
-      return this._openModal();
-    }
-    this.setState({ selected: [item] })
-
-  }
-
-  zoomIn() {
-    var num = this.state.cellHeight + 15
-    this.setState({ cellHeight: num })
-  }
-  zoomOut() {
-    var num = this.state.cellHeight - 15
-    this.setState({ cellHeight: num })
-  }
-
-
-  handleDateRangeChange(startDate, endDate) {
-    this.setState({ startDate: startDate })
-
-  }
-
-  handleRangeSelection(selected) {
-
-
-    this.setState({ selected: selected, showCtrl: true })
-    this._openModal();
-
-  }
-
-  _openModal() {
-    this.setState({ showModal: true })
-  }
-  _closeModal(e) {
-    if (e) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-    this.setState({ showModal: false })
-  }
-
-  handleItemChange(items, item) {
-
-    this.setState({ items: items })
-  }
-
-  handleItemSize(items, item) {
-
-    this.setState({ items: items })
-
-  }
-
-  removeEvent(items, item) {
-
-    this.setState({ items: items });
-  }
-
-  addNewEvent(items, newItems) {
-
-    this.setState({ showModal: false, selected: [], items: items });
-    this._closeModal();
-  }
-  editEvent(items, item) {
-
-    this.setState({ showModal: false, selected: [], items: items });
-    this._closeModal();
-  }
-
-  changeView(days, event) {
-    this.setState({ numberOfDays: days })
-  }
   render() {
     return (
-      <div>
-        <p>HOLI</p>
-        <Link to={{ pathname: '/atenderCita', state: { titulo: "Nueva computadora" } }} >
-          <Button type="primary">Atender Cita</Button>
-        </Link>
-        <div className="control-buttons">
-          <button className="button-control" onClick={this.zoomIn}> <i className="zoom-plus-icon"></i> </button>
-          <button className="button-control" onClick={this.zoomOut}> <i className="zoom-minus-icon"></i> </button>
-          <button className="button-control" onClick={this._openModal}> <i className="schedule-icon"></i> </button>
-          <button className="button-control" onClick={this.changeView.bind(null, 7)}> {moment.duration(7, "days").humanize()}  </button>
-          <button className="button-control" onClick={this.changeView.bind(null, 4)}> {moment.duration(4, "days").humanize()}  </button>
-          <button className="button-control" onClick={this.changeView.bind(null, 3)}> {moment.duration(3, "days").humanize()}  </button>
-          <button className="button-control" onClick={this.changeView.bind(null, 1)}> {moment.duration(1, "day").humanize()} </button>
-        </div>
-
-        <ReactAgenda
-          minDate={new Date(now.getFullYear(), now.getMonth() - 3)}
-          maxDate={new Date(now.getFullYear(), now.getMonth() + 3)}
-          startDate={this.state.startDate}
-          startAtTime={8}
-          endAtTime={23}
-          cellHeight={this.state.cellHeight}
-          locale={"es"}
-          items={this.state.items}
-          numberOfDays={this.state.numberOfDays}
-          headFormat={"ddd DD MMM"}
-          rowsPerHour={this.state.rowsPerHour}
-          itemColors={colors}
-          helper={true}
-          
-          //itemComponent={AgendaItem}
-          view="calendar"
-          autoScale={false}
-          fixedHeader={true}
-          onRangeSelection={this.handleRangeSelection.bind(this)}
-          onChangeEvent={this.handleItemChange.bind(this)}
-          onChangeDuration={this.handleItemSize.bind(this)}
-          onItemEdit={this.handleItemEdit.bind(this)}
-          onCellSelect={this.handleCellSelection.bind(this)}
-          onItemRemove={this.removeEvent.bind(this)}
-          onDateRangeChange={this.handleDateRangeChange.bind(this)} />
-        {
-          this.state.showModal ? <Modal clickOutside={this._closeModal} >
-            <div className="modal-content">
-              <ReactAgendaCtrl locale={"es"} items={this.state.items} itemColors={colors} selectedCells={this.state.selected} Addnew={this.addNewEvent} edit={this.editEvent} />
-
-            </div>
-          </Modal> : ''
-        }
+      <div >
+        <h3 className="callout">
+          Click an event to see more info, or
+          drag the mouse over the calendar to select a date/time range.
+        </h3>
+        <BigCalendar
+          selectable
+          events={events}
+          defaultView='work_week'
+          scrollToTime={new Date(1970, 1, 1, 6)}
+          defaultDate={new Date()}
+          views={Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])}
+          onSelectEvent={event => alert(event.title)}
+          onSelectSlot={(slotInfo) => alert(
+            `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
+            `\nend: ${slotInfo.end.toLocaleString()}` +
+            `\naction: ${slotInfo.action}`
+          )}
+        />
       </div>
-    );
+    )
   }
+
 }

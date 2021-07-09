@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout } from 'antd';
-import '../../custom-antd.css'; 
+//import '../../custom-antd.css'; 
 const { Footer } = Layout;
 
 export default class FooterComp extends React.Component{

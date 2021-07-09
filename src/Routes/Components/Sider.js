@@ -2,7 +2,7 @@ import React from 'react';
 import { Menu, Layout  } from 'antd';
 import { Link } from 'react-router-dom';
 import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
-import '../../custom-antd.css';
+//import '../../custom-antd.css';
 
 //import { RiRouterLine, RiTerminalWindowLine } from "react-icons/ri";
 const { SubMenu } = Menu;

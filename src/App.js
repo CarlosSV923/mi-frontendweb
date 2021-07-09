@@ -5,7 +5,7 @@ import PrivateRouteGeneral from './Routes/PrivateRouteGeneral';
 import GeneralLayout from './Routes/Layouts/GeneralLayout';
 import AgendaCitas from './Citas/AgendaCitas';
 import AtenderCita from './Citas/AtenderCita'
-
+import 'antd/dist/antd.css';
 function App() {
   return (
     <BrowserRouter>
