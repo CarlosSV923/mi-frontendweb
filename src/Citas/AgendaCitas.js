@@ -2,12 +2,9 @@ import React from 'react';
 import BigCalendar from 'react-big-calendar-like-google';
 import moment from 'moment';
 import 'react-big-calendar-like-google/lib/css/react-big-calendar.css';
-//import './style.less';
-BigCalendar.setLocalizer(
-  BigCalendar.momentLocalizer(moment)
-);
-
-require('moment/locale/es-us.js'); // this is important for traduction purpose
+import ModalAgenda from './ModalAgenda';
+BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
+require('moment/locale/es-us.js');
 
 var colors = {
   'color-1': "rgba(102, 195, 131 , 1)",
@@ -134,22 +131,29 @@ export default class AgendaCitas extends React.Component {
     super(props);
 
     this.state = {
-
+      visibleModal: false,
+      slotInfo: {},
     }
 
 
   }
 
+  showModalAgendarCita(slotInfo) {
+    console.log(
+      `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
+      `\nend: ${slotInfo.end.toLocaleString()}` +
+      `\naction: ${slotInfo.action}`
+    )
+    this.setState({ slotInfo: slotInfo, visibleModal: !this.state.visibleModal });
+  }
+
   componentDidMount() {
+    
   }
 
   render() {
     return (
       <div >
-        <h3 className="callout">
-          Click an event to see more info, or
-          drag the mouse over the calendar to select a date/time range.
-        </h3>
         <BigCalendar
           selectable
           events={events}
@@ -158,11 +162,13 @@ export default class AgendaCitas extends React.Component {
           defaultDate={new Date()}
           views={Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])}
           onSelectEvent={event => alert(event.title)}
-          onSelectSlot={(slotInfo) => alert(
-            `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
-            `\nend: ${slotInfo.end.toLocaleString()}` +
-            `\naction: ${slotInfo.action}`
-          )}
+          onSelectSlot={(slotInfo) => {this.showModalAgendarCita(slotInfo)}}
+        />
+        <ModalAgenda
+          slotInfo={this.state.slotInfo}
+          visibleModal={this.state.visibleModal}
+          agendarCita={this.showModalAgendarCita.bind(this)}
+          handleCancel={this.showModalAgendarCita.bind(this)}
         />
       </div>
     )
