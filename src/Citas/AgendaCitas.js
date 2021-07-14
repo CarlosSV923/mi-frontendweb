@@ -2,7 +2,8 @@ import React from 'react';
 import BigCalendar from 'react-big-calendar-like-google';
 import moment from 'moment';
 import 'react-big-calendar-like-google/lib/css/react-big-calendar.css';
-import ModalAgenda from './ModalAgenda';
+import ModalAgenda from './modals/ModalAgenda';
+import ModalConfirmAgenda from './modals/ModalConfirmAgenda';
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 require('moment/locale/es-us.js');
 
@@ -14,117 +15,6 @@ var colors = {
   "color-5": "rgba(170, 59, 123, 1)"
 }
 
-const events = [
-  {
-    'title': 'All Day Event very long title',
-    'bgColor': '#ff7f50',
-    'allDay': true,
-    'start': new Date(2015, 3, 0),
-    'end': new Date(2015, 3, 1)
-  },
-  {
-    'title': 'Long Event',
-    'start': new Date(2015, 3, 7),
-    'end': new Date(2015, 3, 10)
-  },
-
-  {
-    'title': 'DTS STARTS',
-    'bgColor': '#dc143c',
-    'start': new Date(2016, 2, 13, 0, 0, 0),
-    'end': new Date(2016, 2, 20, 0, 0, 0)
-  },
-
-  {
-    'title': 'DTS ENDS',
-    'bgColor': '#ff8c00',
-    'start': new Date(2016, 10, 6, 0, 0, 0),
-    'end': new Date(2016, 10, 13, 0, 0, 0)
-  },
-
-  {
-    'title': 'Some Event',
-    'bgColor': '#9932cc',
-    'start': new Date(2015, 3, 9, 0, 0, 0),
-    'end': new Date(2015, 3, 9, 0, 0, 0)
-  },
-  {
-    'title': 'Conference',
-    'bgColor': '#e9967a',
-    'start': new Date(2015, 3, 11),
-    'end': new Date(2015, 3, 13),
-    desc: 'Big conference for important people'
-  },
-  {
-    'title': 'Meeting',
-    'bgColor': '#8fbc8f',
-    'start': new Date(2015, 3, 12, 10, 30, 0, 0),
-    'end': new Date(2015, 3, 12, 12, 30, 0, 0),
-    desc: 'Pre-meeting meeting, to prepare for the meeting'
-  },
-  {
-    'title': 'Lunch',
-    'bgColor': '#cd5c5c',
-    'start': new Date(2015, 3, 12, 12, 0, 0, 0),
-    'end': new Date(2015, 3, 12, 13, 0, 0, 0),
-    desc: 'Power lunch'
-  },
-  {
-    'title': 'Happy Hour',
-    'start': new Date(2015, 3, 12, 12, 0, 0, 0),
-    'end': new Date(2015, 3, 12, 13, 0, 0, 0),
-    desc: 'Power lunch happy hour'
-  },
-  {
-    'title': 'Meeting',
-    'bgColor': '#da70d6',
-    'start': new Date(2015, 3, 12, 14, 0, 0, 0),
-    'end': new Date(2015, 3, 12, 15, 0, 0, 0)
-  },
-  {
-    'title': 'Happy Hour',
-    'bgColor': '#eee8aa',
-    'start': new Date(2015, 3, 17, 17, 0, 0, 0),
-    'end': new Date(2015, 3, 17, 17, 30, 0, 0),
-    desc: 'Most important meal of the day'
-  },
-  {
-    'title': 'Dinner',
-    'bgColor': '#98fb98',
-    'start': new Date(2015, 3, 15, 20, 0, 0, 0),
-    'end': new Date(2015, 3, 15, 21, 0, 0, 0)
-  },
-  {
-    'title': 'Birthday Party',
-    'bgColor': '#afeeee',
-    'start': new Date(2015, 3, 13, 7, 0, 0),
-    'end': new Date(2015, 3, 13, 10, 30, 0)
-  },
-  {
-    'title': 'Birthday Party 2',
-    'bgColor': '#db7093',
-    'start': new Date(2015, 3, 13, 7, 0, 0),
-    'end': new Date(2015, 3, 13, 10, 30, 0)
-  },
-  {
-    'title': 'Birthday Party 3',
-    'bgColor': '#cd853f',
-    'start': new Date(2015, 3, 13, 7, 0, 0),
-    'end': new Date(2015, 3, 13, 10, 30, 0)
-  },
-  {
-    'title': 'Late Night Event',
-    'bgColor': '#b0e0e6',
-    'start': new Date(2015, 3, 17, 19, 30, 0),
-    'end': new Date(2015, 3, 18, 2, 0, 0)
-  },
-  {
-    'title': 'Multi-day Event',
-    'start': new Date(2015, 3, 20, 19, 30, 0),
-    'end': new Date(2015, 3, 22, 2, 0, 0)
-  }
-]
-
 
 export default class AgendaCitas extends React.Component {
   constructor(props) {
@@ -132,23 +22,80 @@ export default class AgendaCitas extends React.Component {
 
     this.state = {
       visibleModal: false,
-      slotInfo: {},
+      slotInfo: null,
+      event: null,
+      idxEvent: -1,
+      slotInfoSave: null,
+      eventSave: null,
+      visibleConfirm: false,
+      visibleCancel: false,
+      visibleUpdate: false,
+      events: [],
     }
 
 
   }
 
+  createCita(slotInfoSave) {
+    console.log("create cita");
+    this.setState({ visibleModal: false, visibleConfirm: true, event: null, slotInfoSave }, () => { console.log(this.state) });
+  }
+
+  confirmCreatCita() {
+    console.log("confirm create cita");
+    console.log(this.state.slotInfoSave)
+    this.setState({ visibleConfirm: false, events: [...this.state.events, this.state.slotInfoSave], slotInfo: null });
+  }
+
+  updateCita(eventSave) {
+    console.log("update cita");
+    this.setState({ visibleModal: false, visibleUpdate: true, eventSave });
+  }
+
+  confirmUpdateCita() {
+    console.log("confirm update cita");
+    const newEvents = [...this.state.events];
+    newEvents.splice(this.state.idxEvent, 1, this.state.eventSave);
+    this.setState({ events: newEvents, visibleUpdate: false, idxEvent: -1, event: null, });
+  }
+
+  cancelCita(eventSave) {
+    console.log("cancel cita");
+    this.setState({ visibleModal: false, visibleCancel: true, eventSave });
+  }
+
+  confirmCancelCita() {
+    console.log("confirm calcel cita");
+    this.setState({ visibleCancel: false });
+  }
+
   showModalAgendarCita(slotInfo) {
-    console.log(
-      `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
-      `\nend: ${slotInfo.end.toLocaleString()}` +
-      `\naction: ${slotInfo.action}`
-    )
-    this.setState({ slotInfo: slotInfo, visibleModal: !this.state.visibleModal });
+    console.log(slotInfo);
+    this.setState({ slotInfo: slotInfo, event: null, visibleModal: true });
+  }
+
+  showModalEditCita(event) {
+    console.log(event);
+    this.setState({ idxEvent: this.state.events.indexOf(event), event: event, slotInfo: null, visibleModal: true }, () => { console.log(this.state) });
+  }
+
+  closeModal() {
+    this.setState({ visibleModal: false });
+  }
+
+  closeModalConfirm() {
+    this.setState({ visibleModal: true, visibleConfirm: false });
+  }
+  closeModalCancel() {
+    this.setState({ visibleModal: true, visibleCancel: false });
+  }
+  closeModalUpdate() {
+    this.setState({ visibleModal: true, visibleUpdate: false });
   }
 
   componentDidMount() {
-    
+    console.log(BigCalendar.Navigate)
+
   }
 
   render() {
@@ -156,19 +103,60 @@ export default class AgendaCitas extends React.Component {
       <div >
         <BigCalendar
           selectable
-          events={events}
+          events={this.state.events}
           defaultView='work_week'
+          onNavigate={(e, a, r, l) => { console.log(e, a, r, l) }}
           scrollToTime={new Date(1970, 1, 1, 6)}
           defaultDate={new Date()}
           views={Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])}
-          onSelectEvent={event => alert(event.title)}
-          onSelectSlot={(slotInfo) => {this.showModalAgendarCita(slotInfo)}}
+          onSelectEvent={event => { this.showModalEditCita(event) }}
+          onSelectSlot={(slotInfo) => { this.showModalAgendarCita(slotInfo) }}
         />
+
         <ModalAgenda
           slotInfo={this.state.slotInfo}
           visibleModal={this.state.visibleModal}
-          agendarCita={this.showModalAgendarCita.bind(this)}
-          handleCancel={this.showModalAgendarCita.bind(this)}
+          event={this.state.event}
+          agendarCita={this.createCita.bind(this)}
+          handleCancel={this.closeModal.bind(this)}
+          cancelarCita={this.cancelCita.bind(this)}
+          updateCita={this.updateCita.bind(this)}
+        />
+
+        {/* Confirmar Crear Cita */}
+        <ModalConfirmAgenda
+          visible={this.state.visibleConfirm}
+          data={this.state.slotInfoSave}
+          title={"Agendar Cita"}
+          okText={"Aceptar"}
+          cancelText={"Cancelar"}
+          bodyText={"Esta seguro de agendar esta cita?"}
+          confirm={this.confirmCreatCita.bind(this)}
+          cancelConfirm={this.closeModalConfirm.bind(this)}
+        />
+
+        {/*Confirmar Cancelar Cita */}
+        <ModalConfirmAgenda
+          visible={this.state.visibleCancel}
+          data={this.state.eventSave}
+          title={"Cancelar Cita"}
+          okText={"Aceptar"}
+          cancelText={"Cancelar"}
+          bodyText={"Esta seguro de cancelar esta cita?"}
+          confirm={this.confirmCancelCita.bind(this)}
+          cancelConfirm={this.closeModalCancel.bind(this)}
+        />
+
+        {/*Confirmar Actualizar Cita */}
+        <ModalConfirmAgenda
+          visible={this.state.visibleUpdate}
+          data={this.state.eventSave}
+          title={"Editar Cita"}
+          okText={"Aceptar"}
+          cancelText={"Cancelar"}
+          bodyText={"Esta seguro de Editar la información de esta cita?"}
+          confirm={this.confirmUpdateCita.bind(this)}
+          cancelConfirm={this.closeModalUpdate.bind(this)}
         />
       </div>
     )
