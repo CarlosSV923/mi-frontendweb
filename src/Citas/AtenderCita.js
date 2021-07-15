@@ -772,8 +772,7 @@ const AtenderCita = () => {
                                                                 <TextArea className="mt-4" showCount maxLength={400} />
                                                             </Card>
                                                         </Col>
-                                                    </Row>      
-
+                                                    </Row>    
                                                 </Card>                                              
                                             </Form>
                                         </>:null
@@ -790,11 +789,11 @@ const AtenderCita = () => {
                                 <div className="steps-action">
                                     {current > 0 && (
                                         <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-                                        Previous
+                                        Anterior
                                     </Button>
                                     )}{current < steps.length - 1 && (
                                         <Button type="primary" onClick={() => next()}>
-                                            Next
+                                            Siguiente
                                         </Button>
                                         )}
                                         {current === steps.length - 1 && (
