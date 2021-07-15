@@ -11,6 +11,7 @@ function App() {
     <BrowserRouter>
       <PrivateRouteGeneral exact path = '/' component = {AgendaCitas} layout = {GeneralLayout} />
       <PrivateRouteGeneral exact path = '/atenderCita' component = {AtenderCita} layout = {GeneralLayout} />
+
     </BrowserRouter>
   );
 }
