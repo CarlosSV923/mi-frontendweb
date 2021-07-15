@@ -1,9 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, Form, Modal, Button, Title, Select, Input, DatePicker } from 'antd';
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 import moment from 'moment';
 require('moment/locale/es-us.js');
 const { Meta } = Card;
+
 const { RangePicker } = DatePicker;
 
 export default class ModalAgenda extends React.Component {
@@ -15,8 +17,6 @@ export default class ModalAgenda extends React.Component {
             slotInfo: this.props.slotInfo,
             event: this.props.event,
             dateFormat: "DD/MM/YYYY HH:mm",
-            
-            
         }
         this.formRef = React.createRef();
     }
@@ -38,30 +38,30 @@ export default class ModalAgenda extends React.Component {
         }
         if (this.state.slotInfo !== this.props.slotInfo) {
             this.setState({ slotInfo: this.props.slotInfo }, () => {
-                if(this.state.slotInfo){
+                if (this.state.slotInfo) {
                     const start = moment(this.props.slotInfo.start.toLocaleString(), this.state.dateFormat);
                     const end = moment(this.props.slotInfo.end.toLocaleString(), this.state.dateFormat);
                     this.formRef.current.setFieldsValue({
-                        start ,
+                        start,
                         end,
                         rangeDate: [start, end]
                     })
                 }
-                
+
             });
         }
         if (this.state.event !== this.props.event) {
             this.setState({ event: this.props.event }, () => {
-                if(this.state.event){
+                if (this.state.event) {
                     const start = moment(this.props.event.start.toLocaleString(), this.state.dateFormat);
                     const end = moment(this.props.event.end.toLocaleString(), this.state.dateFormat);
                     this.formRef.current.setFieldsValue({
                         start,
                         end,
-                        rangeDate: [start, end] 
+                        rangeDate: [start, end]
                     })
                 }
-                
+
             });
         }
 
@@ -85,12 +85,30 @@ export default class ModalAgenda extends React.Component {
         this.formRef.current.validateFields().then(values => {
             this.setState({
                 eventSave: {
-                    start: values.start._d, 
-                    end: values.end._d, 
-                    title: "Paciente", 
+                    start: values.start._d,
+                    end: values.end._d,
+                    title: "Paciente",
                     desc: values.comment
                 }
             }, () => { this.props.updateCita(this.state.eventSave) });
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+    handlerCancelarCita = (e) => {
+        e.preventDefault();
+        this.formRef.current.validateFields().then(values => {
+            this.setState({
+                eventSave: {
+                    start: values.start._d,
+                    end: values.end._d,
+                    title: "Paciente",
+                    desc: values.comment,
+                    'bgColor': '#cd853f',
+
+                }
+            }, () => { this.props.cancelarCita(this.state.eventSave) });
         }).catch(err => {
             console.log(err);
         });
@@ -113,14 +131,16 @@ export default class ModalAgenda extends React.Component {
             <Button key="back" onClick={this.props.handleCancel}>
                 Cerrar
             </Button>,
-            <Button key="submit" type="primary" onClick={this.props.cancelarCita}>
-                Cancelar Cita
+            <Button key="submit" type="primary" onClick={this.handlerCancelarCita}>
+                Cancelar
             </Button>,
             <Button key="submit" type="primary" onClick={this.handlerEditarCita}>
-                Guardar Cambios
+                Guardar
             </Button>,
-            <Button key="submit" type="primary" onClick={this.props.atenderCita}>
-                Atender
+            <Button key="submit" type="primary">
+                <Link to={{ pathname: '/atenderCita' }} >
+                    Atender
+                </Link>
             </Button>
         ];
     }
@@ -154,10 +174,10 @@ export default class ModalAgenda extends React.Component {
                                 </Select>
                             </Form.Item>
                             <Form.Item name="start" label="Fecha de inicio de la Cita">
-                                <DatePicker style={{width: "100%"}} showTime={{format: 'HH:mm'}} format={this.state.dateFormat} disabled={this.state.slotInfo} />
+                                <DatePicker style={{ width: "100%" }} showTime={{ format: 'HH:mm' }} format={this.state.dateFormat} disabled={this.state.slotInfo} />
                             </Form.Item>
                             <Form.Item name="end" label="Fecha de fin de la Cita">
-                                <DatePicker style={{width: "100%"}} showTime={{format: 'HH:mm'}} format={this.state.dateFormat} disabled={this.state.slotInfo} />
+                                <DatePicker style={{ width: "100%" }} showTime={{ format: 'HH:mm' }} format={this.state.dateFormat} disabled={this.state.slotInfo} />
                             </Form.Item>
                             {/* <Form.Item name="rangeDate" label="Fecha de la Cita">
                                 <RangePicker style={{width: "100%"}} format={this.state.dateFormat} showTime={{format: 'HH', minuteStep:"30"}} disabled={this.state.slotInfo}  />
@@ -176,6 +196,3 @@ export default class ModalAgenda extends React.Component {
 
 
 }
-
-// ModalAgenda = Form.create({})(ModalAgenda);
-// export default ModalAgenda;

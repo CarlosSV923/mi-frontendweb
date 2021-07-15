@@ -56,7 +56,7 @@ export default class AgendaCitas extends React.Component {
     console.log("confirm update cita");
     const newEvents = [...this.state.events];
     newEvents.splice(this.state.idxEvent, 1, this.state.eventSave);
-    this.setState({ events: newEvents, visibleUpdate: false, idxEvent: -1, event: null, });
+    this.setState({ events: newEvents, visibleUpdate: false, idxEvent: -1, event: null, slotInfo: null });
   }
 
   cancelCita(eventSave) {
@@ -66,7 +66,9 @@ export default class AgendaCitas extends React.Component {
 
   confirmCancelCita() {
     console.log("confirm calcel cita");
-    this.setState({ visibleCancel: false });
+    const newEvents = [...this.state.events];
+    newEvents.splice(this.state.idxEvent, 1, this.state.eventSave);
+    this.setState({ events: newEvents, idxEvent: -1, visibleCancel: false, event: null, slotInfo: null });
   }
 
   showModalAgendarCita(slotInfo) {
