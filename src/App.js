@@ -6,11 +6,11 @@ import GeneralLayout from './Routes/Layouts/GeneralLayout';
 import AgendaCitas from './Citas/AgendaCitas';
 import AtenderCita from './Citas/AtenderCita'
 import 'antd/dist/antd.css';
-import FormularioDiscapacidades from './Citas/Administrador/FormularioDiscapacidades';
-import FormularioUsuarios from './Citas/Administrador/FormularioUsuarios';
-import FormularioRoles from './Citas/Administrador/FormularioRoles';
-import FormularioMedicamentos from './Citas/Administrador/FormularioMedicamentos';
-import FormularioEnfermedades from './Citas/Administrador/FormularioEnfermedades';
+import FormularioDiscapacidades from './Administrador/FormularioDiscapacidades';
+import FormularioUsuarios from './Administrador/FormularioUsuarios';
+import FormularioRoles from './Administrador/FormularioRoles';
+import FormularioMedicamentos from './Administrador/FormularioMedicamentos';
+import FormularioEnfermedades from './Administrador/FormularioEnfermedades';
 
 function App() {
   return (
