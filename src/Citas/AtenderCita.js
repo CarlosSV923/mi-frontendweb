@@ -1,18 +1,22 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import {Steps, Button, message, Form, Input, Radio, Row, Col, Collapse, Badge, Dropdown, Menu, Alert, Divider, Card, Select, InputNumber, Upload, Modal, Empty, Avatar} from 'antd'
-import { UserOutlined, 
-         SolutionOutlined, 
-         LoadingOutlined, 
-         SmileOutlined, DownOutlined, InfoCircleOutlined, HeartOutlined, PlusSquareOutlined, FileAddOutlined, InboxOutlined, PlusOutlined, PaperClipOutlined, CalendarOutlined, FileOutlined, LineChartOutlined, PlusCircleOutlined,MedicineBoxFilled, FileImageOutlined, CopyOutlined, FileSearchOutlined, DatabaseOutlined } from '@ant-design/icons';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCoffee, faThermometerQuarter,faWeight, faRulerVertical, faMale, faTachometerAlt, faTablets, faSyringe, faPrescriptionBottle, faNotesMedical, faMedkit, faLaugh, faLungs, faHospital, faHospitalAlt, faHospitalSymbol, faHospitalUser, faHeartbeat, faHeart, faFileSignature, faFileMedical, faFileMedicalAlt, faDiagnoses, faPercent, faHandHoldingHeart, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import {Steps, Button, message, Form, Input, Radio, Row, Col, 
+        Collapse, Badge, Alert, Divider, Card, Select, InputNumber,
+        Upload, Modal, Empty, Avatar} from 'antd'
+import {UserOutlined, InfoCircleOutlined, HeartOutlined, 
+        PlusSquareOutlined, FileAddOutlined, PlusOutlined, 
+        PaperClipOutlined, CalendarOutlined, FileOutlined, 
+        LineChartOutlined, MedicineBoxFilled, 
+        FileImageOutlined, DatabaseOutlined,
+        MinusCircleOutlined} from '@ant-design/icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faThermometerQuarter,faWeight, faRulerVertical, faMale, 
+        faLungs, faHeartbeat, faFileMedicalAlt, faDiagnoses, 
+        faPercent, faHandHoldingHeart} from '@fortawesome/free-solid-svg-icons';
 import EditableTable from './EditableTable';
+import shortid from 'shortid';
 
 const { Option } = Select;
-
-const { Dragger } = Upload;
 
 function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -23,17 +27,14 @@ function getBase64(file) {
     });
 }
 
-
-
 const alergias = [];
-
 const discapacidades = [];
-
 const enfermedades_hereditarias = [];
-
 const enfermedades_preexistentes = [];
+const enfermedades_persistentes = [];
 
 const enfermedades_diagnostico = [];
+
 
 enfermedades_diagnostico.push(<Option key={"COVID-19"}>COVID-19</Option>)
 enfermedades_diagnostico.push(<Option key={"Dengue 1"}>Dengue 1</Option>)
@@ -43,16 +44,21 @@ enfermedades_diagnostico.push(<Option key={"Dengue 4"}>Dengue 4</Option>)
 enfermedades_diagnostico.push(<Option key={"Influenza"}>Influenza</Option>)
 enfermedades_diagnostico.push(<Option key={"Bronquitis Aguda"}>Bronquitis Aguda</Option>)
 
-
 discapacidades.push(<Option key={"Fisica"}>Física o motora</Option>)
 discapacidades.push(<Option key={"Sensorial"}>Sensorial</Option>)
 discapacidades.push(<Option key={"Psicosocial"}>Psicosocial</Option>)
 discapacidades.push(<Option key={"Intelectual"}>Intelectual</Option>)
 
-
 enfermedades_preexistentes.push(<Option key={"Cancer"}>Cáncer</Option>)
 enfermedades_preexistentes.push(<Option key={"Diabetes"}>Diabetes</Option>)
 enfermedades_preexistentes.push(<Option key={"Hipertensión"}>Anemia de células falciformes</Option>)
+
+enfermedades_persistentes.push(<Option key={"VIH"}>Cáncer</Option>)
+enfermedades_persistentes.push(<Option key={"HepatitisB"}>Hepatitis B</Option>)
+enfermedades_persistentes.push(<Option key={"HepatitisC"}>Hepatitis C</Option>)
+enfermedades_persistentes.push(<Option key={"Tuberculosis"}>Tuberculosis</Option>)
+enfermedades_persistentes.push(<Option key={"Helmintiasis"}>Helmintiasis</Option>)
+enfermedades_persistentes.push(<Option key={"VPH"}>VPH</Option>)
 
 enfermedades_hereditarias.push(<Option key={"Anemia"}>Anemia de células falciformes</Option>)
 enfermedades_hereditarias.push(<Option key={"Fibrosis"}>Fibrosis quítica</Option>)
@@ -62,19 +68,14 @@ enfermedades_hereditarias.push(<Option key={"Hemocromatosis"}>Hemocromatosis</Op
 enfermedades_hereditarias.push(<Option key={"Hemofilia"}>Hemofilia</Option>)
 enfermedades_hereditarias.push(<Option key={"Distrofia"}>Distrofia muscular de Duchenne</Option>)
 
-alergias.push(<Option key={"Asma"}>Asma</Option>)
-alergias.push(<Option key={"Rinitis"}>Rinitis</Option>)
-alergias.push(<Option key={"Conjuntivitis"}>Conjuntivitis</Option>)
-alergias.push(<Option key={"Dermatitis"}>Dermatitis</Option>)
-alergias.push(<Option key={"Eccema"}>Eccema</Option>)
-alergias.push(<Option key={"Urticacia"}>Urticacia</Option>)
+alergias.push(<Option key={"Amoxicilina"}>Amoxicilina</Option>)
+alergias.push(<Option key={"acetil"}>Ácido acetil salicílico</Option>)
+alergias.push(<Option key={"Polen"}>Polen</Option>)
+alergias.push(<Option key={"El yodo"}>El yodo</Option>)
+
+
 
 const { Step } = Steps;
-
-function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
-//opciones_discapacidades
 
 const opciones_discapacidades = [
     { label: 'No', value: false },
@@ -91,33 +92,6 @@ const { TextArea } = Input;
 function onChange(value) {
     console.log('changed', value);
   }
-
-function handleButtonClick(e) {
-    message.info('Click on left button.');
-    console.log('click left button', e);
-  }
-  
-  function handleMenuClick(e) {
-    message.info('Click on menu item.');
-    console.log('click', e);
-  }
-  
-  const menu = (
-    <Menu onClick={handleMenuClick}>
-      <Menu.Item key="1" icon={<UserOutlined />}>
-        Física o motora
-      </Menu.Item>
-      <Menu.Item key="2" icon={<UserOutlined />}>
-        Sensorial
-      </Menu.Item>
-      <Menu.Item key="3" icon={<UserOutlined />}>
-        Psicosocial
-      </Menu.Item>
-      <Menu.Item key="3" icon={<UserOutlined />}>
-        Intelectual
-      </Menu.Item>
-    </Menu>
-  );
 
 const steps = [
     {
@@ -145,59 +119,23 @@ const steps = [
 
 const { Panel } = Collapse;
 
-const text = (
-  <p style={{ paddingLeft: 24 }}>
-    A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it can be found
-    as a welcome guest in many households across the world.
-  </p>
-);
-
 const AtenderCita = () => {  
-
     const [current, setCurrent] = React.useState(0);
     const [discapacidad, setDiscapacidad] = React.useState(false);
-    const [discapacidadNo, setDiscapacidadNo] = React.useState(false);
-
     const [alergia, setAlergia] = React.useState(false);
-    const [alergiaNo, setAlergiaNo] = React.useState(false);
-
-    // const [state, setState] = React.useState();
-
     const [previewVisible, setPreviewVisible] = React.useState(false);
     const [previewImage, setPreviewImage] = React.useState('');
     const [previewTitle, setPreviewTitle] = React.useState('');
-
-    
     const [fileList, setFileList] = React.useState([]);
-    
+    const [listaExamenes, setListaExamenes] = React.useState([]);
+    const [indice, setIndice] = React.useState(0);
+
     React.useEffect(()=>{
         setFileList([
-            {
-                uid: '-1',
-                name: 'image.png',
-                status: 'done',
-                url: 'https://www.mayoclinic.org/-/media/kcms/gbs/patient-consumer/images/2017/10/11/14/51/bn7_eeg_results-8col.jpg',
-            },
-            {
-                uid: '-2',
-                name: 'image.png',
-                status: 'done',
-                url: 'https://www.mayoclinic.org/-/media/kcms/gbs/patient-consumer/images/2017/10/11/14/51/bn7_eeg_results-8col.jpg',
-            },
-            {
-                uid: '-3',
-                name: 'image.png',
-                status: 'done',
-                url: 'https://www.mayoclinic.org/-/media/kcms/gbs/patient-consumer/images/2017/10/11/14/51/bn7_eeg_results-8col.jpg',
-            },
-            {
-                uid: '-4',
-                name: 'image.png',
-                status: 'done',
-                url: 'https://www.mayoclinic.org/-/media/kcms/gbs/patient-consumer/images/2017/10/11/14/51/bn7_eeg_results-8col.jpg',
-            },
+            
         ]);
     }, []);
+
     const next = () => {
       console.log("next before");
       console.log(current)
@@ -210,17 +148,11 @@ const AtenderCita = () => {
     const onChange4 = e => {
         console.log('radio4 checked', e.target.value);
         setDiscapacidad(e.target.value);
-        // this.setState({
-        //   value4: e.target.value,
-        // });
     };
 
     const onChange6 = e => {
         console.log('radio4 checked', e.target.value);
         setAlergia(e.target.value);
-        // this.setState({
-        //   value4: e.target.value,
-        // });
     };
 
     const handleCancel = () => setPreviewVisible(false);
@@ -230,12 +162,9 @@ const AtenderCita = () => {
         if (!file.url && !file.preview) {
         file.preview = await getBase64(file.originFileObj);
         }
-
         setPreviewImage(file.url || file.preview);
         setPreviewVisible(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
-
-
     };
 
     const handleChange = ({ fileList }) => setFileList(fileList);
@@ -249,44 +178,53 @@ const AtenderCita = () => {
       console.log("");
     };
 
-    const cambiar_estado_si = (e) =>{
-        console.log("XX: ",e.target.checked);
-        setDiscapacidad(true);    
-        setDiscapacidadNo(false);    
-
-    }
-
-    const cambiar_estado_no = (e) =>{
-        setDiscapacidadNo(true);
-        setDiscapacidad(false)
-    }
-
-    const cambiar_estado_alergia = (e) =>{
-        console.log("B: ",discapacidad);
-        setAlergia(true);
-        setAlergiaNo(false);
-        console.log("A: ",discapacidad)
-    }
-
-    const cambiar_estado_alergia_no = (e) =>{
-        console.log("B: ",discapacidad);
-        setAlergia(false);
-        setAlergiaNo(true);
-        console.log("A: ",discapacidad)
-    }
 
     const uploadButton = (
         <div>
           <PlusOutlined />
           <div style={{ marginTop: 8 }}>Upload</div>
         </div>
-      );
+    );
 
-    return (
+    const onFinish = values => {
+        console.log('Received values of form:', values);
+    };
+
+    const add_ex = () => {
+        
+        const item = 
         <>
-            
+            <Divider plain>Examen {indice}</Divider>
             <Row>
-                
+                <Col span={24} className="">
+                    <Upload
+                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                        listType="picture-card"
+                        fileList={fileList}
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                        >
+                        {uploadButton}
+                    </Upload>
+                    <Modal
+                        visible={previewVisible}
+                        title={previewTitle}
+                        footer={null}
+                        onCancel={handleCancel}
+                    >
+                        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                    </Modal>
+                </Col>
+            </Row>
+        </>;
+
+        setListaExamenes([...listaExamenes,item]);
+        setIndice(indice + 1);
+    }
+    
+    return (
+        <>            
+            <Row>      
                 <Col span={15} className="">
                     <Form>
                         <Row>
@@ -296,7 +234,6 @@ const AtenderCita = () => {
                         </Row>
                         <Row>
                             <Col className="" span={2}>
-                                {/* <FontAwesomeIcon icon={faUserCircle} size="4x" color="blue"/> */}
                                 <Avatar
                                 style={{
                                     backgroundColor: '#00AAE4',
@@ -307,23 +244,18 @@ const AtenderCita = () => {
                             </Col>
                             <Col className="" span={15}>
                                 <Row className="">
-                                        <Col>
-                                            <span className="mx-2 lead">Beth Hidalgo</span>           
-                                        </Col>
-                                        <Col>                                        
-                                            <Badge status="processing" text="Cita en curso" 
-                                            className="me-2 mt-2 text-success"/> 
-                                        </Col>
-                                    {/* <Col>
-                                    </Col>
                                     <Col>
-                                    </Col> */}
+                                        <span className="mx-2 lead">Beth Hidalgo</span>           
+                                    </Col>
+                                    <Col>                                        
+                                        <Badge status="processing" text="Cita en curso" 
+                                            className="me-2 mt-2 text-success"/> 
+                                    </Col>
                                     <Col>
                                         <span className="badge bg-info mt-2">11/07/2021</span>
                                     </Col>
-                                    
-                                    {/* <Button>Default Button</Button> */}
                                 </Row>
+                                
                                 <Row className="">
                                     <span className="ms-2 text-secondary">11/07/1950</span>
                                     <span className="ms-2 text-secondary">72 años</span>
@@ -331,31 +263,25 @@ const AtenderCita = () => {
                                     <span className="ms-2 text-secondary">email@live.es</span>
                                     {/* <span className="mx-2 text-secondary">Miguel Hidalgo</span>  */}
                                 </Row>
-
                             </Col>
-                            {/* <Col span={7} className="justify-content-center">
-                                <Button className="float-end mt-2 me-4" type="primary">Terminar cita</Button>
-                            </Col> */}
                         </Row>
+
                         <Row>
                             <Col span={24}>
-                            <Divider></Divider>
-
+                                <Divider></Divider>
                                 <Steps current={current} size="small" className="mt-4">
-        
                                     {steps.map(item => (
                                     <Step key={item.title} title={item.title} icon = {<item.icon/>} />
                                     ))}
                                 </Steps>                            
                                 <Divider></Divider>
-
                             </Col>
                         </Row>
+
                         <Row>
                             <Col span={24}>
                                 <div className="steps-content">
-                                    {
-                                        current === 0?
+                                    {current === 0?
                                         <>    
                                             <Form>
                                                 <Card type="inner" className="text-center" title="Antecedentes">
@@ -363,85 +289,171 @@ const AtenderCita = () => {
                                                         <Col span={24} className="">
                                                             <Form.Item label="Discapacidad">
                                                                 <Row>
-                                                                    <Col>
+                                                                    <Col span={5}>
                                                                         <Radio.Group
                                                                         options={opciones_discapacidades}
                                                                         onChange={e => onChange4(e)}
                                                                         value={discapacidad}
                                                                         optionType="button"
                                                                         buttonStyle="solid"
-                                                                        />
-                                                                      
+                                                                        />                        
                                                                     </Col>
                                                                 </Row>
-                                                                {discapacidad?<Row>
-                                                                    <Col span={24} className="mt-3">
-                                                                        {discapacidad?
-                                                                            <Select mode="tags" style={{ width: '100%' }} placeholder="Seleccione las discapacidades" onChange={handleChange}>
-                                                                            {discapacidades}
-                                                                          </Select>:null}
-                                                                    </Col>
-                                                                </Row>:null}
                                                                 
-                                                                {discapacidad?<Row>
-                                                                    <Col span={24} className="mt-2 ">
-                                                                        <TextArea showCount maxLength={100} />
-                                                                    </Col>
-                                                                </Row>:null}
-
-                                                            </Form.Item>
-                                                                                                       
+                                                            </Form.Item>                                    
                                                         </Col>
                                                     </Row>
+                                                    
+                                                    {discapacidad?<>
+                                                        
+                                                        <Row className="">
+                                                            <Col span={24} className="">
+                                                                <Form.Item >
+                                                                    <Row>
+                                                                            <Select mode="tags" className="" placeholder="Seleccione las discapacidades" onChange={handleChange}>
+                                                                                {discapacidades}
+                                                                            </Select>                                                                   
+                                                                    </Row>
+                                                                    
+                                                                </Form.Item>                                    
+                                                            </Col>
+                                                        </Row>
+
+                                                        <Row className="">
+                                                            <Col span={24} className="">
+                                                                <Form name="dynamic_form_item" onFinish={onFinish}>
+                                                                    <Form.List name="names">
+                                                                        {(fields, { add, remove }, { errors }) => (
+                                                                        <>
+                                                                            {fields.map((field) => (
+                                                                            <Form.Item
+                                                                                required={false}
+                                                                                key={field.key}>
+                                                                                <Form.Item
+                                                                                    {...field}
+                                                                                    validateTrigger={['onChange', 'onBlur']}
+                                                                                    noStyle>
+                                                                                    <Input placeholder="Ingrese la discapacidad"
+                                                                                    style={{ width: '95%' }}/>
+                                                                                    {fields.length > 0 ? (
+                                                                                    <MinusCircleOutlined
+                                                                                        className="dynamic-delete-button"
+                                                                                        onClick={() => remove(field.name)}
+                                                                                        style={{ width: '5%' }}/>
+                                                                                    ) : null}
+                                                                                </Form.Item>
+                                                                            </Form.Item>
+                                                                            ))}
+                                                                            <Form.Item>
+                                                                                <Button
+                                                                                    type="dashed"
+                                                                                    onClick={() => add()}
+                                                                                    icon={<PlusOutlined />}
+                                                                                    style={{ width: '100%' }}>
+                                                                                    Añadir manualmente otra discapacidad
+                                                                                </Button>
+                                                                                <Form.ErrorList errors={errors} />
+                                                                            </Form.Item>
+                                                                        </>
+                                                                        )}
+                                                                    </Form.List>
+                                                                </Form>
+                                                            </Col>
+                                                        </Row>
+                                                    </>:null}
+
+
                                                     <Row>
-                                                    <Col span={24} className="me-4">
+                                                        <Col span={24} className="">
                                                             <Form.Item label="Alergia">
                                                                 <Row>
-                                                                    <Col>
-
+                                                                    <Col className="ps-1" span={7}>
                                                                         <Radio.Group
                                                                         options={opciones_alergias}
                                                                         onChange={e => onChange6(e)}
                                                                         value={alergia}
+                                                                        className="ps-3"
                                                                         optionType="button"
                                                                         buttonStyle="solid"
                                                                         />
-
                                                                     </Col>
                                                                 </Row>
-                                                                {alergia?<Row>
-                                                                    <Col span={24} className="mt-3">
-                                                                        {alergia?
-                                                                            <Select mode="tags" style={{ width: '100%' }} placeholder="Seleccione las alergias" onChange={handleChange}>
-                                                                            {alergias}
-                                                                          </Select>:null}
-                                                                    </Col>
-                                                                </Row>:null}
-                                                                {alergia?<Row>
-                                                                    <Col span={24} className="mt-2 ">
-                                                                        <TextArea showCount maxLength={100} />
-                                                                    </Col>
-                                                                </Row>:null}
                                                             </Form.Item>                                         
                                                         </Col>
                                                     </Row>
-                                                    <Divider plain>Enfermedades preexistentes</Divider>
-                                                    <Row>
+
+                                                    {alergia?<>
+                                                        
+                                                        <Row className="">
+                                                            <Col span={24} className="">
+                                                                <Form.Item >
+                                                                    <Row>
+                                                                            <Select mode="tags" className="" placeholder="Seleccione las alergias" onChange={handleChange}>
+                                                                                {alergias}
+                                                                            </Select>                                                                   
+                                                                    </Row>
+                                                                    
+                                                                </Form.Item>                                    
+                                                            </Col>
+                                                        </Row>
+
+                                                        <Row className="">
+                                                            <Col span={24} className="">
+                                                                <Form name="dynamic_form_item" onFinish={onFinish}>
+                                                                    <Form.List name="names">
+                                                                        {(fields, { add, remove }, { errors }) => (
+                                                                        <>
+                                                                            {fields.map((field) => (
+                                                                            <Form.Item
+                                                                                required={false}
+                                                                                key={field.key}>
+                                                                                <Form.Item
+                                                                                    {...field}
+                                                                                    validateTrigger={['onChange', 'onBlur']}
+                                                                                    noStyle>
+                                                                                    <Input placeholder="Ingrese la discapacidad"
+                                                                                    style={{ width: '95%' }}/>
+                                                                                    {fields.length > 0 ? (
+                                                                                    <MinusCircleOutlined
+                                                                                        className="dynamic-delete-button"
+                                                                                        onClick={() => remove(field.name)}
+                                                                                        style={{ width: '5%' }}/>
+                                                                                    ) : null}
+                                                                                </Form.Item>
+                                                                            </Form.Item>
+                                                                            ))}
+                                                                            <Form.Item>
+                                                                                <Button
+                                                                                    type="dashed"
+                                                                                    onClick={() => add()}
+                                                                                    icon={<PlusOutlined />}
+                                                                                    style={{ width: '100%' }}>
+                                                                                    Añadir manualmente otra alergia
+                                                                                </Button>
+                                                                                <Form.ErrorList errors={errors} />
+                                                                            </Form.Item>
+                                                                        </>
+                                                                        )}
+                                                                    </Form.List>
+                                                                </Form>
+                                                            </Col>
+                                                        </Row>
+                                                    </>:null}
+
+
+                                                    <Divider plain>Enfermedades persistentes</Divider>
+                                                    <Row className="mt-5">
                                                         <Col span={24}>
                                                             <Form.Item>
-                                                                <Select mode="tags" style={{ width: '100%' }} placeholder="Seleccione las enfermedades preexistentes" onChange={handleChange}>
-                                                                            {enfermedades_preexistentes}
+                                                                <Select mode="tags" placeholder="Seleccione las enfermedades persistentes" onChange={handleChange}>
+                                                                            {enfermedades_persistentes}
                                                                 </Select> 
                                                             </Form.Item>
                                                         </Col>
                                                     </Row>
-                                                    <Row>
-                                                        <Col span={24} className="">
-                                                            <TextArea showCount maxLength={100} />
-                                                        </Col>
-                                                    </Row>
+                                                    
                                                     <Divider plain>Enfermedades hereditarias</Divider>
-                                                    <Row>
+                                                    <Row className="mt-5">
                                                         <Col span={24}>
                                                             <Form.Item>
                                                                 <Select mode="tags" style={{ width: '100%' }} placeholder="Seleccione las enfermedades hereditarias" onChange={handleChange}>
@@ -450,9 +462,10 @@ const AtenderCita = () => {
                                                             </Form.Item>
                                                         </Col>
                                                     </Row>
+                                                    <Divider plain>Observaciones</Divider>
                                                     <Row>
                                                         <Col span={24} className="">
-                                                            <TextArea showCount maxLength={100} />
+                                                            <TextArea style={{ height: '200%' }} showCount maxLength={100} />
                                                         </Col>
                                                     </Row>
                                                 </Card>                                              
@@ -508,8 +521,7 @@ const AtenderCita = () => {
                                                             <Col span={1} className="">
                                                                 <FontAwesomeIcon icon={faMale} size="2x" color=""/> 
                                                             </Col>
-                                                            <Col span={12} className="">
-                                                                
+                                                            <Col span={12} className="">    
                                                                 <span className="mt-2 text-secondary">Masa corporal</span>
                                                             </Col>
                                                             <Col span={4} className="">
@@ -544,8 +556,7 @@ const AtenderCita = () => {
                                                         </Row>
 
                                                         <Row className="mb-2 ms-5">
-                                                            <Col span={1} className="">
-                                                                
+                                                            <Col span={1} className="">    
                                                                 <FontAwesomeIcon icon={faHandHoldingHeart} size="2x" color=""/>
                                                             </Col>
                                                             <Col span={12} className="">
@@ -658,7 +669,18 @@ const AtenderCita = () => {
                                                             </Col>
                                                         </Row>
                                                     </div>
-
+                                                    <Row className="mb-2 mt-2">
+                                                        <Col span={24} className="">
+                                                            <Button
+                                                                type="dashed"
+                                                                // onClick={() => add()}
+                                                                icon={<PlusOutlined />}
+                                                                style={{ width: '56%' }}
+                                                                >
+                                                                Añadir manualmente signo vital
+                                                            </Button>
+                                                        </Col>
+                                                    </Row>
                                                 </Card>                                              
                                             </Form>
                                         </>:null
@@ -667,45 +689,21 @@ const AtenderCita = () => {
                                         current === 2?                
                                         <>    
                                                 <Card type="inner" className="text-center" title="Exámenes">
-                                                        <Row>
 
-                                                            <Col span={24} className="">
-                                                                {/* <Dragger {...props}>
-                                                                    <p className="ant-upload-drag-icon">
-                                                                    <InboxOutlined />
-                                                                    </p>
-                                                                    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                                                    <p className="ant-upload-hint">
-                                                                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                                                                    band files
-                                                                    </p>
-                                                                </Dragger>                             */}
-                                                                <Upload
-                                                                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                                                    listType="picture-card"
-                                                                    fileList={fileList}
-                                                                    onPreview={handlePreview}
-                                                                    onChange={handleChange}
-                                                                    >
-                                                                    {/* {fileList.length >= 8 ? null : uploadButton} */}
-                                                                    {uploadButton}
-                                                                </Upload>
-                                                                <Modal
-                                                                    visible={previewVisible}
-                                                                    title={previewTitle}
-                                                                    footer={null}
-                                                                    onCancel={handleCancel}
+                                                    {listaExamenes.map(elem => elem )}
+                                                    <Row className="mb-2 mt-2">
+                                                        <Col span={24} className="">
+                                                            <Button 
+                                                                type="dashed"
+                                                                onClick={add_ex}
+                                                                icon={<PlusOutlined />}
+                                                                style={{ width: '56%' }}
                                                                 >
-                                                                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                                                                </Modal>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col span={24} className="mt-2">
-                                                                <TextArea showCount maxLength={100} />
-                                                            </Col>
+                                                                Añadir nuevo examen
+                                                            </Button>
+                                                        </Col>
                                                     </Row>
-                                                </Card>                                              
+                                                </Card>                                           
                                         </>:null
                                     }
                                     {
@@ -716,9 +714,6 @@ const AtenderCita = () => {
                                                     
                                                     <Row className="mb-2">
                                                         <Col span={24}>
-                                                            {/* <Card type="inner" className="text-center" title="">
-                                                                li
-                                                            </Card> */}
                                                             <Card type="inner" className="text-center" title="Diagnóstico">
                                                                 <Row className="mb-2">
                                                                     <Col span={24}>
@@ -735,31 +730,24 @@ const AtenderCita = () => {
                                                             </Card>
                                                         </Col>
                                                     </Row>
-                                                    <Row className="mb-2">
-                                                        <Col span={24}>
-                                                            <Card type="inner" className="text-center" title="Procedimiento">
-                                                                    <TextArea showCount maxLength={400} />
-                                                            </Card>
-                                                        </Col>
-                                                    </Row>
-
-                                                    {/* <Row className="mb-2">
-                                                        <Col span={24}>
-                                                            <Card type="inner" className="mb-2" title="Receta de medicamentos">
-                                                                <EditableTable className="" />
-                                                            </Card>
+                                                    {/* <Row>
+                                                        <Col span = {24}>
+                                                            <Select placeholder="Medicamento">
+                                                                <Option value="AnmilipilB">Anmilipil</Option>
+                                                                <Option value="AnmilipilA">AnmilipilA</Option>
+                                                                <Option value="AnmilipilD">AnmilipilD</Option>
+                                                            </Select>
                                                         </Col>
                                                     </Row> */}
-
                                                     <Row className="mb-2">
-
-
                                                         <Col span={24}>
                                                             <Card type="inner" className="mb-2" title="Receta de medicamentos">
                                                                 <EditableTable className="" />
-                                                                {/* <TextArea showCount maxLength={400} /> */}
+                                                                <Card type="inner" className="mt-2"> 
+                                                                
+                                                                </Card>
                                                                 <Card type="inner" className="mt-2" title="Instrucciones médicas">
-                                                                <TextArea className="mt-4" showCount maxLength={400} />
+                                                                    <TextArea className="mt-4" showCount maxLength={400} />
                                                                 </Card>
                                                             </Card>
                                                             
@@ -772,15 +760,13 @@ const AtenderCita = () => {
                                                                 <TextArea className="mt-4" showCount maxLength={400} />
                                                             </Card>
                                                         </Col>
-                                                    </Row>    
+                                                    </Row>      
+
                                                 </Card>                                              
                                             </Form>
                                         </>:null
                                     }
 
-
-                                    {/* {steps[current].content} */}
-                                
                                 </div>
                             </Col>                            
                         </Row>
@@ -824,7 +810,6 @@ const AtenderCita = () => {
                             <Col span = {24}>
                                 <Collapse defaultActiveKey={['1']}>
                                     <Panel header="Archivos adjuntos" extra = {<PaperClipOutlined />} key="1">
-                                        {/* {text} */}
                                         <Card type="inner" className="text-center mb-1">
                                             <Row>
                                                 <Col span={4}>
@@ -866,7 +851,6 @@ const AtenderCita = () => {
                                         </Card>
                                     </Panel>
                                     <Panel header="Citas pasadas" extra = {<CalendarOutlined />} key="2">
-                                        {/* {text} */}
                                         <Card type="inner" className="text-center mb-1">
                                             <Row>
                                                 <Col span={4}>
@@ -875,9 +859,6 @@ const AtenderCita = () => {
                                                 <Col span={12}>
                                                     <a>02/02/2020</a>
                                                 </Col>
-                                                {/* <Col span={8}>
-                                                    114 KB
-                                                </Col> */}
                                             </Row>
                                         </Card>
                                         <Card type="inner" className="text-center mb-1">
@@ -888,14 +869,10 @@ const AtenderCita = () => {
                                                 <Col span={12}>
                                                     <a>02/02/2020</a>
                                                 </Col>
-                                                {/* <Col span={8}>
-                                                    114 KB
-                                                </Col> */}
                                             </Row>
                                         </Card>
                                     </Panel>
-                                    <Panel header="Antecedentes clínicos" extra = {<FileOutlined />} key="3">
-                                        {/* {text} */}
+                                    <Panel header="Enfermedades anteriores diagnosticadas" extra = {<FileOutlined />} key="3">
                                         <Card type="inner" className="text-center mb-1">
                                             <Row>
                                                 <p>Cirugías Previas, Diabetes, Enfermedades Tiroideas, Hipertensión Arterial, Cardiopatias, Traumatismos, Cáncer, Tuberculosis, Transfusiones, Patologías Respiratorias, Patologías Gastrointestinales
@@ -903,53 +880,8 @@ const AtenderCita = () => {
                                             </Row>
                                         </Card>
                                     </Panel>
-                                    <Panel header="Notas de padecimiento" extra = {<LineChartOutlined/>} key="4">
-                                        {/* {text} */}
-                                        <Empty
-                                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                                            imageStyle={{
-                                            height: 60,
-                                            }}
-                                            description={
-                                            <span>
-                                                No hay datos que mostrar
-                                            </span>
-                                            }
-                                        >
-                                        </Empty>
-                                    </Panel>
-                                    <Panel header="Diagnóstico" extra = {<HeartOutlined />} key="5">
-                                        {/* {text} */}
-                                        <Empty
-                                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                                            imageStyle={{
-                                            height: 60,
-                                            }}
-                                            description={
-                                            <span>
-                                                No hay datos que mostrar
-                                            </span>
-                                            }
-                                        >
-                                        </Empty>
-                                    </Panel>
-                                    <Panel header="Tratamientos" extra = {<PlusOutlined />} key="6">
-                                        {/* {text} */}
-                                        <Empty
-                                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                                            imageStyle={{
-                                            height: 60,
-                                            }}
-                                            description={
-                                            <span>
-                                                No hay datos que mostrar
-                                            </span>
-                                            }
-                                        >
-                                        </Empty>
-                                    </Panel>
+
                                     <Panel header="Medicamentos" extra = {<MedicineBoxFilled />} key="7">
-                                        {/* {text} */}
                                         <Empty
                                             image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
                                             imageStyle={{
@@ -966,16 +898,10 @@ const AtenderCita = () => {
                                 </Collapse>
                             </Col>
                         </Row>
-
                     </Card>
                 </Col>
-
             </Row>
-
-
-
         </>
     );
 }
-
 export default AtenderCita;

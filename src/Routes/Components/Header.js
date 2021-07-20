@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu, Layout, Badge, notification } from 'antd';
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 //import '../../custom-antd.css';
 const { Header } = Layout;
@@ -46,7 +46,7 @@ export default class HeaderComp extends React.Component {
 
                     <SubMenu
                         key="user"
-                        icon={<AppstoreOutlined />}
+                        icon={<UserOutlined />}
                         title={
                             <span>
                                 
