@@ -16,6 +16,10 @@ import {faThermometerQuarter,faWeight, faRulerVertical, faMale,
 import EditableTable from './EditableTable';
 import shortid from 'shortid';
 
+import AxiosDiscapacidades from '../services/AxiosDiscapacidades';
+import AxiosMedicamentos from '../services/AxiosMedicamentos';
+import AxiosEnfermedades from '../services/AxiosEnfermedades';
+
 const { Option } = Select;
 
 function getBase64(file) {
@@ -28,7 +32,7 @@ function getBase64(file) {
 }
 
 const alergias = [];
-const discapacidades = [];
+// const discapacidades = [];
 const enfermedades_hereditarias = [];
 const enfermedades_preexistentes = [];
 const enfermedades_persistentes = [];
@@ -44,10 +48,10 @@ enfermedades_diagnostico.push(<Option key={"Dengue 4"}>Dengue 4</Option>)
 enfermedades_diagnostico.push(<Option key={"Influenza"}>Influenza</Option>)
 enfermedades_diagnostico.push(<Option key={"Bronquitis Aguda"}>Bronquitis Aguda</Option>)
 
-discapacidades.push(<Option key={"Fisica"}>Física o motora</Option>)
-discapacidades.push(<Option key={"Sensorial"}>Sensorial</Option>)
-discapacidades.push(<Option key={"Psicosocial"}>Psicosocial</Option>)
-discapacidades.push(<Option key={"Intelectual"}>Intelectual</Option>)
+// discapacidades.push(<Option key={"Fisica"}>Física o motora</Option>)
+// discapacidades.push(<Option key={"Sensorial"}>Sensorial</Option>)
+// discapacidades.push(<Option key={"Psicosocial"}>Psicosocial</Option>)
+// discapacidades.push(<Option key={"Intelectual"}>Intelectual</Option>)
 
 enfermedades_preexistentes.push(<Option key={"Cancer"}>Cáncer</Option>)
 enfermedades_preexistentes.push(<Option key={"Diabetes"}>Diabetes</Option>)
@@ -129,11 +133,23 @@ const AtenderCita = () => {
     const [fileList, setFileList] = React.useState([]);
     const [listaExamenes, setListaExamenes] = React.useState([]);
     const [indice, setIndice] = React.useState(0);
+    const [discapacidades, setDiscapacidades] = React.useState([]);
+    const [medicamentos, setMedicamentos] = React.useState([]);
+    const [enfermedades, setEnfermedades] = React.useState([]);
+    // const [enfermedadesSeleccionadas, setEnfermedadesSeleccionadas] = React.useState([]);
+    const [discapacidadesSeleccionadas, setDiscapacidadesSeleccionadas] = React.useState([]);
+    const [alergiasSeleccionadas, setAlergiasSeleccionadas] = React.useState([]);
+    const [enfermedadesPersistentesSeleccionadas, setEnfermedadesPersistentesSeleccionadas] = React.useState([]);
+    const [enfermedadesHereditariasSeleccionadas, setEnfermedadesHereditariasSeleccionadas] = React.useState([]);
+    const [observaciones, setObservaciones] = React.useState("");
+    const [discapacidadesAgregadas, setDiscapacidadesAgregadas] = React.useState("");
 
     React.useEffect(()=>{
-        setFileList([
-            
-        ]);
+        
+        mostrar_discapacidades();
+        mostrar_medicamentos();
+        mostrar_enfermedades();
+
     }, []);
 
     const next = () => {
@@ -166,6 +182,7 @@ const AtenderCita = () => {
         setPreviewVisible(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
+    
 
     const handleChange = ({ fileList }) => setFileList(fileList);
 
@@ -222,11 +239,67 @@ const AtenderCita = () => {
         setIndice(indice + 1);
     }
     
+    const mostrar_discapacidades = () => {
+        AxiosDiscapacidades.mostrar_discapacidades().then((res)=>{
+            setDiscapacidades(res.data)
+            console.log(res.data);
+        })
+    }
+
+    const mostrar_medicamentos = () => {
+        AxiosMedicamentos.mostrar_medicamentos().then( res => {
+            setMedicamentos(res.data);
+            console.log(res.data);
+        });
+    }
+
+    const mostrar_enfermedades = () => {
+        AxiosEnfermedades.mostrar_enfermedades().then( res => {
+            setEnfermedades(res.data);
+            console.log(res.data);
+        });
+    }
+
+    const discapacidades_seleccionadas = (valores_seleccionados) => {
+        setDiscapacidadesSeleccionadas(valores_seleccionados)
+        console.log("discapacidades_seleccionadas");
+        console.log(valores_seleccionados);
+        console.log(discapacidadesSeleccionadas);
+    }
+
+    const alergias_seleccionadas = (valores_seleccionados) => {
+        setAlergiasSeleccionadas(valores_seleccionados);
+        console.log("alergias_seleccionadas");
+        console.log(valores_seleccionados);
+        console.log(alergiasSeleccionadas);
+    }
+
+    const enfermedades_persistentes_seleccionadas = (valores_seleccionados) => {
+        setEnfermedadesPersistentesSeleccionadas(valores_seleccionados);
+        console.log("enfermedades_persistentes_seleccionadas");
+        console.log(valores_seleccionados);
+        console.log(enfermedadesPersistentesSeleccionadas);
+    }
+
+    const enfermedades_hereditarias_seleccionadas = (valores_seleccionados) => {
+        setEnfermedadesHereditariasSeleccionadas(valores_seleccionados);
+        console.log("enfermedades_hereditarias_seleccionadas");
+        console.log(valores_seleccionados);
+        console.log(enfermedadesHereditariasSeleccionadas);
+    }
+
+    const discapacidades_agregadas = (valores_agregados) => {
+        setDiscapacidadesAgregadas(valores_agregados);
+        console.log("discapacidades_agregadas");
+        console.log(valores_agregados);
+        console.log(discapacidadesAgregadas);
+    }
+
     return (
         <>            
             <Row>      
                 <Col span={15} className="">
-                    <Form>
+                    <Form onFinish = {valores_agregados => discapacidades_agregadas(valores_agregados)}>
                         <Row>
                             <Col span={24} className="text-center">
                                 <h5 className="lead m-4">Atención de cita</h5>
@@ -283,7 +356,7 @@ const AtenderCita = () => {
                                 <div className="steps-content">
                                     {current === 0?
                                         <>    
-                                            <Form>
+                                            {/* <Form> */}
                                                 <Card type="inner" className="text-center" title="Antecedentes">
                                                     <Row className="">
                                                         <Col span={24} className="">
@@ -310,8 +383,14 @@ const AtenderCita = () => {
                                                             <Col span={24} className="">
                                                                 <Form.Item >
                                                                     <Row>
-                                                                            <Select mode="tags" className="" placeholder="Seleccione las discapacidades" onChange={handleChange}>
-                                                                                {discapacidades}
+                                                                            <Select mode="tags" className="" onChange = { (valores_seleccionados) => discapacidades_seleccionadas(valores_seleccionados)} placeholder="Seleccione las discapacidades">
+                                                                                {
+                                                                                    discapacidades.map ( item => 
+                                                                                        (
+                                                                                            <Option key={item.nombre}>{item.nombre}</Option>
+                                                                                        )
+                                                                                    )
+                                                                                }
                                                                             </Select>                                                                   
                                                                     </Row>
                                                                     
@@ -321,46 +400,45 @@ const AtenderCita = () => {
 
                                                         <Row className="">
                                                             <Col span={24} className="">
-                                                                <Form name="dynamic_form_item" onFinish={onFinish}>
-                                                                    <Form.List name="names">
-                                                                        {(fields, { add, remove }, { errors }) => (
-                                                                        <>
-                                                                            {fields.map((field) => (
+                                                                <Form.List name="discapacidades">
+                                                                    {(fields, { add, remove }, { errors }) => (
+                                                                    <>
+                                                                    {fields.map((field) => (
+                                                                        <Form.Item
+                                                                            required={false}
+                                                                            key={field.key}>
                                                                             <Form.Item
-                                                                                required={false}
-                                                                                key={field.key}>
-                                                                                <Form.Item
-                                                                                    {...field}
-                                                                                    validateTrigger={['onChange', 'onBlur']}
-                                                                                    noStyle>
-                                                                                    <Input placeholder="Ingrese la discapacidad"
-                                                                                    style={{ width: '95%' }}/>
-                                                                                    {fields.length > 0 ? (
-                                                                                    <MinusCircleOutlined
-                                                                                        className="dynamic-delete-button"
-                                                                                        onClick={() => remove(field.name)}
-                                                                                        style={{ width: '5%' }}/>
-                                                                                    ) : null}
-                                                                                </Form.Item>
+                                                                                {...field}
+                                                                                validateTrigger={['onChange', 'onBlur']}
+                                                                                noStyle>
+                                                                                <Input placeholder="Ingrese la discapacidad"
+                                                                                style={{ width: '95%' }}/>
+                                                                                {fields.length > 0 ? (
+                                                                                <MinusCircleOutlined
+                                                                                    className="dynamic-delete-button"
+                                                                                    onClick={() => remove(field.name)}
+                                                                                    style={{ width: '5%' }}/>
+                                                                                ) : null}
                                                                             </Form.Item>
-                                                                            ))}
-                                                                            <Form.Item>
-                                                                                <Button
-                                                                                    type="dashed"
-                                                                                    onClick={() => add()}
-                                                                                    icon={<PlusOutlined />}
-                                                                                    style={{ width: '100%' }}>
-                                                                                    Añadir manualmente otra discapacidad
-                                                                                </Button>
-                                                                                <Form.ErrorList errors={errors} />
-                                                                            </Form.Item>
-                                                                        </>
-                                                                        )}
-                                                                    </Form.List>
-                                                                </Form>
-                                                            </Col>
-                                                        </Row>
-                                                    </>:null}
+                                                                        </Form.Item>
+                                                                        ))}
+                                                                        <Form.Item>
+                                                                            <Button
+                                                                                type="dashed"
+                                                                                onClick={() => add()}
+                                                                                icon={<PlusOutlined />}
+                                                                                style={{ width: '100%' }}>
+                                                                                Añadir manualmente otra discapacidad
+                                                                            </Button>
+                                                                            <Form.ErrorList errors={errors} />
+                                                                        </Form.Item>
+                                                                    </>
+                                                                    )}
+                                                                </Form.List>
+                                                        </Col>
+                                                    </Row>
+
+                                                </>:null}
 
 
                                                     <Row>
@@ -388,9 +466,15 @@ const AtenderCita = () => {
                                                             <Col span={24} className="">
                                                                 <Form.Item >
                                                                     <Row>
-                                                                            <Select mode="tags" className="" placeholder="Seleccione las alergias" onChange={handleChange}>
-                                                                                {alergias}
-                                                                            </Select>                                                                   
+                                                                            <Select mode="tags" onChange = {(valores_seleccionados) => alergias_seleccionadas(valores_seleccionados)} className="" placeholder="Seleccione las alergias">
+                                                                                {
+                                                                                    medicamentos.map ( item => 
+                                                                                        (
+                                                                                            <Option key = {item.codigo}>{item.nombre}</Option>
+                                                                                        )
+                                                                                    )
+                                                                                }
+                                                                            </Select>                                                                 
                                                                     </Row>
                                                                     
                                                                 </Form.Item>                                    
@@ -399,7 +483,7 @@ const AtenderCita = () => {
 
                                                         <Row className="">
                                                             <Col span={24} className="">
-                                                                <Form name="dynamic_form_item" onFinish={onFinish}>
+                                                                <Form name="dynamic_form_item">
                                                                     <Form.List name="names">
                                                                         {(fields, { add, remove }, { errors }) => (
                                                                         <>
@@ -430,7 +514,7 @@ const AtenderCita = () => {
                                                                                     style={{ width: '100%' }}>
                                                                                     Añadir manualmente otra alergia
                                                                                 </Button>
-                                                                                <Form.ErrorList errors={errors} />
+                                                                                {/* <Form.ErrorList errors={errors} /> */}
                                                                             </Form.Item>
                                                                         </>
                                                                         )}
@@ -445,8 +529,14 @@ const AtenderCita = () => {
                                                     <Row className="mt-5">
                                                         <Col span={24}>
                                                             <Form.Item>
-                                                                <Select mode="tags" placeholder="Seleccione las enfermedades persistentes" onChange={handleChange}>
-                                                                            {enfermedades_persistentes}
+                                                                <Select mode="tags" placeholder="Seleccione las enfermedades persistentes" onChange={valores_seleccionados => enfermedades_persistentes_seleccionadas(valores_seleccionados)}>
+                                                                    {
+                                                                        enfermedades.map ( item => 
+                                                                            (
+                                                                                <Option key = {item.nombreLargo}>{item.nombreLargo}</Option>
+                                                                            )
+                                                                        )
+                                                                    }
                                                                 </Select> 
                                                             </Form.Item>
                                                         </Col>
@@ -456,8 +546,14 @@ const AtenderCita = () => {
                                                     <Row className="mt-5">
                                                         <Col span={24}>
                                                             <Form.Item>
-                                                                <Select mode="tags" style={{ width: '100%' }} placeholder="Seleccione las enfermedades hereditarias" onChange={handleChange}>
-                                                                        {enfermedades_hereditarias}
+                                                                <Select mode="tags" style={{ width: '100%' }} placeholder="Seleccione las enfermedades hereditarias" onChange={(valores_seleccionados) => enfermedades_hereditarias_seleccionadas(valores_seleccionados)}>
+                                                                    {
+                                                                        enfermedades.map ( item => 
+                                                                            (
+                                                                                <Option key = {item.nombreLargo}>{item.nombreLargo}</Option>
+                                                                            )
+                                                                        )
+                                                                    }
                                                                 </Select> 
                                                             </Form.Item>
                                                         </Col>
@@ -468,14 +564,15 @@ const AtenderCita = () => {
                                                             <TextArea style={{ height: '200%' }} showCount maxLength={100} />
                                                         </Col>
                                                     </Row>
+                                                    
                                                 </Card>                                              
-                                            </Form>
+                                            {/* </Form> */}
                                         </>:null
                                     }
                                     {
                                         current === 1?                
                                         <>    
-                                            <Form className="">
+                                            {/* <Form className=""> */}
                                                 <Card type="inner" className="text-center" title="Signos vitales">
                                                     <div className="ms-5 ps-5">
 
@@ -682,7 +779,7 @@ const AtenderCita = () => {
                                                         </Col>
                                                     </Row>
                                                 </Card>                                              
-                                            </Form>
+                                            {/* </Form> */}
                                         </>:null
                                     }
                                     {
@@ -709,7 +806,7 @@ const AtenderCita = () => {
                                     {
                                         current === 3?
                                         <>    
-                                            <Form>
+                                            {/* <Form> */}
                                                 <Card type="inner" className="" title="">
                                                     
                                                     <Row className="mb-2">
@@ -718,7 +815,15 @@ const AtenderCita = () => {
                                                                 <Row className="mb-2">
                                                                     <Col span={24}>
                                                                         <Select mode="tags" style={{ width: '100%' }} placeholder="Seleccione las enfermedades" onChange={handleChange}>
-                                                                            {enfermedades_diagnostico}
+
+                                                                           {
+                                                                                enfermedades.map ( item => 
+                                                                                    (
+                                                                                        <Option key = {item.nombreLargo}>{item.nombreLargo}</Option>
+                                                                                    )
+                                                                                )
+                                                                            }
+
                                                                         </Select>
                                                                     </Col>
                                                                 </Row>
@@ -763,7 +868,7 @@ const AtenderCita = () => {
                                                     </Row>      
 
                                                 </Card>                                              
-                                            </Form>
+                                            {/* </Form> */}
                                         </>:null
                                     }
 
@@ -786,6 +891,9 @@ const AtenderCita = () => {
                                         <Button type="primary" onClick={() => message.success('Cita finalizada con éxito!')}>
                                             Terminar cita
                                         </Button>
+                                            // <Button type="primary" htmlType="submit">
+                                            //     Terminar cita
+                                            // </Button>
                                         )}
                                 </div>            
                             </Col>
