@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Form, Modal, Button, Title, Select, Input, DatePicker } from 'antd';
-import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
+import { Card, Form, Modal, Button, Spin, Title, Select, Input, DatePicker } from 'antd';
+import { EditOutlined, EllipsisOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import CitasSrvices from "./../../Services/CitasServices";
 import moment from 'moment';
+import debounce from 'lodash/debounce';
 require('moment/locale/es-us.js');
 const { Meta } = Card;
 
@@ -11,12 +13,14 @@ const { RangePicker } = DatePicker;
 export default class ModalAgenda extends React.Component {
     constructor(props) {
         super(props);
-        console.log(props)
+        this.getPacientes = this.getPacientes.bind(this);
         this.state = {
             visibleModal: this.props.visibleModal,
             slotInfo: this.props.slotInfo,
             event: this.props.event,
             dateFormat: "DD/MM/YYYY HH:mm",
+            users: [],
+            fetching: false,
         }
         this.formRef = React.createRef();
     }
@@ -29,6 +33,27 @@ export default class ModalAgenda extends React.Component {
         });
 
 
+    }
+
+    debounceLocal = (fn, delay = 50) => {
+        let time;
+        return (...args) => {
+            clearTimeout(time);
+            time = setTimeout(() => fn(...args), delay);
+        };
+    };
+
+    getPacientes = (value) => {
+        this.setState({ fetching: true, users: [] });
+        var filter = { cedula: value, nombre: value, apellido: value, rol: "Paciente" };
+        CitasSrvices.getPersonasFilter(filter).then(resp => {
+            console.log(resp);
+            this.setState({ fetching: false });
+            this.setState({ users: resp.data });
+        }).catch(err => {
+            this.setState({ fetching: false });
+            console.log(err);
+        });
     }
 
     componentDidUpdate() {
@@ -169,8 +194,16 @@ export default class ModalAgenda extends React.Component {
                                     },
                                 ]}
                             >
-                                <Select>
-                                    <Select.Option value="09776387">Demo</Select.Option>
+                                <Select
+                                    labelInValue
+                                    showSearch
+                                    
+                                    filterOption={false}
+                                    placeholder={"Ingrese la cedula o el nombre del paciente"}
+                                    notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
+                                    onSearch={(value) => { this.debounceLocal(this.getPacientes(value), 80) }}
+                                >
+                                    {this.state.users.map(user => (<Select.Option key={user.cedula} value={user.cedula}>{user.cedula + " - " + user.nombre + " " + user.apellido}</Select.Option>))}
                                 </Select>
                             </Form.Item>
                             <Form.Item name="start" label="Fecha de inicio de la Cita">
