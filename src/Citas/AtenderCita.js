@@ -16,9 +16,9 @@ import {faThermometerQuarter,faWeight, faRulerVertical, faMale,
 import EditableTable from './EditableTable';
 import shortid from 'shortid';
 
-import AxiosDiscapacidades from '../services/AxiosDiscapacidades';
-import AxiosMedicamentos from '../services/AxiosMedicamentos';
-import AxiosEnfermedades from '../services/AxiosEnfermedades';
+import AxiosDiscapacidades from '../Services/AxiosDiscapacidades';
+import AxiosMedicamentos from '../Services/AxiosMedicamentos';
+import AxiosEnfermedades from '../Services/AxiosEnfermedades';
 
 const { Option } = Select;
 
