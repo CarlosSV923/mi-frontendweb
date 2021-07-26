@@ -2,13 +2,12 @@ import React from 'react';
 import { Layout } from 'antd';
 import HeaderComp from '../Components/Header';
 import FooterComp from '../Components/Footer';
-import SiderComp from '../Components/Sider';
-import '../../custom-antd.css'; 
+import SiderMedicoComp from '../Components/SiderMedico';
 const { Content } = Layout;
 
-const GeneralLayout = ({children}) =>(
+const MedicoLayout = ({children}) =>(
     <Layout style={{ minHeight: '100vh' }}>
-        <SiderComp/>
+        <SiderMedicoComp/>
         <Layout className="site-layout">
             <HeaderComp/>
             <Content style={{ margin: '16px' }}>
@@ -19,4 +18,4 @@ const GeneralLayout = ({children}) =>(
     </Layout>
 )
 
-export default GeneralLayout;
+export default MedicoLayout;

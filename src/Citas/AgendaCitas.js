@@ -1,25 +1,19 @@
 import React from 'react';
 import BigCalendar from 'react-big-calendar-like-google';
 import moment from 'moment';
+import { message } from 'antd'
 import 'react-big-calendar-like-google/lib/css/react-big-calendar.css';
 import ModalAgenda from './modals/ModalAgenda';
 import ModalConfirmAgenda from './modals/ModalConfirmAgenda';
+import AxiosCitas from './../Services/AxiosCitas';
+import { estadoCitaColor } from './enumEstadoCita';
+import Auth from './../Login/Auth';
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 require('moment/locale/es-us.js');
-
-var colors = {
-  'color-1': "rgba(102, 195, 131 , 1)",
-  "color-2": "rgba(242, 177, 52, 1)",
-  "color-3": "rgba(235, 85, 59, 1)",
-  "color-4": "rgba(70, 159, 213, 1)",
-  "color-5": "rgba(170, 59, 123, 1)"
-}
-
-
 export default class AgendaCitas extends React.Component {
   constructor(props) {
     super(props);
-
+    this.getFechasLimitesSemana = this.getFechasLimitesSemana.bind(this);
     this.state = {
       visibleModal: false,
       slotInfo: null,
@@ -31,9 +25,143 @@ export default class AgendaCitas extends React.Component {
       visibleCancel: false,
       visibleUpdate: false,
       events: [],
+      userData: {}
     }
 
 
+  }
+
+  componentDidMount() {
+    this.setState({ userData: Auth.getDataUser() }, () => { this.preLoadCitas(); });
+  }
+
+  getCitasMedico(filter, merge = true) {
+    AxiosCitas.getCitasMedico(filter).then(resp => {
+      console.log(resp);
+      const citas = resp.data.map(cita => {
+        cita.title = cita.cedula + " - " + cita.nombre + " " + cita.apellido;
+        cita.bgColor = estadoCitaColor[cita.estado];
+        cita.start = new Date(cita.start);
+        cita.end = new Date(cita.end);
+        return cita;
+      });
+      console.log(citas);
+      this.setState({ events: merge ? [...this.state.events, ...citas] : citas });
+
+    }).catch(err => {
+      console.log(err);
+      message.error('No se cargar las citas actuales, intentelo mas tarde!');
+    });
+  }
+
+  getCitasPaciente(filter, merge = true) {
+    AxiosCitas.getCitasPaciente(filter).then(resp => {
+      console.log(resp);
+      const citas = resp.data.map(cita => {
+        cita.title = cita.especialidad + " - " + cita.cedula + " - " + cita.nombre + " " + cita.apellido;
+        cita.bgColor = estadoCitaColor[cita.estado];
+        cita.start = new Date(cita.start);
+        cita.end = new Date(cita.end);
+        return cita;
+      });
+      console.log(citas);
+      this.setState({ events: merge ? [...this.state.events, ...citas] : citas });
+
+    }).catch(err => {
+      console.log(err);
+      message.error('No se cargar las citas actuales, intentelo mas tarde!');
+    });
+  }
+
+  getFechasLimitesSemana(date, daysAdd = 7, daysLess = -7) {
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+
+    const dayOfWeek = date.getDay();
+
+    const date_max = new Date((new Date()).setDate(date.getDate() + (dayOfWeek === 0 ? 0 : 7 - dayOfWeek) + daysAdd));
+    const date_min = new Date((new Date()).setDate(date.getDate() + (dayOfWeek === 0 ? -7 : - dayOfWeek) + daysLess));
+
+    return { date_max, date_min }
+  }
+
+  preLoadCitas(merge = true) {
+
+    const filter = {
+      ...this.getFechasLimitesSemana(new Date()),
+      cedula: this.state.userData.cedula,
+    }
+    if (Auth.isMedico()) {
+      this.getCitasMedico(filter, merge);
+    } else {
+      this.getCitasPaciente(filter, merge);
+    }
+  }
+
+  updateCitaX(action) {
+    const start = this.state.eventSave.start;
+    const end = this.state.eventSave.end;
+
+    start.setMinutes(start.getMinutes() - (5 * 60));
+    end.setMinutes(end.getMinutes() - (5 * 60));
+
+    const cita = {
+      id: this.state.eventSave.id,
+      init_comment: this.state.eventSave.desc,
+      inicio_cita: new Date(start),
+      fin_cita: new Date(end),
+      estado: this.state.eventSave.estado,
+    }
+
+    this.reangedarCancelarCita(cita, action);
+
+  }
+
+  reangedarCancelarCita(cita, action) {
+    AxiosCitas.reangedarCancelarCita(cita).then(resp => {
+      console.log(resp);
+      if (action === "R") {
+        message.success('Cita Reagendada con éxito!');
+      } else {
+        message.success('Cita Cancelada con éxito!');
+      }
+      this.preLoadCitas(false);
+    }).catch(err => {
+      console.log(err);
+      if (action === "R") {
+        message.error('Error al reagendar cita, intentelo mas tarde!');
+      } else {
+        message.error('Error al cancelar cita, intentelo mas tarde!');
+      }
+    });
+  }
+
+  agendarCita() {
+    const start = this.state.slotInfoSave.start;
+    const end = this.state.slotInfoSave.end;
+
+    start.setMinutes(start.getMinutes() - (5 * 60));
+    end.setMinutes(end.getMinutes() - (5 * 60));
+
+    const cita = {
+      paciente: this.state.slotInfoSave.paciente,
+      medico: this.state.slotInfoSave.medico,
+      init_comment: this.state.slotInfoSave.desc,
+      inicio_cita: new Date(start),
+      fin_cita: new Date(end),
+    }
+
+    console.log(cita)
+
+    AxiosCitas.agendarCita(cita).then((result) => {
+      console.log(result);
+      message.success('Cita Agendada con éxito!');
+    }).catch((err) => {
+      console.log(err);
+      message.error('No se pudo agendar la cita, intentelo mas tarde!');
+    });
   }
 
   createCita(slotInfoSave) {
@@ -44,7 +172,9 @@ export default class AgendaCitas extends React.Component {
   confirmCreatCita() {
     console.log("confirm create cita");
     console.log(this.state.slotInfoSave)
-    this.setState({ visibleConfirm: false, events: [...this.state.events, this.state.slotInfoSave], slotInfo: null });
+    this.setState({ visibleConfirm: false, events: [...this.state.events, this.state.slotInfoSave], slotInfo: null }, () => {
+      this.agendarCita();
+    });
   }
 
   updateCita(eventSave) {
@@ -56,7 +186,9 @@ export default class AgendaCitas extends React.Component {
     console.log("confirm update cita");
     const newEvents = [...this.state.events];
     newEvents.splice(this.state.idxEvent, 1, this.state.eventSave);
-    this.setState({ events: newEvents, visibleUpdate: false, idxEvent: -1, event: null, slotInfo: null });
+    this.setState({ events: newEvents, visibleUpdate: false, idxEvent: -1, event: null, slotInfo: null }, () => {
+      this.updateCitaX("R");
+    });
   }
 
   cancelCita(eventSave) {
@@ -68,7 +200,9 @@ export default class AgendaCitas extends React.Component {
     console.log("confirm calcel cita");
     const newEvents = [...this.state.events];
     newEvents.splice(this.state.idxEvent, 1, this.state.eventSave);
-    this.setState({ events: newEvents, idxEvent: -1, visibleCancel: false, event: null, slotInfo: null });
+    this.setState({ events: newEvents, idxEvent: -1, visibleCancel: false, event: null, slotInfo: null }, () => {
+      this.updateCitaX("C");
+    });
   }
 
   showModalAgendarCita(slotInfo) {
@@ -95,8 +229,17 @@ export default class AgendaCitas extends React.Component {
     this.setState({ visibleModal: true, visibleUpdate: false });
   }
 
-  componentDidMount() {
-    console.log(BigCalendar.Navigate)
+  navigateCalendar(date, view, action){
+    
+    const filter ={
+      cedula: this.state.userData.cedula,
+      ...this.getFechasLimitesSemana(date),
+    }
+    if (Auth.isMedico()) {
+      this.getCitasMedico(filter, false);
+    } else {
+      this.getCitasPaciente(filter, false);
+    }
 
   }
 
@@ -107,10 +250,11 @@ export default class AgendaCitas extends React.Component {
           selectable
           events={this.state.events}
           defaultView='work_week'
-          onNavigate={(e, a, r, l) => { console.log(e, a, r, l) }}
+          onNavigate={(date, view, action) => { this.navigateCalendar(date, view, action) }}
           scrollToTime={new Date(1970, 1, 1, 6)}
           defaultDate={new Date()}
-          views={Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])}
+          //views={Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])}
+          views={["work_week"]}
           onSelectEvent={event => { this.showModalEditCita(event) }}
           onSelectSlot={(slotInfo) => { this.showModalAgendarCita(slotInfo) }}
         />

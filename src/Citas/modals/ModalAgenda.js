@@ -2,9 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Form, Modal, Button, Spin, Title, Select, Input, DatePicker } from 'antd';
 import { EditOutlined, EllipsisOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import CitasSrvices from "./../../Services/CitasServices";
+import AxiosPersonas from "../../Services/AxiosPersonas";
 import moment from 'moment';
-import debounce from 'lodash/debounce';
+import Auth from './../../Login/Auth';
+import { estadoCitaColor } from './../enumEstadoCita';
 require('moment/locale/es-us.js');
 const { Meta } = Card;
 
@@ -19,8 +20,11 @@ export default class ModalAgenda extends React.Component {
             slotInfo: this.props.slotInfo,
             event: this.props.event,
             dateFormat: "DD/MM/YYYY HH:mm",
-            users: [],
-            fetching: false,
+            pacientes: [],
+            medicos: [],
+            fetchingPacientes: false,
+            fetchingMedicos: false,
+
         }
         this.formRef = React.createRef();
     }
@@ -31,7 +35,6 @@ export default class ModalAgenda extends React.Component {
             slotInfo: this.props.slotInfo,
             event: this.props.event
         });
-
 
     }
 
@@ -44,14 +47,25 @@ export default class ModalAgenda extends React.Component {
     };
 
     getPacientes = (value) => {
-        this.setState({ fetching: true, users: [] });
-        var filter = { cedula: value, nombre: value, apellido: value, rol: "Paciente" };
-        CitasSrvices.getPersonasFilter(filter).then(resp => {
+        this.setState({ fetchingPacientes: true, pacientes: [] });
+        var filter = { filter: value };
+        AxiosPersonas.getPacientesFilter(filter).then(resp => {
             console.log(resp);
-            this.setState({ fetching: false });
-            this.setState({ users: resp.data });
+            this.setState({ fetchingPacientes: false, pacientes: resp.data });
         }).catch(err => {
-            this.setState({ fetching: false });
+            this.setState({ fetchingPacientes: false });
+            console.log(err);
+        });
+    }
+
+    getMedicos = (value) => {
+        this.setState({ fetchingMedicos: true, medicos: [] });
+        var filter = { filter: value };
+        AxiosPersonas.getMedicosFilter(filter).then(resp => {
+            console.log(resp);
+            this.setState({ fetchingMedicos: false, medicos: resp.data });
+        }).catch(err => {
+            this.setState({ fetchingMedicos: false });
             console.log(err);
         });
     }
@@ -69,7 +83,7 @@ export default class ModalAgenda extends React.Component {
                     this.formRef.current.setFieldsValue({
                         start,
                         end,
-                        rangeDate: [start, end]
+                        // rangeDate: [start, end]
                     })
                 }
 
@@ -77,13 +91,25 @@ export default class ModalAgenda extends React.Component {
         }
         if (this.state.event !== this.props.event) {
             this.setState({ event: this.props.event }, () => {
+
                 if (this.state.event) {
                     const start = moment(this.props.event.start.toLocaleString(), this.state.dateFormat);
                     const end = moment(this.props.event.end.toLocaleString(), this.state.dateFormat);
                     this.formRef.current.setFieldsValue({
                         start,
                         end,
-                        rangeDate: [start, end]
+                        comment: this.state.event.desc,
+                        paciente: {
+                            label: this.state.event.title,
+                            value: this.state.event.cedula,
+                            key: this.state.event.cedula,
+                        },
+                        medico: {
+                            label: this.state.event.title,
+                            value: this.state.event.cedula,
+                            key: this.state.event.cedula,
+                        }
+                        // rangeDate: [start, end]
                     })
                 }
 
@@ -92,12 +118,37 @@ export default class ModalAgenda extends React.Component {
 
     }
 
+    getIdentifications(values) {
+        const resp = {};
+        const user = Auth.getDataUser();
+        if (Auth.isMedico()) {
+            resp["title"] = values.paciente.label;
+            resp["paciente"] = values.paciente.value;
+            resp["medico"] = user.cedula;
+        }
+        if (Auth.isPaciente()) {
+            resp["title"] = values.medico.label;
+            resp["medico"] = values.medico.value;
+            resp["paciente"] = user.cedula;
+        }
+        if (Auth.isCuidador()) {
+            resp["paciente"] = values.paciente.value;
+            resp["medico"] = values.medico.value;
+
+        }
+        return resp;
+    }
+
     handlerCrearCita = e => {
         e.preventDefault();
         this.formRef.current.validateFields().then(values => {
             this.setState({
                 slotInfoSave: {
-                    start: this.props.slotInfo.start, end: this.props.slotInfo.end, title: "Paciente", desc: values.comment
+                    start: this.props.slotInfo.start,
+                    end: this.props.slotInfo.end,
+                    bgColor: estadoCitaColor["P"],
+                    desc: values.comment,
+                    ...this.getIdentifications(values),
                 }
             }, () => { this.props.agendarCita(this.state.slotInfoSave) });
         }).catch(err => {
@@ -110,9 +161,9 @@ export default class ModalAgenda extends React.Component {
         this.formRef.current.validateFields().then(values => {
             this.setState({
                 eventSave: {
+                    ...this.state.event,
                     start: values.start._d,
                     end: values.end._d,
-                    title: "Paciente",
                     desc: values.comment
                 }
             }, () => { this.props.updateCita(this.state.eventSave) });
@@ -126,12 +177,12 @@ export default class ModalAgenda extends React.Component {
         this.formRef.current.validateFields().then(values => {
             this.setState({
                 eventSave: {
+                    ...this.state.event,
                     start: values.start._d,
                     end: values.end._d,
-                    title: "Paciente",
                     desc: values.comment,
-                    'bgColor': '#cd853f',
-
+                    estado: "C",
+                    bgColor: estadoCitaColor["C"],
                 }
             }, () => { this.props.cancelarCita(this.state.eventSave) });
         }).catch(err => {
@@ -152,10 +203,13 @@ export default class ModalAgenda extends React.Component {
 
 
     getBtnsEditarCita() {
-        return [
+        const btnsBasic = [
             <Button key="back" onClick={this.props.handleCancel}>
                 Cerrar
             </Button>,
+        ];
+
+        const btnsEdit = [
             <Button key="submit" type="primary" onClick={this.handlerCancelarCita}>
                 Cancelar
             </Button>,
@@ -167,7 +221,10 @@ export default class ModalAgenda extends React.Component {
                     Atender
                 </Link>
             </Button>
-        ];
+        ]
+        return this.state.event && this.state.event.estado !== "C" ? [
+            ...btnsBasic, ...btnsEdit
+        ] : [...btnsBasic]; 
     }
 
     render() {
@@ -185,27 +242,50 @@ export default class ModalAgenda extends React.Component {
                             layout="vertical"
                             onSubmi={this.handlerCrearCita}
                         >
-                            <Form.Item
+                            {Auth.isMedico() ? <Form.Item
                                 name="paciente"
                                 label="Seleccione o busque al Paciente"
                                 rules={[
                                     {
                                         required: true,
+                                        message: "*Debe Seleccionar un Paciente"
                                     },
                                 ]}
                             >
                                 <Select
                                     labelInValue
                                     showSearch
-                                    
+                                    disabled={this.state.event}
                                     filterOption={false}
                                     placeholder={"Ingrese la cedula o el nombre del paciente"}
                                     notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
                                     onSearch={(value) => { this.debounceLocal(this.getPacientes(value), 80) }}
                                 >
-                                    {this.state.users.map(user => (<Select.Option key={user.cedula} value={user.cedula}>{user.cedula + " - " + user.nombre + " " + user.apellido}</Select.Option>))}
+                                    {this.state.pacientes.map(user => (<Select.Option key={user.cedula} value={user.cedula}>{user.cedula + " - " + user.nombre + " " + user.apellido}</Select.Option>))}
                                 </Select>
-                            </Form.Item>
+                            </Form.Item> : null}
+                            {Auth.isPaciente() ? <Form.Item
+                                name="medico"
+                                label="Seleccione o busque al Medico"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "*Debe Seleccionar un Medico"
+                                    },
+                                ]}
+                            >
+                                <Select
+                                    labelInValue
+                                    showSearch
+                                    disabled={this.state.event}
+                                    filterOption={false}
+                                    placeholder={"Ingrese la especialidad o el nombre del medico"}
+                                    notFoundContent={this.state.fetching ? <Spin size="small" /> : null}
+                                    onSearch={(value) => { this.debounceLocal(this.getMedicos(value), 80) }}
+                                >
+                                    {this.state.medicos.map(user => (<Select.Option key={user.cedula} value={user.cedula}>{user.especialidad + " - " + user.nombre + " " + user.apellido}</Select.Option>))}
+                                </Select>
+                            </Form.Item> : null}
                             <Form.Item name="start" label="Fecha de inicio de la Cita">
                                 <DatePicker style={{ width: "100%" }} showTime={{ format: 'HH:mm' }} format={this.state.dateFormat} disabled={this.state.slotInfo} />
                             </Form.Item>

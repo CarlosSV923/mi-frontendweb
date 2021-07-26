@@ -2,16 +2,10 @@ import React from 'react';
 import { Menu, Layout  } from 'antd';
 import { Link } from 'react-router-dom';
 import { FormOutlined, HeartOutlined } from '@ant-design/icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCog } from '@fortawesome/free-solid-svg-icons';
-import shortid from 'shortid';
-//import '../../custom-antd.css';
 
-//import { RiRouterLine, RiTerminalWindowLine } from "react-icons/ri";
-const { SubMenu } = Menu;
 const { Sider } = Layout; 
 
-export default class SiderComp extends React.Component{
+export default class SiderCuidadorComp extends React.Component{
     state = {
         collapsed: false,
       };
@@ -49,13 +43,6 @@ export default class SiderComp extends React.Component{
                 <Link to="/" />
               </Menu.Item>
 
-              <SubMenu key="admin" icon={<FontAwesomeIcon icon={faUserCog}/>} title="Administrador">
-                <Menu.Item key={shortid.generate()}>Discapacidades<Link to="/formulariodiscapacidades"></Link></Menu.Item>
-                <Menu.Item key={shortid.generate()}>Usuarios<Link to="/formulariousuarios"></Link></Menu.Item>
-                <Menu.Item key={shortid.generate()}>Roles<Link to="/formularioroles"></Link></Menu.Item>
-                <Menu.Item key={shortid.generate()}>Medicamentos<Link to="/formulariomedicamentos" /></Menu.Item>
-                <Menu.Item key={shortid.generate()}>Enfermedades<Link to="/formularioenfermedades" /></Menu.Item>
-              </SubMenu>
 
             </Menu>
           </Sider>
