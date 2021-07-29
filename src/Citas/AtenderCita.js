@@ -411,6 +411,8 @@ const AtenderCita = (props) => {
                 console.log("AxiosAlergias.almacenar_alergias_paciente: ",res2);
                 setExito(exito + 1)
                 message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+                props.history.push('/medico');
+
 
             }).catch(err => {
                 console.log('err.response.data', err.response.data);
@@ -1249,9 +1251,9 @@ const AtenderCita = (props) => {
                                                             <TextArea rows = {4} style={{ height: '200%' }} placeholder="Observación" value = {observaciones} onChange = { observacion => campo_observacion(observacion) } showCount maxLength = {100}/>
                                                         </Col>
                                                     </Row>
-                                                    <Button type="primary" htmlType="submit">
+                                                    {/* <Button type="primary" htmlType="submit">
                                                         Terminar cita
-                                                    </Button>
+                                                    </Button> */}
                                                     {/* <Button type="primary" htmlType="submit">
                                                         Terminar cita
                                                     </Button>
@@ -1536,9 +1538,9 @@ const AtenderCita = (props) => {
                                                         )}
                                                         </Form.List>
 
-                                                        <Button type="primary" htmlType="submit">
+                                                        {/* <Button type="primary" htmlType="submit">
                                                             Terminar cita
-                                                        </Button>
+                                                        </Button> */}
                                                     </div>
                                                 </Card>                                              
                                         </>:null
@@ -1569,12 +1571,12 @@ const AtenderCita = (props) => {
                                                         </Modal>
                                                     </Col>
                                                 </Row>
-                                                <Button type="primary" onClick = {() => subir_imagenes()}>
+                                                {/* <Button type="primary" onClick = {() => subir_imagenes()}>
                                                         Subir
                                                 </Button>
                                                 <Button type="primary" htmlType="submit">
                                                         Terminar cita
-                                                </Button>
+                                                </Button> */}
                                             </Card>                                           
                                         </>:null
                                     }
@@ -1742,7 +1744,7 @@ const AtenderCita = (props) => {
                                         //     Terminar cita
                                         // </Button>
                                             <Button type="primary" visible = {true} htmlType="submit">
-                                                Terminar cita
+                                                Guardar cita
                                             </Button>
                                         )}
                                 </div>            
