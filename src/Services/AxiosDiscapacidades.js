@@ -17,4 +17,8 @@ export default class AxiosDiscapacidades {
     return AxiosDiscapacidades.instanceAxios.post(`/almacenar_discapacidades_pacientes`, discapacidades);
   }
 
+  static almacenar_discapacidad = (discapacidad) => {
+    return AxiosDiscapacidades.instanceAxios.post(`/almacenar_discapacidad`, discapacidad);
+  }
+
 }

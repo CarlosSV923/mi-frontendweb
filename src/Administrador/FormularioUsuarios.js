@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
-import { Form, Input, Cascader, Select, Row, Col, Checkbox, Button, Radio, AutoComplete, InputNumber, DatePicker, Card } from 'antd';
+import { Form, Input, message, Cascader, Select, Row, Col, Checkbox, Button, Radio, AutoComplete, InputNumber, DatePicker, Card } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserAlt } from '@fortawesome/free-solid-svg-icons';
+import AxiosRoles from '../Services/AxiosRoles';
 const { Option } = Select;
 
 const opciones_estado = [
@@ -43,15 +44,69 @@ const tailFormItemLayout = {
   },
 };
 
-const FormularioUsuarios = () => {
+const FormularioUsuarios = (props) => {
     
     const [form] = Form.useForm();
 
     const [estado, setEstado] = React.useState(false);
+    const [listaRoles, setListaRoles] = React.useState([]);
+    const [cedula, setCedula] = React.useState("");
+    const [nombre, setNombre] = React.useState("");
+    const [correo, setCorreo] = React.useState("");
+    const [apellido, setApellido] = React.useState("");
+    const [fechaNacimiento, setFechaNacimiento] = React.useState("");
+    const [sexo, setSexo] = React.useState("");
+    const [username, setUsername] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    const [idRol, setidRol] = React.useState("");
+    const key = 'updatable';
+
 
     const onFinish = (values) => {
       console.log('Received values of form: ', values);
+      console.log('Received values of form: ', values.genero);
+
+      setFechaNacimiento(values['date-picker'].format('YYYY-MM-DD'))
+
+      let usuario = {
+        cedula: cedula,
+        nombre: nombre,
+        correo: correo,
+        apellido: apellido,
+        fecha_nacimiento: values['date-picker'].format('YYYY-MM-DD'),
+        sexo: sexo,
+        username: username,
+        password: password,
+        id_rol: idRol,
+      }
+
+      console.log("USUARIO: ", usuario);
+
+      AxiosRoles.almacenar_usuario(usuario).then((res)=>{
+        console.log("almacenar_usuario: ",res.data);
+       props.history.push('/admin')
+      })
+
+      console.log("values['date-picker'].format('YYYY-MM-DD'): ", values['date-picker'].format('YYYY-MM-DD'));
     };
+
+    React.useEffect(()=>{
+        
+        mostrar_roles();
+  
+    }, []);
+
+    const mostrar_roles = () => {
+        message.loading({ content: 'Guardando...', key, duration: 20});
+
+        AxiosRoles.mostrar_roles().then((res)=>{
+          console.log(res.data);
+          setListaRoles(res.data);
+          
+          message.success({ content: 'Guardado con éxito', key, duration: 3 });
+
+        })
+    }
 
     const onChange4 = e => {
         console.log('radio4 checked', e.target.value);
@@ -98,14 +153,14 @@ const FormularioUsuarios = () => {
                             name="nombre"
                             label="Nombre"
                             >
-                                <Input placeholder="Ingrese nombre"/>
+                                <Input placeholder="Ingrese nombre" value = {nombre} onChange = {(e)=> setNombre(e.target.value)}/>
                             </Form.Item>
                 
                             <Form.Item
                             name="apellido"
                             label="Apellido"
                             >
-                                <Input placeholder="Ingrese apellido"/>
+                                <Input placeholder="Ingrese apellido" value = {apellido} onChange = {(e)=> setApellido(e.target.value)}/>
                             </Form.Item>
                 
                             <Form.Item
@@ -122,7 +177,7 @@ const FormularioUsuarios = () => {
                                 },
                             ]}
                             >
-                                <Input placeholder="Ingrese correo electrónico"/>
+                                <Input placeholder="Ingrese correo electrónico" value = {correo} onChange = {(e)=> setCorreo(e.target.value)}/>
                             </Form.Item>
                 
                             <Form.Item
@@ -160,7 +215,7 @@ const FormularioUsuarios = () => {
                                 }),
                                 ]}
                             >
-                                <Input.Password placeholder="Confirme su contraseña" />
+                                <Input.Password placeholder="Confirme su contraseña" value = {password} onChange = { (e) => setPassword(e.target.value) } />
                             </Form.Item>
                 
                             <Form.Item
@@ -174,19 +229,20 @@ const FormularioUsuarios = () => {
                                 },
                                 ]}
                             >
-                                <Input placeholder="Ingrese nombre de usuario" />
+                                <Input placeholder="Ingrese nombre de usuario" value = {username} onChange = { (e) => setUsername(e.target.value) } />
                             </Form.Item>
 
                             <Form.Item
                             name="cedula"
                             label="Cédula"
                             >
-                                <Input placeholder="Ingrese su número de identificación"/>
+                                <Input placeholder="Ingrese su número de identificación" value = {cedula} onChange = {(e)=> setCedula(e.target.value)}/>
                             </Form.Item>
                 
                             <Form.Item
                             name="fechna"
                             label="Fecha de nacimiento"
+                            name="date-picker" label="DatePicker"
                             >
                                 <DatePicker/>
                             </Form.Item>
@@ -195,10 +251,10 @@ const FormularioUsuarios = () => {
                             name="genero"
                             label="Género"
                             >
-                                <Select placeholder="Seleccione género">
-                                    <Option value="male">Male</Option>
-                                    <Option value="female">Female</Option>
-                                    <Option value="other">Other</Option>
+                                <Select placeholder="Seleccione género" value = {sexo} onChange = {e => setSexo(e)}>
+                                    <Option value="Hombre">Hombre</Option>
+                                    <Option value="Mujer">Mujer</Option>
+                                    <Option value="Prefiero no decirlo">Prefiero no decirlo</Option>
                                 </Select>
                             </Form.Item>
                 
@@ -206,10 +262,15 @@ const FormularioUsuarios = () => {
                             name="rol"
                             label="Rol"
                             >
-                                <Select placeholder="Seleccione el rol">
-                                    <Option value="Paciente">Paciente</Option>
-                                    <Option value="Administrador">Administrador</Option>
-                                    <Option value="medico">Médico</Option>
+                                <Select placeholder="Seleccione el rol" value = {idRol} onChange = { (e) => setidRol(e) }>
+
+                                    {
+                                        listaRoles.map ( item => 
+                                            (
+                                                <Option key={item.nombre} value = {item.id_rol} >{item.nombre}</Option>
+                                            )
+                                        )
+                                    }
                                 </Select>
                             </Form.Item>
                 

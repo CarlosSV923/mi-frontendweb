@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
-import { Form, Input, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, InputNumber, DatePicker, Card } from 'antd';
+import { Form, Input, message, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, InputNumber, DatePicker, Card } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTablets, faUsers } from '@fortawesome/free-solid-svg-icons';
+import AxiosMedicamentos from '../Services/AxiosMedicamentos';
 
 const formItemLayout = {
   labelCol: {
@@ -38,12 +39,23 @@ const tailFormItemLayout = {
     },
   };  
 
-const FormularioMedicamentos = () => {
+const FormularioMedicamentos = (props) => {
     
     const [form] = Form.useForm();
+    const [nombre, setNombre] = React.useState("");
+    const [codigo, setCodigo] = React.useState("");
+    const [descrip, setDescrip] = React.useState("");
+    const key = 'updatable';
 
     const onFinish = (values) => {
-      console.log('Received values of form: ', values);
+      message.loading({ content: 'Guardando...', key, duration: 20});
+
+      AxiosMedicamentos.almacenar_medicamento({nombre: nombre, codigo: codigo, descrip: descrip}).then((res)=>{
+        console.log(res.data);
+        props.history.push('/admin');
+        message.success({ content: 'Guardado con éxito', key, duration: 3 });
+
+      })
     };
   
     const [autoCompleteResult, setAutoCompleteResult] = useState([]);
@@ -77,21 +89,21 @@ const FormularioMedicamentos = () => {
                             name="medicamento"
                             label="Medicamento"
                             >
-                                <Input placeholder="Ingrese el nombre del rol"/>
+                                <Input placeholder="Ingrese el nombre del medicamento" value = {nombre} onChange = {(e)=> setNombre(e.target.value)}/>
                             </Form.Item>
 
                             <Form.Item
                             name="codigo"
                             label="Código"
                             >
-                                <Input placeholder="Ingrese el código del medicamento" />
+                                <Input placeholder="Ingrese el código del medicamento" value = {codigo} onChange = {(e) => setCodigo(e.target.value)}/>
                             </Form.Item>
                 
                             <Form.Item
                             name="descripcion"
                             label="Descripción"
                             >
-                                <TextArea placeholder="Ingrese una descripción (opcional)" showCount maxLength={100} />
+                                <TextArea placeholder="Ingrese una descripción (opcional)" value = {descrip} onChange ={ e => setDescrip(e.target.value) } showCount maxLength={100} />
                             </Form.Item>
 
                             <Form.Item {...tailFormItemLayout}>

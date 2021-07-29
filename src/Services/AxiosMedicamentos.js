@@ -13,4 +13,8 @@ export default class AxiosMedicamentos {
     return AxiosMedicamentos.instanceAxios.post(`/almacenar_medicamentos_cita_paciente`, informacion_medicamentos);
   }
 
+  static almacenar_medicamento = (medicamento) => {
+    return AxiosMedicamentos.instanceAxios.post(`/almacenar_medicamento`, medicamento);
+  }
+
 }

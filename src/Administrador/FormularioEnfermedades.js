@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
-import { Form, Input, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, InputNumber, DatePicker, Card } from 'antd';
+import { Form, Input, message, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, InputNumber, DatePicker, Card } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiagnoses, faUsers } from '@fortawesome/free-solid-svg-icons';
+import AxiosEnfermedades from '../Services/AxiosEnfermedades';
 
 const formItemLayout = {
   labelCol: {
@@ -38,12 +39,25 @@ const tailFormItemLayout = {
     },
   };  
 
-const FormularioEnfermedades = () => {
+const FormularioEnfermedades = (props) => {
     
     const [form] = Form.useForm();
+    const [nombreCorto, setNombreCorto] = React.useState("");
+    const [nombreLargo, setNombreLargo] = React.useState("");
+    const [codigo, setCodigo] = React.useState("");
+    const [descrip, setDescrip] = React.useState("");
+    const key = 'updatable';
 
     const onFinish = (values) => {
-      console.log('Received values of form: ', values);
+      message.loading({ content: 'Guardando...', key, duration: 20});
+
+      AxiosEnfermedades.almacenar_enfermedad({nombreCorto: nombreCorto, nombreLargo:nombreLargo, codigo: codigo, descrip: descrip}).then((res)=>{
+        console.log(res.data);
+        props.history.push('/admin');
+        message.success({ content: 'Guardado con éxito', key, duration: 3 });
+
+      })
+
     };
   
     const [autoCompleteResult, setAutoCompleteResult] = useState([]);
@@ -78,28 +92,28 @@ const FormularioEnfermedades = () => {
                             name="ncorto"
                             label="Nombre corto"
                             >
-                                <Input placeholder="Ingrese el nombre corto de la enfermedad"/>
+                                <Input placeholder="Ingrese el nombre corto de la enfermedad" value = {nombreCorto} onChange = {(e) => setNombreCorto(e.target.value)}/>
                             </Form.Item>
                 
                             <Form.Item
                             name="nlargo"
                             label="Nombre largo"
                             >
-                                <Input placeholder="Ingrese el nombre largo de la enfermedad"/>
+                                <Input placeholder="Ingrese el nombre largo de la enfermedad" value = {nombreLargo} onChange = {(e) => setNombreLargo(e.target.value)}/>
                             </Form.Item>
 
                             <Form.Item
                             name="codigo"
                             label="Código"
                             >
-                                <Input placeholder="Ingrese el código"/>
+                                <Input placeholder="Ingrese el código" value = {codigo} onChange = {(e) => setCodigo(e.target.value)}/>
                             </Form.Item>
 
                             <Form.Item
                             name="descripcion"
                             label="Descripción"
                             >
-                                <TextArea placeholder="Ingrese una descripción (opcional)" showCount maxLength={100} />
+                                <TextArea placeholder="Ingrese una descripción (opcional)" showCount maxLength={100} value = {descrip} onChange ={ e => setDescrip(e.target.value) }/>
                             </Form.Item>
 
                             <Form.Item {...tailFormItemLayout}>

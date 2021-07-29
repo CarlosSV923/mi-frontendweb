@@ -9,4 +9,8 @@ export default class AxiosEnfermedades {
     return AxiosEnfermedades.instanceAxios.get(`/mostrar_enfermedades`);
   }
 
+  static almacenar_enfermedad = (enfermedad) => {
+    return AxiosEnfermedades.instanceAxios.post(`/almacenar_enfermedad`, enfermedad);
+  }
+
 }
