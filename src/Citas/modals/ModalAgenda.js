@@ -217,7 +217,7 @@ export default class ModalAgenda extends React.Component {
                 Guardar
             </Button>,
             <Button key="submit" type="primary">
-                <Link to={{ pathname: '/atenderCita' }} >
+                <Link to={{ pathname: '/medico/atenderCita/' + this.state.event.id}} >
                     Atender
                 </Link>
             </Button>

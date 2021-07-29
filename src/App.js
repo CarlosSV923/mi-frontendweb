@@ -21,6 +21,8 @@ import FormularioUsuarios from './Administrador/FormularioUsuarios';
 import FormularioRoles from './Administrador/FormularioRoles';
 import FormularioMedicamentos from './Administrador/FormularioMedicamentos';
 import FormularioEnfermedades from './Administrador/FormularioEnfermedades';
+import HomeAdmin from './Administrador/initPage';
+import HomeCuidador from './Cuidador/initPage';
 
 function App() {
   return (
@@ -39,11 +41,15 @@ function App() {
 
 
       {/* Routes Admin */}
+      <PrivateRouteAdmin exact path='/admin' component={HomeAdmin} layout={AdminLayout} />
       <PrivateRouteAdmin exact path='/admin/formulariodiscapacidades' component={FormularioDiscapacidades} layout={AdminLayout} />
       <PrivateRouteAdmin exact path='/admin/formulariousuarios' component={FormularioUsuarios} layout={AdminLayout} />
       <PrivateRouteAdmin exact path='/admin/formularioroles' component={FormularioRoles} layout={AdminLayout} />
       <PrivateRouteAdmin exact path='/admin/formulariomedicamentos' component={FormularioMedicamentos} layout={AdminLayout} />
       <PrivateRouteAdmin exact path='/admin/formularioenfermedades' component={FormularioEnfermedades} layout={AdminLayout} />
+
+      {/* Routes Admin */}
+      <PrivateRouteCuidador exact path='/admin' component={HomeCuidador} layout={CuidadorLayout} />
 
     </BrowserRouter>
   );
