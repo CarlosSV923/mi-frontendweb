@@ -22,4 +22,9 @@ export default class AxiosCitas {
     static reangedarCancelarCita = (cita) => {
         return AxiosCitas.instanceAxios.post(`/reangedarCancelarCita`, cita);
     }
+
+    static almacenar_informacion_cita = (informacion_cita) => {
+    return AxiosCitas.instanceAxios.post(`/almacenar_cita`, informacion_cita);
+  }
+
 }

@@ -40,6 +40,7 @@ const enfermedades_persistentes = [];
 
 const enfermedades_diagnostico = [];
 
+const key = 'updatable';
 
 enfermedades_diagnostico.push(<Option key={"COVID-19"}>COVID-19</Option>)
 enfermedades_diagnostico.push(<Option key={"Dengue 1"}>Dengue 1</Option>)
@@ -143,7 +144,15 @@ const AtenderCita = (props) => {
     const [enfermedadesPersistentesSeleccionadas, setEnfermedadesPersistentesSeleccionadas] = React.useState([]);
     const [enfermedadesHereditariasSeleccionadas, setEnfermedadesHereditariasSeleccionadas] = React.useState([]);
     const [enfermedadesDiagnostivoSeleccionadas, setEnfermedadesDiagnosticoSeleccionadas] = React.useState([]);
-    const [observaciones, setObservaciones] = React.useState("");
+    const [observaciones, setObservaciones] = React.useState(""); 
+    const [diagnostico, setDiagnostico] = React.useState("");
+    const [instrucciones, setInstrucciones] = React.useState("");
+    const [tratamiento, setTratamiento] = React.useState("");
+    const [listaDisc, setListaDisc] = React.useState([]);
+    const [listaMed, setListaMed] = React.useState([]);
+    const [listaAler, setListaAler] = React.useState([]);
+    const [listaSig, setListaSig] = React.useState([]);
+
     const [camposAdicionalesAgregados, setCamposAdicionalesAgregados] = React.useState([]);
     const [dataSource, setDataSource] = React.useState([])
     const [columns, setColumns] = React.useState([{
@@ -161,6 +170,7 @@ const AtenderCita = (props) => {
                                                     dataIndex: 'address',
                                                     key: 'address',
                                                 }]);
+    const [exito, setExito] = React.useState(0);
     const [signosVitales, setSignosVitales] = React.useState([{tipo_signo:"estatura", valor_signo: 5, unidad_signo: "cm"},
                                                               {tipo_signo:"peso", valor_signo: 20, unidad_signo: "kg"},
                                                               {tipo_signo:"masa_corporal", valor_signo: 30, unidad_signo: "kg/m2"},
@@ -202,16 +212,18 @@ const AtenderCita = (props) => {
                                                         comentarios: "Comentarios",
                                                         cita: 1});
 
+
     React.useEffect(()=>{
         
         mostrar_discapacidades();
         mostrar_medicamentos();
         mostrar_enfermedades();
+        console.log(localStorage.getItem('userdata'),'hhh')
 
     }, []);
 
-    const next = () => {
-      console.log("next before");
+    const next = (e) => {
+      console.log("next before: ",e);
       console.log(current)
       setCurrent(current + 1);
       console.log("next after");
@@ -355,6 +367,12 @@ const AtenderCita = (props) => {
             console.log("array_todas_discapacidades_mod ",array_todas_discapacidades_mod);
             AxiosDiscapacidades.almacenar_discapacidades_pacientes({discapacidades_paciente: array_todas_discapacidades_mod, "paciente":"0954003067"}).then(res2 =>{
                 console.log("AxiosDiscapacidades.almacenar_discapacidades_pacientes: ",res2);
+                setExito(exito + 1)
+                if(exito === 9){
+                    // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+                }
+            }).catch(err => {
+                console.log('err.response.data', err.response.data);
             })
             //console.log("array: ",Object.values(array));
             // console.log("array: ",JSON.parse(array));
@@ -391,6 +409,11 @@ const AtenderCita = (props) => {
             console.log("array_todas_alergias_mod ",array_todas_alergias_mod);
             AxiosAlergias.almacenar_alergias_paciente({alergias_paciente: array_todas_alergias_mod, "paciente":"0954003067"}).then(res2 =>{
                 console.log("AxiosAlergias.almacenar_alergias_paciente: ",res2);
+                setExito(exito + 1)
+                message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+
+            }).catch(err => {
+                console.log('err.response.data', err.response.data);
             })
             //console.log("array: ",Object.values(array));
             // console.log("array: ",JSON.parse(array));
@@ -414,6 +437,10 @@ const AtenderCita = (props) => {
         console.log(json);
         console.log("data_modificado_enfermedades_hereditarias: ",json);
         AxiosEnfermedadesHereditarias.almacenar_enfermedades_hereditarias_paciente(json).then(res2 =>{
+            setExito(exito + 1)
+            if(exito === 9){
+                // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+            }
             console.log("AxiosEnfermedadesHereditarias.almacenar_enfermedades_hereditarias_paciente: ",res2);
         }).catch( err => {
             console.log("err: ",err);
@@ -431,6 +458,10 @@ const AtenderCita = (props) => {
         console.log("data_modificado_enfermedades_hereditarias: ",json);
         AxiosEnfermedadesPersistentes.almacenar_enfermedades_persistentes_paciente(json).then(res2 =>{
             console.log("AxiosEnfermedadesHereditarias.almacenar_enfermedades_persistentes_paciente: ",res2);
+            setExito(exito + 1)
+            if(exito === 9){
+                // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+            }
         }).catch( err => {
             console.log("err: ",err);
         } )
@@ -443,6 +474,10 @@ const AtenderCita = (props) => {
         console.log("almacenar_signos_vitales_adicionales: ",json);
         AxiosSignosVitales.almacenar_signos_vitales_paciente(json).then(res2 =>{
             console.log("AxiosSignosVitales.almacenar_signos_vitales_paciente: ",res2);
+            setExito(exito + 1)
+            if(exito === 9){
+                // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+            }
         }).catch( err => {
             console.log("err: ",err);
         } )
@@ -454,6 +489,10 @@ const AtenderCita = (props) => {
         console.log("almacenar_medicamentos_cita_adicionales: ",json);
         AxiosMedicamentos.almacenar_medicamentos_cita_paciente(json).then(res2 =>{
             console.log("AxiosMedicamentos.almacenar_medicamentos_cita_paciente: ",res2);
+            setExito(exito + 1)
+            if(exito === 9){
+                // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+            }
         }).catch( err => {
             console.log("err: ",err.response.data);
         } )
@@ -465,6 +504,10 @@ const AtenderCita = (props) => {
         console.log("enfermedades_cita_paciente: ",json);
         AxiosEnfermedadesCitas.almacenar_enfermedades_cita_paciente(json).then(res2 =>{
             console.log("AxiosEnfermedadesCitas.almacenar_enfermedades_cita_paciente: ",res2);
+            setExito(exito + 1)
+            if(exito === 9){
+                // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+            }
         }).catch( err => {
             console.log("err: ",err.response.data);
         } )
@@ -485,150 +528,387 @@ const AtenderCita = (props) => {
           "fecha_atencion": "2021/07/24 00:00:00",
           "seguimiento": 1
         */
+        // let cita = { medico: "0912908694",
+        //              paciente: "0954003067",
+        //              inicio_cita:"2021/07/24 00:00:00",
+        //              fin_cita: "2021/07/24 00:30:00",
+        //              init_comment:"comen",
+        //              estado:  "P",
+        //              observRec: "Observación/recomendación",
+        //              procedimiento: "Procedimiento",
+        //              instrucciones: "Instrucciones",
+        //              sintomas: "Síntomas",
+        //              fecha_agendada: "2021/07/22 00:00:00",
+        //              fecha_atencion: "2021/07/24 00:00:00"}
         let cita = { medico: "0912908694",
                      paciente: "0954003067",
+                     inicio_cita:"2021/07/24 00:00:00",
+                     fin_cita: "2021/07/24 00:30:00",
+                     init_comment:"comen",
                      estado:  "P",
-                     observRec: "Observación/recomendación",
-                     procedimiento: "Procedimiento",
-                     instrucciones: "Instrucciones",
-                     sintomas: "Síntomas",
+                     planTratam: tratamiento,
+                     observRec: observaciones,
+                     procedimiento: "",
+                     instrucciones: instrucciones,
+                     sintomas: diagnostico,
                      fecha_agendada: "2021/07/22 00:00:00",
                      fecha_atencion: "2021/07/24 00:00:00"}
-        almacenar_cita();
+        almacenar_cita(cita);
 
     }
 
     const almacenar_secciones = () => {
-        subir_imagenes();
+        
     }
 
-    const campos_adicionales_agregadas = (valores_agregados) => {
-        
+    const campos_adicionales_agregadas3 = (valores_agregados) => {
+        if (current === 0){
+            setListaDisc(valores_agregados.lista_discapacidades);
+            setListaAler(valores_agregados.lista_alergias);
+            setCurrent(current + 1);
+        }else if (current === 1){
+            setListaSig(valores_agregados.lista_signos);
+            setCurrent(current + 1);
+        }else if(current === 2){
+            setCurrent(current + 1);
+        }else if (current === 3) {
 
-        
-        setCamposAdicionalesAgregados(valores_agregados);
+            setListaMed(valores_agregados.lista_medicamentos);
+            console.log("fileList: ",fileList);
+            let temp_discapacidades = []
+            for (let i = 0; i< discapacidadesSeleccionadas.length; i++ ){
+                let elem = discapacidadesSeleccionadas[i].split(",")
+                temp_discapacidades.push(elem[1]);
+            }
+
+            let temp_alergias = [];
+            for (let i = 0; i< alergiasSeleccionadas.length; i++ ){
+                let elem = alergiasSeleccionadas[i].split(",")
+                temp_alergias.push(elem[1]);
+            }
+
+            let temp_enfermedades_hereditarias = [];
+            for (let i = 0; i< enfermedadesHereditariasSeleccionadas.length; i++ ){
+                let elem = enfermedadesHereditariasSeleccionadas[i].split(",")
+                temp_enfermedades_hereditarias.push(elem[1]);
+            }
+
+            let temp_enfermedades_persistentes = [];
+            for (let i = 0; i< enfermedadesPersistentesSeleccionadas.length; i++ ){
+                let elem = enfermedadesPersistentesSeleccionadas[i].split(",")
+                temp_enfermedades_persistentes.push(elem[1]);
+            }
+
+            console.log(valores_agregados);
+            let medicamentos_nuevos = listaMed;
+            let medicamentos_nuevos_mod = [] 
+            for (let i = 0; i < medicamentos_nuevos.length ; i++) {
+
+                medicamentos_nuevos_mod.push({medicamento: medicamentos_nuevos[i].medicina,
+                                            dosis: medicamentos_nuevos[i].dosis, 
+                                            frecuencia: medicamentos_nuevos[i].frecuencia, 
+                                            duracion: medicamentos_nuevos[i].duracion,
+                                            });
+
+            }
+
+            let temp_enfermedades_citas = [];
+            for (let i = 0; i< enfermedadesDiagnostivoSeleccionadas.length; i++ ){
+                let elem = enfermedadesDiagnostivoSeleccionadas[i].split(",")
+                temp_enfermedades_citas.push({"enfermedad":elem[1]});
+            }
+
+            let signos_vitales_nuevos = listaSig;
+
+            let signos_vitales_nuevos_mod = [] 
+            for (let i = 0; i < signos_vitales_nuevos.length ; i++) {
+
+                signos_vitales_nuevos_mod.push({key: signos_vitales_nuevos[i].nombre_signo_vital, 
+                                                value: signos_vitales_nuevos[i].valor_signo_vital, 
+                                                unidad: signos_vitales_nuevos[i].unidad});
+
+            }
+            console.log('signos_vitales_nuevos_mod:' , signos_vitales_nuevos_mod);
+            console.log("signos_vitales_nuevos: ", signos_vitales_nuevos);
+            
+            let signos_vitales_predeterminados = [{key: 'Estatura', value: estatura, unidad: 'cm'},
+                                                {key: 'Peso', value: peso, unidad: 'Kg'},
+                                                {key: 'Masa Coporal', value: masaCorporal, unidad: 'Kg/m2'},
+                                                {key: 'Porcentaje de grasa corporal', value: porcentaje, unidad: '%'},
+                                                {key: 'Masa muscular', value: masaMuscular, unidad: '%'},
+                                                {key: 'Tensión arterial', value: tensionArterial, unidad: 'mmHg'},
+                                                {key: 'Frecuencia cardíaca', value: frecuenciaCardiaca, unidad: 'bmp'},
+                                                {key: 'Frecuencia respiratoria', value: frecuenciaRespiratoria, unidad: 'r/m'},
+                                                {key: 'Saturación de oxígeno', value: saturacion, unidad: 'cm'},
+                                                {key: 'Temperatura', value: temperatura, unidad: '°C'}]
+
+            let signos_vitales_totales = [...signos_vitales_nuevos_mod, ...signos_vitales_predeterminados];
+
+            let cita = { medico: "0912908694",
+                paciente: "0954003067",
+                inicio_cita:"2021/07/24 00:00:00",
+                fin_cita: "2021/07/24 00:30:00",
+                init_comment:"comen",
+                estado:  "P",
+                planTratam: tratamiento,
+                observRec: observaciones,
+                procedimiento: "",
+                instrucciones: instrucciones,
+                sintomas: diagnostico,
+                fecha_agendada: "2021/07/22 00:00:00",
+                fecha_atencion: "2021/07/24 00:00:00"}
+
+            
+            message.loading({ content: 'Guardando cita...', key, duration: 10});
+            let value = enviar2(cita, listaDisc, temp_discapacidades,
+                listaAler, temp_alergias,
+                temp_enfermedades_hereditarias,
+                temp_enfermedades_persistentes,
+                signos_vitales_totales,
+                medicamentos_nuevos_mod,
+                temp_enfermedades_citas
+            );
+            console.log("VALUEEEEEEEEEE: ", value);
+            // almacenar_cita(cita);
+            // almacenar_discapacidades_adicionales(listaDisc, temp_discapacidades);        
+            // almacenar_alergias_adicionales(listaAler, temp_alergias);
+            // almacenar_enfermedades_hereditarias_adicionales(temp_enfermedades_hereditarias);
+            // almacenar_enfermedades_persistentes_adicionales(temp_enfermedades_persistentes);
+            // almacenar_signos_vitales_adicionales(signos_vitales_totales);
+            // subir_imagenes();
+            // almacenar_medicamentos_cita_adicionales(medicamentos_nuevos_mod);
+            // almacenar_enfermedades_cita(temp_enfermedades_citas);
+            console.log("exito: ", exito);
+            if(value === 9){
+
+            }
+
+
+
+        }
+        console.log("VALOR CURRENT: ", current); 
+        console.log("valores_agregados: ", valores_agregados);
+    }
+
+    const enviar2 = async(cita, listaDisc, temp_discapacidades,
+                    listaAler, temp_alergias,
+                    temp_enfermedades_hereditarias,
+                    temp_enfermedades_persistentes,
+                    signos_vitales_totales,
+                    medicamentos_nuevos_mod,
+                    temp_enfermedades_citas
+                    ) => {
+        almacenar_cita(cita);
+        almacenar_discapacidades_adicionales(listaDisc, temp_discapacidades);        
+        almacenar_alergias_adicionales(listaAler, temp_alergias);
+        almacenar_enfermedades_hereditarias_adicionales(temp_enfermedades_hereditarias);
+        almacenar_enfermedades_persistentes_adicionales(temp_enfermedades_persistentes);
+        almacenar_signos_vitales_adicionales(signos_vitales_totales);
         subir_imagenes();
-        console.log("campos_adicionales_agregadas");
-        console.log(valores_agregados);
-        console.log("fileList: ",fileList);
-        let temp_discapacidades = []
-        for (let i = 0; i< discapacidadesSeleccionadas.length; i++ ){
-            let elem = discapacidadesSeleccionadas[i].split(",")
-            temp_discapacidades.push(elem[1]);
-        }
+        almacenar_medicamentos_cita_adicionales(medicamentos_nuevos_mod);
+        almacenar_enfermedades_cita(temp_enfermedades_citas);
 
-        let temp_alergias = [];
-        for (let i = 0; i< alergiasSeleccionadas.length; i++ ){
-            let elem = alergiasSeleccionadas[i].split(",")
-            temp_alergias.push(elem[1]);
-        }
+        return 1;
+    }
 
-        let temp_enfermedades_hereditarias = [];
-        for (let i = 0; i< enfermedadesHereditariasSeleccionadas.length; i++ ){
-            let elem = enfermedadesHereditariasSeleccionadas[i].split(",")
-            temp_enfermedades_hereditarias.push(elem[1]);
-        }
-
-        let temp_enfermedades_persistentes = [];
-        for (let i = 0; i< enfermedadesPersistentesSeleccionadas.length; i++ ){
-            let elem = enfermedadesPersistentesSeleccionadas[i].split(",")
-            temp_enfermedades_persistentes.push(elem[1]);
-        }
-
-        console.log(valores_agregados);
-        let medicamentos_nuevos = valores_agregados.lista_medicamentos;
-        let medicamentos_nuevos_mod = [] 
-        for (let i = 0; i < medicamentos_nuevos.length ; i++) {
-
-            medicamentos_nuevos_mod.push({medicamento: medicamentos_nuevos[i].medicina,
-                                          dosis: medicamentos_nuevos[i].dosis, 
-                                          frecuencia: medicamentos_nuevos[i].frecuencia, 
-                                          duracion: medicamentos_nuevos[i].duracion,
-                                          });
-
-        }
-
-        let temp_enfermedades_citas = [];
-        for (let i = 0; i< enfermedadesDiagnostivoSeleccionadas.length; i++ ){
-            let elem = enfermedadesDiagnostivoSeleccionadas[i].split(",")
-            temp_enfermedades_citas.push({"enfermedad":elem[1]});
-        }
-
-        let signos_vitales_nuevos = valores_agregados.lista_signos;
-        let signos_vitales_nuevos_mod = [] 
-        for (let i = 0; i < signos_vitales_nuevos.length ; i++) {
-
-            signos_vitales_nuevos_mod.push({key: signos_vitales_nuevos[i].nombre_signo_vital, 
-                                            value: signos_vitales_nuevos[i].valor_signo_vital, 
-                                            unidad: signos_vitales_nuevos[i].unidad});
-
-        }
-        console.log('signos_vitales_nuevos_mod:' , signos_vitales_nuevos_mod);
-        console.log("signos_vitales_nuevos: ", signos_vitales_nuevos);
+    // const campos_adicionales_agregadas = (valores_agregados) => {
         
-        let signos_vitales_predeterminados = [{key: 'Estatura', value: estatura, unidad: 'cm'},
-                                              {key: 'Peso', value: peso, unidad: 'Kg'},
-                                              {key: 'Masa Coporal', value: masaCorporal, unidad: 'Kg/m2'},
-                                              {key: 'Porcentaje de grasa corporal', value: porcentaje, unidad: '%'},
-                                              {key: 'Masa muscular', value: masaMuscular, unidad: '%'},
-                                              {key: 'Tensión arterial', value: tensionArterial, unidad: 'mmHg'},
-                                              {key: 'Frecuencia cardíaca', value: frecuenciaCardiaca, unidad: 'bmp'},
-                                              {key: 'Frecuencia respiratoria', value: frecuenciaRespiratoria, unidad: 'r/m'},
-                                              {key: 'Saturación de oxígeno', value: saturacion, unidad: 'cm'},
-                                              {key: 'Temperatura', value: temperatura, unidad: '°C'}]
-
-        let signos_vitales_totales = [...signos_vitales_nuevos_mod, ...signos_vitales_predeterminados];
-
-        console.log('signos_vitales_totales ', signos_vitales_totales);
-
-        // let temp_signos_vitales = [];
-        // for (let i = 0; i< enfermedadesPersistentesSeleccionadas.length; i++ ){
-        //     let elem = enfermedadesPersistentesSeleccionadas[i].split(",")
-        //     temp_enfermedades_persistentes.push(elem[1]);
-        // }
-
-
-        console.log("temp_discapacidades: ",temp_discapacidades);
-        console.log("temp_alergias: ",temp_alergias);
-        console.log("temp_enfermedades_hereditarias: ",temp_enfermedades_hereditarias);
-        console.log("temp_enfermedades_persistentes: ",temp_enfermedades_persistentes);
-        console.log("medicamentos_nuevos_mod: ", medicamentos_nuevos_mod);
-        console.log('temp_enfermedades_citas: ',temp_enfermedades_citas);
-
-        // almacenar_cita(valores_agregados.lista_discapacidades, temp_discapacidades,
-        //                valores_agregados.lista_alergias, temp_alergias,
-        //                temp_enfermedades_hereditarias,
-        //                temp_enfermedades_persistentes,
-        //                signos_vitales_totales,
-        //                medicamentos_nuevos_mod,
-        //                temp_enfermedades_citas);
-
 
         
-        // almacenar_discapacidades_adicionales(valores_agregados.lista_discapacidades, temp_discapacidades);        
-        // almacenar_alergias_adicionales(valores_agregados.lista_alergias, temp_alergias);
-        // almacenar_enfermedades_hereditarias_adicionales(temp_enfermedades_hereditarias);
-        // almacenar_enfermedades_persistentes_adicionales(temp_enfermedades_persistentes);
-        //almacenar_signos_vitales_adicionales(signos_vitales_totales);
-        //subir_imagenes();
-        //almacenar_medicamentos_cita_adicionales(medicamentos_nuevos_mod);
-        // almacenar_enfermedades_cita(temp_enfermedades_citas);
+    //     setCamposAdicionalesAgregados(valores_agregados);
+    //     // subir_imagenes();
+    //     console.log("campos_adicionales_agregadas");
+    //     console.log(valores_agregados);
+    //     console.log("discapacidadesSeleccionadas: ", discapacidadesSeleccionadas);
+    //     console.log("alergiasSeleccionadas: ", alergiasSeleccionadas);
+    //     console.log("enfermedadesHereditariasSeleccionadas: ", enfermedadesHereditariasSeleccionadas);
+    //     console.log("enfermedadesPersistentesSeleccionadas: ", enfermedadesPersistentesSeleccionadas);
+    //     console.log("medicamentos_nuevos: ", valores_agregados.lista_medicamentos);
+    //     console.log("enfermedadesDiagnostivoSeleccionadas: ", enfermedadesDiagnostivoSeleccionadas);
+    //     console.log("signos_vitales_nuevos: ", valores_agregados.lista_signos);
 
-        // let discapacidades_ingresadas = [...temp_discapacidades,...valores_agregados.lista_discapacidades];
-        // console.log("discapacidades_ingresadas: ",discapacidades_ingresadas);
+    //     console.log("fileList: ",fileList);
+    //     let temp_discapacidades = []
+    //     for (let i = 0; i< discapacidadesSeleccionadas.length; i++ ){
+    //         let elem = discapacidadesSeleccionadas[i].split(",")
+    //         temp_discapacidades.push(elem[1]);
+    //     }
+
+    //     let temp_alergias = [];
+    //     for (let i = 0; i< alergiasSeleccionadas.length; i++ ){
+    //         let elem = alergiasSeleccionadas[i].split(",")
+    //         temp_alergias.push(elem[1]);
+    //     }
+
+    //     let temp_enfermedades_hereditarias = [];
+    //     for (let i = 0; i< enfermedadesHereditariasSeleccionadas.length; i++ ){
+    //         let elem = enfermedadesHereditariasSeleccionadas[i].split(",")
+    //         temp_enfermedades_hereditarias.push(elem[1]);
+    //     }
+
+    //     let temp_enfermedades_persistentes = [];
+    //     for (let i = 0; i< enfermedadesPersistentesSeleccionadas.length; i++ ){
+    //         let elem = enfermedadesPersistentesSeleccionadas[i].split(",")
+    //         temp_enfermedades_persistentes.push(elem[1]);
+    //     }
+
+    //     console.log(valores_agregados);
+    //     let medicamentos_nuevos = valores_agregados.lista_medicamentos;
+    //     let medicamentos_nuevos_mod = [] 
+    //     for (let i = 0; i < medicamentos_nuevos.length ; i++) {
+
+    //         medicamentos_nuevos_mod.push({medicamento: medicamentos_nuevos[i].medicina,
+    //                                       dosis: medicamentos_nuevos[i].dosis, 
+    //                                       frecuencia: medicamentos_nuevos[i].frecuencia, 
+    //                                       duracion: medicamentos_nuevos[i].duracion,
+    //                                       });
+
+    //     }
+
+    //     let temp_enfermedades_citas = [];
+    //     for (let i = 0; i< enfermedadesDiagnostivoSeleccionadas.length; i++ ){
+    //         let elem = enfermedadesDiagnostivoSeleccionadas[i].split(",")
+    //         temp_enfermedades_citas.push({"enfermedad":elem[1]});
+    //     }
+
+    //     let signos_vitales_nuevos = valores_agregados.lista_signos;
+    //     console.log("pppppppppppppppppppppppppppp: ", signos_vitales_nuevos);
+    //     console.log("pppppppppppppppppppppppppppp: ", valores_agregados);
+
+    //     let signos_vitales_nuevos_mod = [] 
+    //     for (let i = 0; i < signos_vitales_nuevos.length ; i++) {
+
+    //         signos_vitales_nuevos_mod.push({key: signos_vitales_nuevos[i].nombre_signo_vital, 
+    //                                         value: signos_vitales_nuevos[i].valor_signo_vital, 
+    //                                         unidad: signos_vitales_nuevos[i].unidad});
+
+    //     }
+    //     console.log('signos_vitales_nuevos_mod:' , signos_vitales_nuevos_mod);
+    //     console.log("signos_vitales_nuevos: ", signos_vitales_nuevos);
         
-        let json = {seguimiento: 1,
-                    diagnostico: "diagnostico",
-                    tipo_examen: "tipo_examen",
-                    medico: "0912908694",
-                    paciente: "0954003067",
-                    comentarios: "Comentarios",
-                    cita: 1};
+    //     let signos_vitales_predeterminados = [{key: 'Estatura', value: estatura, unidad: 'cm'},
+    //                                           {key: 'Peso', value: peso, unidad: 'Kg'},
+    //                                           {key: 'Masa Coporal', value: masaCorporal, unidad: 'Kg/m2'},
+    //                                           {key: 'Porcentaje de grasa corporal', value: porcentaje, unidad: '%'},
+    //                                           {key: 'Masa muscular', value: masaMuscular, unidad: '%'},
+    //                                           {key: 'Tensión arterial', value: tensionArterial, unidad: 'mmHg'},
+    //                                           {key: 'Frecuencia cardíaca', value: frecuenciaCardiaca, unidad: 'bmp'},
+    //                                           {key: 'Frecuencia respiratoria', value: frecuenciaRespiratoria, unidad: 'r/m'},
+    //                                           {key: 'Saturación de oxígeno', value: saturacion, unidad: 'cm'},
+    //                                           {key: 'Temperatura', value: temperatura, unidad: '°C'}]
+
+    //     let signos_vitales_totales = [...signos_vitales_nuevos_mod, ...signos_vitales_predeterminados];
+
+    //     console.log('signos_vitales_totales ', signos_vitales_totales);
+
+    //     // let temp_signos_vitales = [];
+    //     // for (let i = 0; i< enfermedadesPersistentesSeleccionadas.length; i++ ){
+    //     //     let elem = enfermedadesPersistentesSeleccionadas[i].split(",")
+    //     //     temp_enfermedades_persistentes.push(elem[1]);
+    //     // }
+
+
+    //     console.log("temp_discapacidades: ",temp_discapacidades);
+    //     console.log("temp_alergias: ",temp_alergias);
+    //     console.log("temp_enfermedades_hereditarias: ",temp_enfermedades_hereditarias);
+    //     console.log("temp_enfermedades_persistentes: ",temp_enfermedades_persistentes);
+    //     console.log("medicamentos_nuevos_mod: ", medicamentos_nuevos_mod);
+    //     console.log('temp_enfermedades_citas: ',temp_enfermedades_citas);
+
+    //     // almacenar_cita(valores_agregados.lista_discapacidades, temp_discapacidades,
+    //     //                valores_agregados.lista_alergias, temp_alergias,
+    //     //                temp_enfermedades_hereditarias,
+    //     //                temp_enfermedades_persistentes,
+    //     //                signos_vitales_totales,
+    //     //                medicamentos_nuevos_mod,
+    //     //                temp_enfermedades_citas);
+
+
+    //     // almacenar_cita(valores_agregados.lista_discapacidades, temp_discapacidades,
+    //     //                valores_agregados.lista_alergias, temp_alergias,
+    //     //                temp_enfermedades_hereditarias,
+    //     //                temp_enfermedades_persistentes,
+    //     //                signos_vitales_totales,
+    //     //                medicamentos_nuevos_mod,
+    //     //                temp_enfermedades_citas);
+
+        
+    //     // almacenar_discapacidades_adicionales(valores_agregados.lista_discapacidades, temp_discapacidades);        
+    //     // almacenar_alergias_adicionales(valores_agregados.lista_alergias, temp_alergias);
+    //     // almacenar_enfermedades_hereditarias_adicionales(temp_enfermedades_hereditarias);
+    //     // almacenar_enfermedades_persistentes_adicionales(temp_enfermedades_persistentes);
+    //     // almacenar_signos_vitales_adicionales(signos_vitales_totales);
+    //     // subir_imagenes();
+    //     // almacenar_medicamentos_cita_adicionales(medicamentos_nuevos_mod);
+    //     // almacenar_enfermedades_cita(temp_enfermedades_citas);
+
+
+
+
+    //     let cita = { medico: "0912908694",
+    //                  paciente: "0954003067",
+    //                  inicio_cita:"2021/07/24 00:00:00",
+    //                  fin_cita: "2021/07/24 00:30:00",
+    //                  init_comment:"comen",
+    //                  estado:  "P",
+    //                  planTratam: tratamiento,
+    //                  observRec: observaciones,
+    //                  procedimiento: "",
+    //                  instrucciones: instrucciones,
+    //                  sintomas: diagnostico,
+    //                  fecha_agendada: "2021/07/22 00:00:00",
+    //                  fecha_atencion: "2021/07/24 00:00:00"}
+
+        
+
+
+
+
+    //     almacenar_cita(cita);
+    //     almacenar_discapacidades_adicionales(valores_agregados.lista_discapacidades, temp_discapacidades);        
+    //     almacenar_alergias_adicionales(valores_agregados.lista_alergias, temp_alergias);
+    //     almacenar_enfermedades_hereditarias_adicionales(temp_enfermedades_hereditarias);
+    //     almacenar_enfermedades_persistentes_adicionales(temp_enfermedades_persistentes);
+    //     almacenar_signos_vitales_adicionales(signos_vitales_totales);
+    //     // subir_imagenes();
+    //     almacenar_medicamentos_cita_adicionales(medicamentos_nuevos_mod);
+    //     almacenar_enfermedades_cita(temp_enfermedades_citas);
+
+
+
+    //     // let discapacidades_ingresadas = [...temp_discapacidades,...valores_agregados.lista_discapacidades];
+    //     // console.log("discapacidades_ingresadas: ",discapacidades_ingresadas);
+        
+    //     let json = {seguimiento: 1,
+    //                 diagnostico: "diagnostico",
+    //                 tipo_examen: "tipo_examen",
+    //                 medico: "0912908694",
+    //                 paciente: "0954003067",
+    //                 comentarios: "Comentarios",
+    //                 cita: 1};
     
-    }
+    // }
 
     const campo_observacion = (observacion) =>{
         setObservaciones(observacion.target.value);
+        //console.log("observacion");
+        //console.log(observacion.target.value);
+    }
+
+    const campo_diagnostico = (diagnostico) =>{
+        setDiagnostico(diagnostico.target.value);
+        //console.log("observacion");
+        //console.log(observacion.target.value);
+    }
+
+    const campo_instrucciones = (instrucciones) =>{
+        setInstrucciones(instrucciones.target.value);
+        //console.log("observacion");
+        //console.log(observacion.target.value);
+    }
+
+    const campo_tratamiento = (tratamiento) =>{
+        setTratamiento(tratamiento.target.value);
         //console.log("observacion");
         //console.log(observacion.target.value);
     }
@@ -661,25 +941,37 @@ const AtenderCita = (props) => {
         for (let i = 0; i < fileList.length; i++){
             let formData = new FormData();
             console.log("fileList[0].originFileObj: ",fileList[0].originFileObj);
-            formData.append("image_name", fileList[i].originFileObj);            
+            formData.append("image_name", fileList[i].originFileObj);   
+            console.log("FORM DATA: ", fileList[i].originFileObj);         
             AxiosExamenes.almacenar_examen(formData).then( res => {
                 console.log("AxiosExamenes.almacenar_examen: ",res);
                 let dataExamenNueva = dataExamen;
                 dataExamenNueva.url_examen = res.data;
                 AxiosExamenes.almacenar_informacion_examen(dataExamenNueva).then( res2 => {
-                    console.log("AxiosExamenes.almacenar_informacion_examen: ",res2);
+                    console.log("AxiosExamenes.almacenar_informacion_examen2222: ",res2);
                 });
             }).catch(err => {
                 console.log('err.response.data', err.response.data);
             });
+
+        }
+        setExito(exito + 1)
+        if(exito === 9){
+            // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
         }
     }
 
-    const almacenar_cita = () => {
-        AxiosCitas.almacenar_informacion_cita(dataCita).then( res => {
-            console.log("AxiosCitas.almacenar_informacion_cita: ", res);
+    const almacenar_cita = async (cita) => {
+        let id = "";
+        await AxiosCitas.almacenar_informacion_cita(cita).then( res => {
+            id = res.data;
+            console.log("AxiosCitas.almacenar_informacion_cita: ", res.data);
+            setExito(exito + 1);
+            if(exito === 9){
+                // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+            }
         });
-
+        // console.log('id: ', cita);
     }
 
     return (
@@ -689,7 +981,7 @@ const AtenderCita = (props) => {
             */}
             <Row>      
                 <Col span={15} className="">
-                    <Form onFinish = {valores_agregados => campos_adicionales_agregadas2(valores_agregados)}>
+                    <Form onFinish = {valores_agregados => campos_adicionales_agregadas3(valores_agregados)} >
                         <Row>
                             <Col span={24} className="text-center">
                                 <h5 className="lead m-4">Atención de cita</h5>
@@ -732,7 +1024,7 @@ const AtenderCita = (props) => {
                         <Row>
                             <Col span={24}>
                                 <Divider></Divider>
-                                <Steps current={current} size="small" className="mt-4">
+                                <Steps current={current} size="small" className="mt-4" onChange= {(c) => console.log("Cambiandooooooooooooooo")}>
                                     {steps.map(item => (
                                     <Step key={item.title} title={item.title} icon = {<item.icon/>} />
                                     ))}
@@ -957,6 +1249,9 @@ const AtenderCita = (props) => {
                                                             <TextArea rows = {4} style={{ height: '200%' }} placeholder="Observación" value = {observaciones} onChange = { observacion => campo_observacion(observacion) } showCount maxLength = {100}/>
                                                         </Col>
                                                     </Row>
+                                                    <Button type="primary" htmlType="submit">
+                                                        Terminar cita
+                                                    </Button>
                                                     {/* <Button type="primary" htmlType="submit">
                                                         Terminar cita
                                                     </Button>
@@ -1241,9 +1536,9 @@ const AtenderCita = (props) => {
                                                         )}
                                                         </Form.List>
 
-                                                        {/* <Button type="primary" htmlType="submit">
+                                                        <Button type="primary" htmlType="submit">
                                                             Terminar cita
-                                                        </Button> */}
+                                                        </Button>
                                                     </div>
                                                 </Card>                                              
                                         </>:null
@@ -1308,7 +1603,7 @@ const AtenderCita = (props) => {
                                                                 </Row>
                                                                 <Row>
                                                                     <Col span={24}>
-                                                                        <TextArea showCount maxLength={400} />
+                                                                        <TextArea showCount maxLength={400} value = {diagnostico} onChange = { diagnostico => campo_diagnostico(diagnostico) } />
                                                                     </Col>
                                                                 </Row>
                                                             </Card>
@@ -1408,7 +1703,7 @@ const AtenderCita = (props) => {
                                                         </Form.List>
                                                             </Card>
                                                                 <Card type="inner" className="mt-2" title="Instrucciones médicas">
-                                                                    <TextArea className="mt-4" showCount maxLength={400} />
+                                                                    <TextArea className="mt-4" showCount maxLength={400}  value = {instrucciones} onChange = { intrucciones => campo_instrucciones(intrucciones) }/>
                                                                 </Card>
                                                             </Card>                                                            
                                                         </Col>
@@ -1417,7 +1712,7 @@ const AtenderCita = (props) => {
                                                     <Row className="">
                                                         <Col span={24}>
                                                             <Card type="inner" className="" title="Plan de tratamiento">
-                                                                <TextArea className="mt-4" showCount maxLength={400} />
+                                                                <TextArea className="mt-4" showCount maxLength={400} value = {tratamiento} onChange = { tratamiento => campo_tratamiento(tratamiento) }/>
                                                             </Card>
                                                         </Col>
                                                     </Row>      
@@ -1438,17 +1733,17 @@ const AtenderCita = (props) => {
                                         Anterior
                                     </Button>
                                     )}{current < steps.length - 1 && (
-                                        <Button type="primary" onClick={() => next()}>
+                                        <Button type="primary" htmlType="submit">
                                             Siguiente
                                         </Button>
                                         )}
                                         {current === steps.length - 1 && (
-                                        <Button type="primary" onClick={() => message.success('Cita finalizada con éxito!')}>
-                                            Terminar cita
-                                        </Button>
-                                            // <Button type="primary" htmlType="submit">
-                                            //     Terminar cita
-                                            // </Button>
+                                        // <Button type="primary" onClick={() => message.success('Cita finalizada con éxito!')}>
+                                        //     Terminar cita
+                                        // </Button>
+                                            <Button type="primary" visible = {true} htmlType="submit">
+                                                Terminar cita
+                                            </Button>
                                         )}
                                 </div>            
                             </Col>
@@ -1473,7 +1768,7 @@ const AtenderCita = (props) => {
                             <Col span = {24}>
                                 <Collapse defaultActiveKey={['1']}>
                                     <Panel header="Archivos adjuntos" extra = {<PaperClipOutlined />} key="1">
-                                        <Card type="inner" className="text-center mb-1">
+                                        {/* <Card type="inner" className="text-center mb-1">
                                             <Row>
                                                 <Col span={4}>
                                                     <FileImageOutlined className="" />
@@ -1511,10 +1806,22 @@ const AtenderCita = (props) => {
                                                     614 KB
                                                 </Col>
                                             </Row>
-                                        </Card>
+                                        </Card> */}
+                                        <Empty
+                                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                            imageStyle={{
+                                            height: 60,
+                                            }}
+                                            description={
+                                            <span>
+                                                No hay datos que mostrar
+                                            </span>
+                                            }
+                                        >
+                                        </Empty>
                                     </Panel>
                                     <Panel header="Citas pasadas" extra = {<CalendarOutlined />} key="2">
-                                        <Card type="inner" className="text-center mb-1">
+                                        {/* <Card type="inner" className="text-center mb-1">
                                             <Row>
                                                 <Col span={4}>
                                                     <DatabaseOutlined className="" />
@@ -1533,15 +1840,39 @@ const AtenderCita = (props) => {
                                                     <a>02/02/2020</a>
                                                 </Col>
                                             </Row>
-                                        </Card>
+                                        </Card> */}
+                                        <Empty
+                                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                            imageStyle={{
+                                            height: 60,
+                                            }}
+                                            description={
+                                            <span>
+                                                No hay datos que mostrar
+                                            </span>
+                                            }
+                                        >
+                                        </Empty>
                                     </Panel>
                                     <Panel header="Enfermedades anteriores diagnosticadas" extra = {<FileOutlined />} key="3">
-                                        <Card type="inner" className="text-center mb-1">
+                                        {/* <Card type="inner" className="text-center mb-1">
                                             <Row>
                                                 <p>Cirugías Previas, Diabetes, Enfermedades Tiroideas, Hipertensión Arterial, Cardiopatias, Traumatismos, Cáncer, Tuberculosis, Transfusiones, Patologías Respiratorias, Patologías Gastrointestinales
                                                 </p>
                                             </Row>
-                                        </Card>
+                                        </Card> */}
+                                        <Empty
+                                            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                                            imageStyle={{
+                                            height: 60,
+                                            }}
+                                            description={
+                                            <span>
+                                                No hay datos que mostrar
+                                            </span>
+                                            }
+                                        >
+                                        </Empty>
                                     </Panel>
 
                                     <Panel header="Medicamentos" extra = {<MedicineBoxFilled />} key="7">
