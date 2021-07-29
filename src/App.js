@@ -49,7 +49,7 @@ function App() {
       <PrivateRouteAdmin exact path='/admin/formularioenfermedades' component={FormularioEnfermedades} layout={AdminLayout} />
 
       {/* Routes Admin */}
-      <PrivateRouteCuidador exact path='/admin' component={HomeCuidador} layout={CuidadorLayout} />
+      <PrivateRouteCuidador exact path='/cuidador' component={HomeCuidador} layout={CuidadorLayout} />
 
     </BrowserRouter>
   );
