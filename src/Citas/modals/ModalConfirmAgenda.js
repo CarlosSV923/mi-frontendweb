@@ -55,7 +55,7 @@ export default class ModalConfirmAgenda extends React.Component {
             <div>
                 {this.state.data ? <Modal title={this.state.title}
                     visible={this.state.visible}
-                    onOk={(e) => {this.props.confirm(); console.log("ERROR")}}
+                    onOk={(e) => {this.props.confirm();}}
                     onCancel={this.props.cancelConfirm}
                     okText={this.state.okText}
                     cancelText={this.state.cancelText}
