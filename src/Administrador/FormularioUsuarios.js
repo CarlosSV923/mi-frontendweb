@@ -81,10 +81,11 @@ const FormularioUsuarios = (props) => {
       }
 
       console.log("USUARIO: ", usuario);
-
+      message.loading({ content: 'Guardando...', key, duration: 20});
       AxiosRoles.almacenar_usuario(usuario).then((res)=>{
         console.log("almacenar_usuario: ",res.data);
-       props.history.push('/admin')
+        props.history.push('/admin')
+        message.success({ content: 'Guardado con éxito', key, duration: 3 });
       })
 
       console.log("values['date-picker'].format('YYYY-MM-DD'): ", values['date-picker'].format('YYYY-MM-DD'));
@@ -97,13 +98,12 @@ const FormularioUsuarios = (props) => {
     }, []);
 
     const mostrar_roles = () => {
-        message.loading({ content: 'Guardando...', key, duration: 20});
 
         AxiosRoles.mostrar_roles().then((res)=>{
           console.log(res.data);
           setListaRoles(res.data);
           
-          message.success({ content: 'Guardado con éxito', key, duration: 3 });
+          
 
         })
     }
