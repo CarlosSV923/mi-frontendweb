@@ -24,7 +24,11 @@ export default class AxiosCitas {
     }
 
     static almacenar_informacion_cita = (informacion_cita) => {
-    return AxiosCitas.instanceAxios.post(`/almacenar_cita`, informacion_cita);
-  }
+        return AxiosCitas.instanceAxios.post(`/almacenar_cita`, informacion_cita);
+    }
+
+    static actualizar_cita = (informacion_cita) => {
+        return AxiosCitas.instanceAxios.post(`/actualizar_cita`, informacion_cita);
+    }
 
 }

@@ -12,12 +12,17 @@ export default class HeaderComp extends React.Component {
         this.state = {
             userName: '',
             route: '',
+            cedula: '',
         }
 
     }
 
     getDataUser() {
         let data = Auth.getDataUser();
+        console.log(Auth.getDataUser().cedula)
+        this.setState({
+            cedula: data.cedula
+        });
         if (data) {
             return data.nombre + " " + data.apellido
         }
@@ -38,7 +43,7 @@ export default class HeaderComp extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({ userName: this.getDataUser(), route: this.getRoutePerfil() + "/perfil" })
+        this.setState({ userName: this.getDataUser(), route: this.getRoutePerfil() + `/perfil/${Auth.getDataUser().cedula}` })
     }
 
 

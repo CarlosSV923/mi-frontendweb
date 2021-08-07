@@ -24,4 +24,8 @@ export default class AxiosExamenes {
     return AxiosExamenes.instanceAxios.post(`/saveImages`, informacion_examen);
   }
 
+  static almacenar_examenes_cita_paciente = (examenes, info) => {
+    return AxiosExamenes.instanceAxios.post(`/almacenar_examenes_cita_paciente`, examenes, info);
+  }
+
 }

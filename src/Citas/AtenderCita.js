@@ -2,20 +2,24 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import {Steps, Button, message, Form, Input, Radio, Row, Col, 
         Collapse, Badge, Alert, Divider, Card, Select, InputNumber,
-        Upload, Modal, Empty, Avatar, Table} from 'antd'
+        Upload, Modal, Empty, Avatar, Table, Checkbox} from 'antd'
 import {UserOutlined, InfoCircleOutlined, HeartOutlined, 
         PlusSquareOutlined, FileAddOutlined, PlusOutlined, 
         PaperClipOutlined, CalendarOutlined, FileOutlined, 
         LineChartOutlined, MedicineBoxFilled, 
         FileImageOutlined, DatabaseOutlined,
-        MinusCircleOutlined} from '@ant-design/icons';
+        MinusCircleOutlined, ExclamationCircleOutlined, CloudSyncOutlined} from '@ant-design/icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faThermometerQuarter,faWeight, faRulerVertical, faMale, 
         faLungs, faHeartbeat, faFileMedicalAlt, faDiagnoses, 
         faPercent, faHandHoldingHeart, faFileMedical} from '@fortawesome/free-solid-svg-icons';
+
+import moment from 'moment';
+
+
 import EditableTable from './EditableTable';
 import shortid from 'shortid';
-
+import { useParams } from 'react-router-dom';
 import AxiosDiscapacidades from '../Services/AxiosDiscapacidades';
 import AxiosAlergias from '../Services/AxiosAlergias';
 import AxiosMedicamentos from '../Services/AxiosMedicamentos';
@@ -27,10 +31,10 @@ import AxiosEnfermedadesPersistentes from '../Services/AxiosEnfermedadesPersiste
 import AxiosSignosVitales from '../Services/AxiosSignosVitales';
 import AxiosCitas from '../Services/AxiosCitas';
 import AxiosEnfermedadesCitas from '../Services/AxiosEnfermedadesCitas';
+import AxiosUsers from '../Services/AxiosUsers';
 
 const { Option } = Select;
-
-
+const { confirm } = Modal;
 
 const alergias = [];
 // const discapacidades = [];
@@ -152,7 +156,10 @@ const AtenderCita = (props) => {
     const [listaMed, setListaMed] = React.useState([]);
     const [listaAler, setListaAler] = React.useState([]);
     const [listaSig, setListaSig] = React.useState([]);
-
+    const [isModalVisible, setIsModalVisible] = React.useState(false);
+    const [seguimiento, setSeguimiento] = React.useState(false);
+    const [cedulaMedico, setCedulaMedico] = React.useState("");
+    const [cedulaPaciente, setCedulaPaciente] = React.useState("");
     const [camposAdicionalesAgregados, setCamposAdicionalesAgregados] = React.useState([]);
     const [dataSource, setDataSource] = React.useState([])
     const [columns, setColumns] = React.useState([{
@@ -203,24 +210,45 @@ const AtenderCita = (props) => {
                                                     sintomas: "Síntomas",
                                                     fecha_agendada: "2021/07/22 00:00:00",
                                                     fecha_atencion: "2021/07/24 00:00:00",
-                                                    seguimiento: 1});
-    const [dataExamen, setDataExamen] = React.useState({seguimiento: 1,
+                                                    seguimiento: 2});
+    const [dataExamen, setDataExamen] = React.useState({seguimiento: 2,
                                                         diagnostico: "diagnostico",
                                                         tipo_examen: "tipo_examen",
-                                                        medico: "0912908694",
+                                                        medico: "0812345671",
                                                         paciente: "0954003067",
                                                         comentarios: "Comentarios",
-                                                        cita: 1});
+                                                        cita: 89});
 
-
+    const [nombre, setNombre] = React.useState("");
+    const [apellido, setApellido] = React.useState("");
+    const [paciente, setPaciente] = React.useState([]);
+    
     React.useEffect(()=>{
         
         mostrar_discapacidades();
         mostrar_medicamentos();
         mostrar_enfermedades();
+        informacion();
         console.log(localStorage.getItem('userdata'),'hhh')
 
     }, []);
+
+    const informacion = () => {
+        AxiosUsers.informacion({id_cita: id}).then( response => {
+            console.log("id_cita: ",response);
+            setCedulaMedico(response.data[0].medico);
+            setCedulaPaciente(response.data[0].paciente);
+            setNombre(response.data[0].nombre);
+            setApellido(response.data[0].apellido);
+            AxiosUsers.info_paciente(response.data[0].paciente).then( response2 => {
+                console.log("LLLLLLLLLLLLLLLLLLL: ",response2.data);
+                setPaciente(response2.data[0])
+            });
+        });
+    }
+
+    const {id} = useParams();
+    console.log(id);
 
     const next = (e) => {
       console.log("next before: ",e);
@@ -230,6 +258,27 @@ const AtenderCita = (props) => {
       console.log(current + 1);
       console.log("");
     };
+
+    const showModal = () => {
+        setIsModalVisible(true);
+      };
+    
+      const handleOk = () => {
+        setIsModalVisible(false);
+      };
+    
+      const cancelar_modal = () => {
+        setIsModalVisible(false);
+      };
+
+    //   La cita está a punto de finalizar, de en <span className="text-danger"><b>OK</b></span> para culminar la cita. Adicionalmente puede iniciar un seguimiento del estado de salud del paciente, <span className="text-danger"><b>marcando la respectiva opción
+
+      
+
+    const iniciar_seguimiento = (e) => {
+        setSeguimiento(e.target.checked);
+        console.log(`checked = ${e.target.checked}`);
+      }
 
     function getBase64(file) {
         return new Promise((resolve, reject) => {
@@ -303,6 +352,24 @@ const AtenderCita = (props) => {
         });
     }
 
+    const  info = () => {
+        Modal.info({
+          title: 'This is a notification message',
+          content: (
+            <div>
+              <p>some messages...some messages...</p>
+              <p>some messages...some messages...</p>
+            </div>
+          ),
+          onOk() {
+
+          },
+          onCancel() {
+            console.log('Cancel');
+          },
+        });
+      }
+
     const mostrar_enfermedades = () => {
         AxiosEnfermedades.mostrar_enfermedades().then( res => {
             setEnfermedades(res.data);
@@ -365,7 +432,7 @@ const AtenderCita = (props) => {
                 array_todas_discapacidades_mod.push({"discapacidad":parseInt(array_todas_discapacidades[i])})
             }
             console.log("array_todas_discapacidades_mod ",array_todas_discapacidades_mod);
-            AxiosDiscapacidades.almacenar_discapacidades_pacientes({discapacidades_paciente: array_todas_discapacidades_mod, "paciente":"0954003067"}).then(res2 =>{
+            AxiosDiscapacidades.almacenar_discapacidades_pacientes({discapacidades_paciente: array_todas_discapacidades_mod, "paciente":cedulaPaciente}).then(res2 =>{
                 console.log("AxiosDiscapacidades.almacenar_discapacidades_pacientes: ",res2);
                 setExito(exito + 1)
                 if(exito === 9){
@@ -386,7 +453,8 @@ const AtenderCita = (props) => {
     // }
 }
 
-    const almacenar_alergias_adicionales = (lista, temp) => {
+    const almacenar_alergias_adicionales = (lista, temp, segui) => {
+
 
         let data = lista;
         let data_modificada = []
@@ -394,7 +462,7 @@ const AtenderCita = (props) => {
             data_modificada.push({"nombre":data[i]});
         }
         // discapacid
-        let json ={"alergias":data_modificada, "paciente":"0954003067"};
+        let json ={"alergias":data_modificada, "paciente":cedulaPaciente};
         console.log(json);
         console.log("data_modificado_alergia: ",json);
         AxiosAlergias.almacenar_alergias(json).then(res =>{
@@ -407,11 +475,16 @@ const AtenderCita = (props) => {
                 array_todas_alergias_mod.push({"medicamento":parseInt(array_todas_alergias[i])})
             }
             console.log("array_todas_alergias_mod ",array_todas_alergias_mod);
-            AxiosAlergias.almacenar_alergias_paciente({alergias_paciente: array_todas_alergias_mod, "paciente":"0954003067"}).then(res2 =>{
+            AxiosAlergias.almacenar_alergias_paciente({alergias_paciente: array_todas_alergias_mod, "paciente":cedulaPaciente}).then(res2 =>{
                 console.log("AxiosAlergias.almacenar_alergias_paciente: ",res2);
                 setExito(exito + 1)
+                console.log("JLLLLLLLLLLLLLLLLLLLLLLLLLLLLL: ", segui);
                 message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
-                props.history.push('/medico');
+                if (seguimiento){
+                    props.history.push('/medico/seguimiento');
+                }else{
+                    props.history.push('/medico');
+                }
 
 
             }).catch(err => {
@@ -435,7 +508,7 @@ const AtenderCita = (props) => {
         for (let i = 0 ; i < data.length; i++){
             data_modificada.push({"enfermedad":data[i]});
         }
-        let json ={"enfermedades_hereditarias_paciente":data_modificada, "paciente":"0954003067"};
+        let json ={"enfermedades_hereditarias_paciente":data_modificada, "paciente":cedulaPaciente};
         console.log(json);
         console.log("data_modificado_enfermedades_hereditarias: ",json);
         AxiosEnfermedadesHereditarias.almacenar_enfermedades_hereditarias_paciente(json).then(res2 =>{
@@ -455,7 +528,7 @@ const AtenderCita = (props) => {
         for (let i = 0 ; i < data.length; i++){
             data_modificada.push({"enfermedad":data[i]});
         }
-        let json ={"enfermedades_persistentes_paciente":data_modificada, "paciente":"0954003067"};
+        let json ={"enfermedades_persistentes_paciente":data_modificada, "paciente": cedulaPaciente};
         console.log(json);
         console.log("data_modificado_enfermedades_hereditarias: ",json);
         AxiosEnfermedadesPersistentes.almacenar_enfermedades_persistentes_paciente(json).then(res2 =>{
@@ -471,7 +544,7 @@ const AtenderCita = (props) => {
 
     const almacenar_signos_vitales_adicionales = (temp) => {
         
-        let json ={"signos_vitales_paciente":temp, "cita":1, "seguimiento":1};
+        let json ={"signos_vitales_paciente":temp, "cita":id, "seguimiento":2};
         //console.log(json);
         console.log("almacenar_signos_vitales_adicionales: ",json);
         AxiosSignosVitales.almacenar_signos_vitales_paciente(json).then(res2 =>{
@@ -486,7 +559,7 @@ const AtenderCita = (props) => {
     }
 
     const almacenar_medicamentos_cita_adicionales = (temp) => {
-        let json ={"medicamentos_cita_paciente":temp, "cita":1};
+        let json ={"medicamentos_cita_paciente":temp, "cita":id};
         //console.log(json);
         console.log("almacenar_medicamentos_cita_adicionales: ",json);
         AxiosMedicamentos.almacenar_medicamentos_cita_paciente(json).then(res2 =>{
@@ -501,7 +574,7 @@ const AtenderCita = (props) => {
     }
 
     const almacenar_enfermedades_cita = (temp) => {
-        let json ={"enfermedades_cita_paciente":temp, "cita":1};
+        let json ={"enfermedades_cita_paciente":temp, "cita":id};
         //console.log(json);
         console.log("enfermedades_cita_paciente: ",json);
         AxiosEnfermedadesCitas.almacenar_enfermedades_cita_paciente(json).then(res2 =>{
@@ -542,19 +615,14 @@ const AtenderCita = (props) => {
         //              sintomas: "Síntomas",
         //              fecha_agendada: "2021/07/22 00:00:00",
         //              fecha_atencion: "2021/07/24 00:00:00"}
-        let cita = { medico: "0912908694",
-                     paciente: "0954003067",
-                     inicio_cita:"2021/07/24 00:00:00",
-                     fin_cita: "2021/07/24 00:30:00",
-                     init_comment:"comen",
-                     estado:  "P",
-                     planTratam: tratamiento,
+        let cita = { id_cita: id,
+                     estado:  "A",
                      observRec: observaciones,
-                     procedimiento: "",
+                     planTratam: tratamiento,
                      instrucciones: instrucciones,
                      sintomas: diagnostico,
-                     fecha_agendada: "2021/07/22 00:00:00",
-                     fecha_atencion: "2021/07/24 00:00:00"}
+                     fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+                     seguimiento: ""}
         almacenar_cita(cita);
 
     }
@@ -576,6 +644,7 @@ const AtenderCita = (props) => {
         }else if (current === 3) {
 
             setListaMed(valores_agregados.lista_medicamentos);
+            console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHH: ",valores_agregados.lista_medicamentos)
             console.log("fileList: ",fileList);
             let temp_discapacidades = []
             for (let i = 0; i< discapacidadesSeleccionadas.length; i++ ){
@@ -602,7 +671,7 @@ const AtenderCita = (props) => {
             }
 
             console.log(valores_agregados);
-            let medicamentos_nuevos = listaMed;
+            let medicamentos_nuevos = valores_agregados.lista_medicamentos;
             let medicamentos_nuevos_mod = [] 
             for (let i = 0; i < medicamentos_nuevos.length ; i++) {
 
@@ -645,64 +714,69 @@ const AtenderCita = (props) => {
                                                 {key: 'Temperatura', value: temperatura, unidad: '°C'}]
 
             let signos_vitales_totales = [...signos_vitales_nuevos_mod, ...signos_vitales_predeterminados];
-
-            let cita = { medico: "0912908694",
-                paciente: "0954003067",
-                inicio_cita:"2021/07/24 00:00:00",
-                fin_cita: "2021/07/24 00:30:00",
-                init_comment:"comen",
-                estado:  "P",
-                planTratam: tratamiento,
+            let cita = { id_cita: id,
+                estado:  "A",
                 observRec: observaciones,
-                procedimiento: "",
+                planTratam: tratamiento,
                 instrucciones: instrucciones,
                 sintomas: diagnostico,
-                fecha_agendada: "2021/07/22 00:00:00",
-                fecha_atencion: "2021/07/24 00:00:00"}
+                fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+                seguimiento: ""}           
+                let b = "";
+                confirm({
+                    title: 'La cita está a punto de finalizar. Si desea puede iniciar un seguimiento marcando la siguiente opción',
+                    icon: <ExclamationCircleOutlined />,
+                    content: <Checkbox onChange={ e => {iniciar_seguimiento(e); b =1}}>Iniciar seguimiento</Checkbox>,
+                    onOk() {
+                        console.log('OK000');
+                        console.log("El check: ",seguimiento);   
+                        console.log("El b: ", b);                     
+                        message.loading({ content: 'Guardando cita...', key, duration: 50});
+                    
 
-            
-            message.loading({ content: 'Guardando cita...', key, duration: 10});
-            let value = enviar2(cita, listaDisc, temp_discapacidades,
-                listaAler, temp_alergias,
-                temp_enfermedades_hereditarias,
-                temp_enfermedades_persistentes,
-                signos_vitales_totales,
-                medicamentos_nuevos_mod,
-                temp_enfermedades_citas
-            );
-            console.log("VALUEEEEEEEEEE: ", value);
-            // almacenar_cita(cita);
-            // almacenar_discapacidades_adicionales(listaDisc, temp_discapacidades);        
-            // almacenar_alergias_adicionales(listaAler, temp_alergias);
-            // almacenar_enfermedades_hereditarias_adicionales(temp_enfermedades_hereditarias);
-            // almacenar_enfermedades_persistentes_adicionales(temp_enfermedades_persistentes);
-            // almacenar_signos_vitales_adicionales(signos_vitales_totales);
-            // subir_imagenes();
-            // almacenar_medicamentos_cita_adicionales(medicamentos_nuevos_mod);
-            // almacenar_enfermedades_cita(temp_enfermedades_citas);
-            console.log("exito: ", exito);
-            if(value === 9){
+                        enviar2(cita, listaDisc, temp_discapacidades,
+                            listaAler, temp_alergias,
+                            temp_enfermedades_hereditarias,
+                            temp_enfermedades_persistentes,
+                            signos_vitales_totales,
+                            medicamentos_nuevos_mod,
+                            temp_enfermedades_citas
+                        );
+                    },
+                onCancel() {
+                  console.log('Cancel');
+                },
+            });
 
-            }
-
-
-
+            // console.log("VALUEEEEEEEEEE: ", value);
         }
-        console.log("VALOR CURRENT: ", current); 
-        console.log("valores_agregados: ", valores_agregados);
     }
 
-    const enviar2 = async(cita, listaDisc, temp_discapacidades,
-                    listaAler, temp_alergias,
-                    temp_enfermedades_hereditarias,
-                    temp_enfermedades_persistentes,
-                    signos_vitales_totales,
-                    medicamentos_nuevos_mod,
-                    temp_enfermedades_citas
-                    ) => {
-        almacenar_cita(cita);
+    const ejecutar_cita = (cita, listaDisc, temp_discapacidades,
+        listaAler, temp_alergias,
+        temp_enfermedades_hereditarias,
+        temp_enfermedades_persistentes,
+        signos_vitales_totales,
+        medicamentos_nuevos_mod,
+        temp_enfermedades_citas) => {
+
+        console.log("ENNNNNNNNNNNNNNNNNNNNNNNNNNNNNN EJECUTAR");
+        console.log("CITA: ",cita);
+        console.log("listaDisc: ",listaDisc);
+        console.log("listaDisc: ",temp_discapacidades);
+        console.log("listaAler: ",listaAler);
+        console.log("temp_alergias: ",temp_alergias);
+        console.log("temp_enfermedades_hereditarias: ",temp_enfermedades_hereditarias);
+        console.log("temp_enfermedades_persistentes: ",temp_enfermedades_persistentes);
+        console.log("signos_vitales_totales: ",signos_vitales_totales);
+        console.log("medicamentos_nuevos_mod: ",medicamentos_nuevos_mod);
+        console.log("temp_enfermedades_citas: ",temp_enfermedades_citas);
+    
+        
+        actualizar_cita(cita);
+        // almacenar_cita(cita);
         almacenar_discapacidades_adicionales(listaDisc, temp_discapacidades);        
-        almacenar_alergias_adicionales(listaAler, temp_alergias);
+        almacenar_alergias_adicionales(listaAler, temp_alergias, seguimiento);
         almacenar_enfermedades_hereditarias_adicionales(temp_enfermedades_hereditarias);
         almacenar_enfermedades_persistentes_adicionales(temp_enfermedades_persistentes);
         almacenar_signos_vitales_adicionales(signos_vitales_totales);
@@ -710,7 +784,24 @@ const AtenderCita = (props) => {
         almacenar_medicamentos_cita_adicionales(medicamentos_nuevos_mod);
         almacenar_enfermedades_cita(temp_enfermedades_citas);
 
-        return 1;
+    }
+
+    const enviar2 = (cita, listaDisc, temp_discapacidades,
+                    listaAler, temp_alergias,
+                    temp_enfermedades_hereditarias,
+                    temp_enfermedades_persistentes,
+                    signos_vitales_totales,
+                    medicamentos_nuevos_mod,
+                    temp_enfermedades_citas
+                    ) => {
+
+        ejecutar_cita(cita, listaDisc, temp_discapacidades,
+            listaAler, temp_alergias,
+            temp_enfermedades_hereditarias,
+            temp_enfermedades_persistentes,
+            signos_vitales_totales,
+            medicamentos_nuevos_mod,
+            temp_enfermedades_citas);
     }
 
     // const campos_adicionales_agregadas = (valores_agregados) => {
@@ -899,8 +990,9 @@ const AtenderCita = (props) => {
 
     const campo_diagnostico = (diagnostico) =>{
         setDiagnostico(diagnostico.target.value);
-        //console.log("observacion");
-        //console.log(observacion.target.value);
+        console.log(diagnostico.target.value);
+        // console.log("observacion");
+        // console.log(observacion.target.value);
     }
 
     const campo_instrucciones = (instrucciones) =>{
@@ -946,11 +1038,31 @@ const AtenderCita = (props) => {
             formData.append("image_name", fileList[i].originFileObj);   
             console.log("FORM DATA: ", fileList[i].originFileObj);         
             AxiosExamenes.almacenar_examen(formData).then( res => {
-                console.log("AxiosExamenes.almacenar_examen: ",res);
-                let dataExamenNueva = dataExamen;
+                console.log("AxiosExamenes.almacenar_examen88888888: ",res);
+                // let dataExamenNueva = {
+                //                         seguimiento: 2,
+                //                         diagnostico: "",
+                //                         tipo_examen: "examen",
+                //                         medico: cedulaMedico,
+                //                         paciente: cedulaPaciente,
+                //                         comentarios: "",
+                //                         cita: id
+                //                       };
+                
+                let dataExamenNueva = {
+                                        seguimiento: 2,
+                                        diagnostico: "Sin datos",
+                                        tipo_examen: "examen",
+                                        medico: cedulaMedico,
+                                        paciente: cedulaPaciente,
+                                        comentarios: "Sin datos",
+                                        cita: id
+                };
+
                 dataExamenNueva.url_examen = res.data;
+                console.log("CIIIIIIIIIIIIIIIIIIIIIIIII: ",dataExamenNueva);
                 AxiosExamenes.almacenar_informacion_examen(dataExamenNueva).then( res2 => {
-                    console.log("AxiosExamenes.almacenar_informacion_examen2222: ",res2);
+                    console.log("AxiosExamenes.almacenar_informacion_examenwwwwwwww: ",res2);
                 });
             }).catch(err => {
                 console.log('err.response.data', err.response.data);
@@ -972,6 +1084,16 @@ const AtenderCita = (props) => {
             if(exito === 9){
                 // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
             }
+        });
+        // console.log('id: ', cita);
+    }
+
+    const actualizar_cita = async (cita) => {
+        let id = "";
+        await AxiosCitas.actualizar_cita(cita).then( res => {
+            id = res.data;
+            console.log("AxiosCitas.actualizar_cita: ", res.data);
+            
         });
         // console.log('id: ', cita);
     }
@@ -1002,7 +1124,7 @@ const AtenderCita = (props) => {
                             <Col className="" span={15}>
                                 <Row className="">
                                     <Col>
-                                        <span className="mx-2 lead">Beth Hidalgo</span>           
+                                        <span className="mx-2 lead">{paciente.nombre} {paciente.apellido}</span>           
                                     </Col>
                                     <Col>                                        
                                         <Badge status="processing" text="Cita en curso" 
@@ -1014,10 +1136,13 @@ const AtenderCita = (props) => {
                                 </Row>
                                 
                                 <Row className="">
-                                    <span className="ms-2 text-secondary">11/07/1950</span>
-                                    <span className="ms-2 text-secondary">72 años</span>
-                                    <span className="ms-2 text-secondary">Femenino</span>
-                                    <span className="ms-2 text-secondary">email@live.es</span>
+                                    {/* <span className="ms-2 text-secondary">11/07/1950</span> */}
+                                    <span className="ms-2 text-secondary">{(moment(moment(paciente.fecha_nacimiento).format('YYYY-MM-DD'),'YYYYMMDD').fromNow()).substring(4,12)}</span>
+                                    {/* <span className="ms-2 text-secondary">72 años</span> */}
+                                    <span className="ms-2 text-secondary">{paciente.sexo === 'M'? 'Masculino': paciente.sexo === 'F'? 'Femenino': 'Prefiero no decirlo' }</span>
+                                    <span className="ms-2 text-secondary">{paciente.correo}</span>
+                                    {/* <span className="ms-2 text-secondary">Femenino</span>
+                                    <span className="ms-2 text-secondary">email@live.es</span> */}
                                     {/* <span className="mx-2 text-secondary">Miguel Hidalgo</span>  */}
                                 </Row>
                             </Col>
@@ -1251,6 +1376,12 @@ const AtenderCita = (props) => {
                                                             <TextArea rows = {4} style={{ height: '200%' }} placeholder="Observación" value = {observaciones} onChange = { observacion => campo_observacion(observacion) } showCount maxLength = {100}/>
                                                         </Col>
                                                     </Row>
+
+                                                    <Button type="primary" htmlType="submit">
+                                                        Guardar cita
+                                                    </Button>
+
+
                                                     {/* <Button type="primary" htmlType="submit">
                                                         Terminar cita
                                                     </Button> */}
@@ -1571,6 +1702,7 @@ const AtenderCita = (props) => {
                                                         </Modal>
                                                     </Col>
                                                 </Row>
+                                                <Button type="primary" onClick = {subir_imagenes}>Subir</Button>
                                                 {/* <Button type="primary" onClick = {() => subir_imagenes()}>
                                                         Subir
                                                 </Button>
@@ -1738,16 +1870,31 @@ const AtenderCita = (props) => {
                                         <Button type="primary" htmlType="submit">
                                             Siguiente
                                         </Button>
+                                        
                                         )}
                                         {current === steps.length - 1 && (
                                         // <Button type="primary" onClick={() => message.success('Cita finalizada con éxito!')}>
                                         //     Terminar cita
                                         // </Button>
-                                            <Button type="primary" visible = {true} htmlType="submit">
+                                            // <Button type="primary" visible = {true} htmlType="submit">
+                                            //     Guardar cita
+                                            // </Button>
+                                            // <Button type="primary" visible = {true} onClick = {showModal}>
+                                            //     Guardar cita
+                                            // </Button>
+                                            // <Button type="primary" visible = {true} onClick = {() => info()}>
+                                            //     Guardar cita
+                                            // </Button>
+                                            // <Button type="primary" onClick = {() => showConfirm()}>
+                                            //     Guardar cita
+                                            // </Button>
+                                            <Button type="primary" htmlType="submit">
                                                 Guardar cita
                                             </Button>
+
                                         )}
-                                </div>            
+                                </div>
+                                        
                             </Col>
                         </Row>
                     </Form>
@@ -1757,13 +1904,13 @@ const AtenderCita = (props) => {
                     <Card size="small" title="Historia Clínica">                        
                         <Row>
                             <Col span = {24}>
-                                <Alert
+                                {/* <Alert
                                     message="Paciente alérgico:"
                                     description="Complejo B"
                                     type="warning"
                                     showIcon
                                     className="ms-3 me-3 mb-3 mt-2"
-                                />
+                                /> */}
                             </Col>
                         </Row>
                         <Row>

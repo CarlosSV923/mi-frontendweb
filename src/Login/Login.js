@@ -34,6 +34,8 @@ export default class Login extends React.Component {
                 message.loading({ content: 'Verificando datos...', key });
                 AxiosUsers.login(values).then(res => {
                     Auth.login(res.data);
+                    console.log("Login: ", res.data);
+                    console.log("D: ",Auth.getDataUser());
                     setTimeout(() => {
                         message.success({ content: 'Sesion Iniciada con Exito', key, duration: 3 });
                     }, 1000);

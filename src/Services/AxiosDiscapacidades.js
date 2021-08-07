@@ -21,4 +21,16 @@ export default class AxiosDiscapacidades {
     return AxiosDiscapacidades.instanceAxios.post(`/almacenar_discapacidad`, discapacidad);
   }
 
+  static eliminar_discapacidad = (id_discapacidad) => {
+    return AxiosDiscapacidades.instanceAxios.delete(`/eliminar_discapacidad/${id_discapacidad}`);
+  }
+
+  static obtener_discapacidad_por_id = (id) => {
+    return AxiosDiscapacidades.instanceAxios.get(`/obtener_discapacidad_por_id/${id}`);
+  }
+
+  static actualizar_discapacidad = (discapacidad) => {
+    return AxiosDiscapacidades.instanceAxios.post(`/actualizar_discapacidad`, discapacidad);
+  }
+
 }
