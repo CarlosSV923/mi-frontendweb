@@ -34,7 +34,7 @@ import FormularioPerfiles from './Administrador/FormularioPerfiles';
 import Seguimiento from './Citas/Seguimiento';
 import HomeCitasAtendidas from './Administrador/HomeCitasAtendidas';
 import HomePacientes from './Administrador/HomePacientes';
-import ExpedientePaciente from './Administrador/ExpedientePaciente';
+import ExpedientePaciente from '../src/Administrador/ExpedientePaciente';
 import VisualizarCita from './Citas/VisualizarCita';
 
 const perfil = () => {

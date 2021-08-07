@@ -34,6 +34,7 @@ const ExpedientePaciente = () => {
     const [loading, setLoading] = React.useState(true);
     const [noData, setNoData] = React.useState(false);
 
+    
     const key = 'updatable';
     
     const data = [
