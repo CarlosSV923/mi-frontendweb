@@ -23,6 +23,7 @@ import FormularioMedicamentos from './Administrador/FormularioMedicamentos';
 import FormularioEnfermedades from './Administrador/FormularioEnfermedades';
 import HomeAdmin from './Administrador/initPage';
 import HomeCuidador from './Cuidador/initPage';
+import Index from './Seguimientos/index';
 
 function App() {
   return (
@@ -35,8 +36,9 @@ function App() {
       {/* Routes Medicos */}
       <PrivateRouteMedico exact path='/medico' component={AgendaCitas} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/atenderCita' component={AtenderCita} layout={MedicoLayout} />
+      <PrivateRouteMedico exact path='/medico/seguimientos' component={Index} layout={MedicoLayout} />
 
-      {/* Routes Medicos */}
+      {/* Routes Paciente */}
       <PrivateRoutePaciente exact path='/paciente' component={AgendaCitas} layout={PacienteLayout} />
 
 

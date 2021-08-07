@@ -44,7 +44,7 @@ export default class SiderMedicoComp extends React.Component{
                 <span>Seguimientos
                 </span>
                 </span>
-                <Link to="/" />
+                <Link to="/medico/seguimientos" />
               </Menu.Item>
 
             </Menu>
