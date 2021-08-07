@@ -7,6 +7,7 @@ import ModalAgenda from './modals/ModalAgenda';
 import ModalConfirmAgenda from './modals/ModalConfirmAgenda';
 import AxiosCitas from './../Services/AxiosCitas';
 import { estadoCitaColor } from './enumEstadoCita';
+import FilterAgenda from './filterAgenda';
 import Auth from './../Login/Auth';
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 require('moment/locale/es-us.js');
@@ -14,6 +15,7 @@ export default class AgendaCitas extends React.Component {
   constructor(props) {
     super(props);
     this.getFechasLimitesSemana = this.getFechasLimitesSemana.bind(this);
+    this.setDataFilter = this.setDataFilter.bind(this);
     this.state = {
       visibleModal: false,
       slotInfo: null,
@@ -25,7 +27,8 @@ export default class AgendaCitas extends React.Component {
       visibleCancel: false,
       visibleUpdate: false,
       events: [],
-      userData: {}
+      userData: {},
+      date: new Date(),
     }
 
 
@@ -33,6 +36,10 @@ export default class AgendaCitas extends React.Component {
 
   componentDidMount() {
     this.setState({ userData: Auth.getDataUser() }, () => { this.preLoadCitas(); });
+  }
+
+  setDataFilter(data){
+    this.setState({...data});
   }
 
   getCitasMedico(filter, merge = true) {
@@ -78,11 +85,10 @@ export default class AgendaCitas extends React.Component {
     date.setMinutes(0);
     date.setSeconds(0);
     date.setMilliseconds(0);
-
     const dayOfWeek = date.getDay();
-
-    const date_max = new Date((new Date()).setDate(date.getDate() + (dayOfWeek === 0 ? 0 : 7 - dayOfWeek) + daysAdd));
-    const date_min = new Date((new Date()).setDate(date.getDate() + (dayOfWeek === 0 ? -7 : - dayOfWeek) + daysLess));
+    const d = date.getDate();
+    const date_max = new Date((new Date()).setDate(d + (dayOfWeek === 0 ? 0 : 7 - dayOfWeek) + daysAdd));
+    const date_min = new Date((new Date()).setDate(d + (dayOfWeek === 0 ? -7 : - dayOfWeek) + daysLess));
 
     return { date_max, date_min }
   }
@@ -99,6 +105,8 @@ export default class AgendaCitas extends React.Component {
       this.getCitasPaciente(filter, merge);
     }
   }
+
+ 
 
   updateCitaX(action) {
     const start = this.state.eventSave.start;
@@ -229,12 +237,16 @@ export default class AgendaCitas extends React.Component {
     this.setState({ visibleModal: true, visibleUpdate: false });
   }
 
-  navigateCalendar(date, view, action){
-    
-    const filter ={
+  navigateCalendar(date, view, action) {
+    console.log(date)
+    this.setState({ date });
+    const filter = {
       cedula: this.state.userData.cedula,
       ...this.getFechasLimitesSemana(date),
     }
+
+    console.log(date, filter)
+
     if (Auth.isMedico()) {
       this.getCitasMedico(filter, false);
     } else {
@@ -246,13 +258,18 @@ export default class AgendaCitas extends React.Component {
   render() {
     return (
       <div >
+
+        {Auth.isMedico() ? <FilterAgenda
+          setDataFilter={this.setDataFilter}
+        /> : null}
         <BigCalendar
           selectable
           events={this.state.events}
           defaultView='work_week'
           onNavigate={(date, view, action) => { this.navigateCalendar(date, view, action) }}
           scrollToTime={new Date(1970, 1, 1, 6)}
-          defaultDate={new Date()}
+          defaultDate={this.state.date}
+          date={this.state.date}
           //views={Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])}
           views={["work_week"]}
           onSelectEvent={event => { this.showModalEditCita(event) }}
