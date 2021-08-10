@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu, Layout  } from 'antd';
 import { Link } from 'react-router-dom';
-import { FormOutlined, HeartOutlined } from '@ant-design/icons';
+import { FormOutlined, HeartOutlined, UserOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCog } from '@fortawesome/free-solid-svg-icons';
 import shortid from 'shortid';
@@ -34,7 +34,7 @@ export default class SiderMedicoComp extends React.Component{
                 <span>Citas
                 </span>
                 </span>
-                <Link to="/" />
+                <Link to="/medico" />
               </Menu.Item>
               <Menu.Item
               icon={<HeartOutlined />}
@@ -45,6 +45,16 @@ export default class SiderMedicoComp extends React.Component{
                 </span>
                 </span>
                 <Link to="/medico/seguimientos" />
+              </Menu.Item>
+
+              <Menu.Item 
+              icon={<UserOutlined />}
+              key={shortid.generate()}>
+                <span>
+                <span>Pacientes
+                </span>
+                </span>
+                <Link to="/medico/homepacientes" />
               </Menu.Item>
 
             </Menu>

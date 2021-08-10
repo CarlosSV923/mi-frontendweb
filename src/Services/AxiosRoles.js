@@ -17,5 +17,16 @@ export default class AxiosRoles {
     return AxiosRoles.instanceAxios.post(`/almacenar_usuario`, usuario);
   }
 
+  static eliminar_rol = (id_rol) => {
+    return AxiosRoles.instanceAxios.delete(`/eliminar_rol/${id_rol}`);
+  }
+
+  static obtener_rol_por_id = (id_rol) => {
+    return AxiosRoles.instanceAxios.get(`/obtener_rol_por_id/${id_rol}`);;
+  }
+
+  static actualizar_rol = (rol) => {
+    return AxiosRoles.instanceAxios.post(`/actualizar_rol`, rol);
+  }
 
 }

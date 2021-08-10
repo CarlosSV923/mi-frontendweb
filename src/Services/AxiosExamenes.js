@@ -24,4 +24,23 @@ export default class AxiosExamenes {
     return AxiosExamenes.instanceAxios.post(`/saveImages`, informacion_examen);
   }
 
+  static getExamenesFilter = (filtro) => {
+    return AxiosExamenes.instanceAxios.post(`/getExFilter`, filtro);
+  }
+
+  static almacenar_examenes_cita_paciente = (examenes, info) => {
+    return AxiosExamenes.instanceAxios.post(`/almacenar_examenes_cita_paciente`, examenes, info);
+  }
+
+  static saveExamen = (exam) => {
+    return AxiosExamenes.instanceAxios.post(`/saveExamen`, exam);
+  }
+
+  static editExamen = (exam) => {
+    return AxiosExamenes.instanceAxios.post(`/editExamen`, exam);
+  }
+
+  static deleteExamen = (exam) => {
+    return AxiosExamenes.instanceAxios.post(`/deleteExamen`, exam);
+  }
 }

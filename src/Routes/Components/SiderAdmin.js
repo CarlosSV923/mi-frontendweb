@@ -30,11 +30,11 @@ export default class SiderAdminComp extends React.Component {
 
 
           <SubMenu key="admin" icon={<FontAwesomeIcon icon={faUserCog} />} title="Administrador">
-            <Menu.Item key={shortid.generate()}>Discapacidades<Link to="/admin/formulariodiscapacidades"></Link></Menu.Item>
-            <Menu.Item key={shortid.generate()}>Usuarios<Link to="/admin/formulariousuarios"></Link></Menu.Item>
-            <Menu.Item key={shortid.generate()}>Roles<Link to="/admin/formularioroles"></Link></Menu.Item>
-            <Menu.Item key={shortid.generate()}>Medicamentos<Link to="/admin/formulariomedicamentos" /></Menu.Item>
-            <Menu.Item key={shortid.generate()}>Enfermedades<Link to="/admin/formularioenfermedades" /></Menu.Item>
+            <Menu.Item key={shortid.generate()}>Discapacidades<Link to="/admin/homediscapacidades"></Link></Menu.Item>
+            <Menu.Item key={shortid.generate()}>Usuarios<Link to="/admin/homeusuarios"></Link></Menu.Item>
+            <Menu.Item key={shortid.generate()}>Roles<Link to="/admin/homeroles"></Link></Menu.Item>
+            <Menu.Item key={shortid.generate()}>Medicamentos<Link to="/admin/homemedicamentos" /></Menu.Item>
+            <Menu.Item key={shortid.generate()}>Enfermedades<Link to="/admin/homeenfermedades" /></Menu.Item>
           </SubMenu>
 
         </Menu>

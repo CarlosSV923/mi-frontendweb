@@ -17,4 +17,16 @@ export default class AxiosMedicamentos {
     return AxiosMedicamentos.instanceAxios.post(`/almacenar_medicamento`, medicamento);
   }
 
+  static eliminar_medicamento = (id_medicamento) => {
+    return AxiosMedicamentos.instanceAxios.delete(`/eliminar_medicamento/${id_medicamento}`);
+  }
+
+  static obtener_medicamento_por_id = (id) => {
+    return AxiosMedicamentos.instanceAxios.get(`/obtener_medicamento_por_id/${id}`);
+  }
+
+  static actualizar_medicamento = (medicamento) => {
+    return AxiosMedicamentos.instanceAxios.post(`/actualizar_medicamento`, medicamento);
+  }
+
 }
