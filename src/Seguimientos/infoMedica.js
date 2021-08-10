@@ -16,6 +16,7 @@ import {
 import ModalSignoVital from './modalSignoVital';
 import AxiosSignosVitales from './../Services/AxiosSignosVitales';
 import AxiosSeguimientos from './../Services/AxiosSeguimientos';
+import Auth from './../Login/Auth';
 
 const { Title, Text } = Typography;
 
@@ -142,7 +143,7 @@ export default class InfoMedica extends React.Component {
 
     saveSignoVital(signo) {
         this.setState({ loadingSave: true });
-        AxiosSignosVitales.saveSignosVitales({...signo, paciente: this.state.paciente, medico: this.state.medico}).then(resp => {
+        AxiosSignosVitales.saveSignosVitales({...signo, paciente: this.state.paciente, medico: this.state.medico, isPaciente: Auth.isPaciente()}).then(resp => {
             console.log(resp);
             this.setState({ loadingSave: false, signo: null, visibleModal: false, editSigno: false }, () => { this.props.getSeguimientoId() });
             message.success("Signo Vital Guardado Correctamente.");

@@ -16,6 +16,7 @@ import AxiosSeguimientos from './../Services/AxiosSeguimientos';
 import AxiosExamenes from './../Services/AxiosExamenes';
 import AxiosCitas from '../Services/AxiosCitas';
 import moment from 'moment';
+import Auth from './../Login/Auth';
 import ModalExamAsociados from './modalExamAsociado';
 
 require('moment/locale/es-us.js');
@@ -89,6 +90,7 @@ export default class CitasAsociadas extends React.Component {
     saveExamenAsociada(exam) {
         exam.append("paciente", this.state.paciente);
         exam.append("medico", this.state.medico);
+        exam.append("isPaciente", Auth.isPaciente());
         this.setState({ loadingSave: true });
         AxiosExamenes.saveExamen(exam).then(resp => {
             console.log(resp);

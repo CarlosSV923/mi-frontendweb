@@ -2,19 +2,18 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import { Link } from 'react-router-dom';
 import {
-    Steps, Button, message, Form, Input, Popconfirm, Row, Col,
-    Collapse, DatePicker, Alert, Divider, Card, Select, InputNumber,
-    Upload, Modal, Empty, Avatar, Table, Tabs, Typography
+     Button, message, Form,  Row, Col,
+    Collapse, DatePicker,  Typography, Table
 } from 'antd'
 import {
-    UserOutlined, InfoCircleOutlined, HeartOutlined,
-    SearchOutlined, DeleteOutlined, EyeOutlined
+
+    SearchOutlined
 } from '@ant-design/icons';
-import ModalSignoVital from './modalSignoVital';
-import AxiosSignosVitales from './../Services/AxiosSignosVitales';
-import AxiosSeguimientos from './../Services/AxiosSeguimientos';
+
+import Auth from './../Login/Auth';
+
 import AxiosCitas from '../Services/AxiosCitas';
-import moment from 'moment';
+
 import ModalAgenCitaAsociada from './modalAgenCitaAsociada';
 
 require('moment/locale/es-us.js');
@@ -96,6 +95,7 @@ export default class CitasAsociadas extends React.Component {
         const citaSave = {
             paciente: this.state.paciente,
             medico: this.state.medico,
+            isPaciente: Auth.isPaciente(),
             init_comment: cita.desc,
             inicio_cita: new Date(start),
             fin_cita: new Date(end),
