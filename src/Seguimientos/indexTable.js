@@ -76,6 +76,7 @@ export default class IndexTable extends React.Component {
             const filter = {
                 date_min: values.dateRange[0]._d,
                 date_max: values.dateRange[1]._d,
+                ...this.getPersona(),
             }
             this.getExamenesSeg(filter);
         }).catch(err => {
