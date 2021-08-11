@@ -17,7 +17,7 @@ import AxiosExamenes from './../Services/AxiosExamenes';
 import AxiosCitas from '../Services/AxiosCitas';
 import moment from 'moment';
 import ModalExamAsociados from './modalExamAsociado';
-
+import Auth from './../Login/Auth';
 require('moment/locale/es-us.js');
 
 const { Title, Text } = Typography;
@@ -36,10 +36,20 @@ export default class IndexTable extends React.Component {
 
     componentDidMount() {
 
-        this.getSeguimientos();
+        this.getSeguimientos(this.getPersona());
     }
 
-    getSeguimientos(filtro={}) {
+    getPersona() {
+        if (Auth.isMedico()) {
+            return { medico: Auth.getDataUser().cedula };
+        }
+        if (Auth.isPaciente()) {
+            return { paciente: Auth.getDataUser().cedula };
+        }
+        return {};
+    }
+
+    getSeguimientos(filtro = {}) {
         AxiosSeguimientos.getSeguimientos(filtro).then(resp => {
             console.log(resp);
             const segs = resp.data.map(seg => {
@@ -67,7 +77,7 @@ export default class IndexTable extends React.Component {
                 date_min: values.dateRange[0]._d,
                 date_max: values.dateRange[1]._d,
             }
-           this.getExamenesSeg(filter);
+            this.getExamenesSeg(filter);
         }).catch(err => {
             console.log(err);
         });
@@ -111,7 +121,7 @@ export default class IndexTable extends React.Component {
                 dataIndex: 'accion',
                 render: (_, record) =>
                     <div className="text-center">
-                        <a target="_blank" rel="noreferrer" href={"/medico/seguimiento/" + record.id_seguimiento} className="me-4">
+                        <a target="_blank" rel="noreferrer" href={(Auth.isPaciente() ? "/paciente/seguimiento/" : "/medico/seguimiento/") + record.id_seguimiento} className="me-4">
                             Ver Detalles
                         </a>
                     </div>,
@@ -162,7 +172,7 @@ export default class IndexTable extends React.Component {
                                     Buscar
                                 </Button>
                             </Form.Item>
-                            
+
 
                         </Form>
                     </Col>
