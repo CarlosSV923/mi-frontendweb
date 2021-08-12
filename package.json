@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^12.8.3",
     "antd": "^4.16.9",
     "axios": "^0.21.1",
+    "express": "^4.17.1",
     "globalize": "^1.6.0",
     "react": "^17.0.2",
     "react-big-calendar-like-google": "0.0.3",
@@ -25,7 +26,8 @@
     "xlsx": "^0.17.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start:dev": "react-scripts start",
+    "start": "node server/server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

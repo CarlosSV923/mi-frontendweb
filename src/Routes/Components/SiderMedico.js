@@ -34,7 +34,7 @@ export default class SiderMedicoComp extends React.Component{
                 <span>Citas
                 </span>
                 </span>
-                <Link to="/" />
+                <Link to="/medico" />
               </Menu.Item>
               <Menu.Item
               icon={<HeartOutlined />}
@@ -44,7 +44,7 @@ export default class SiderMedicoComp extends React.Component{
                 <span>Seguimientos
                 </span>
                 </span>
-                <Link to="/" />
+                <Link to="/medico/seguimientos" />
               </Menu.Item>
 
               <Menu.Item 

@@ -9,4 +9,16 @@ export default class AxiosSignosVitales {
     return AxiosSignosVitales.instanceAxios.post(`/almacenar_signos_vitales_paciente`, signos_vitales);
   }
 
+  static saveSignosVitales = (signo) => {
+    return AxiosSignosVitales.instanceAxios.post(`/saveSignoVital`, signo);
+  }
+
+  static editSignosVitales = (signo) => {
+    return AxiosSignosVitales.instanceAxios.post(`/editSignoVital`, signo);
+  }
+
+  static deleteSignoVital = (signo) => {
+    return AxiosSignosVitales.instanceAxios.post(`/deleteSignoVital`, signo);
+  }
+
 }

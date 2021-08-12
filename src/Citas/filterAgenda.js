@@ -117,7 +117,6 @@ export default class FilterAgenda extends Component {
                 <Form
                     ref={this.formRef}
                     layout="inline"
-                    onSubmi={this.handlerCrearCita}
                 >
                     <Form.Item
                         name="dateRange"

@@ -240,7 +240,6 @@ export default class ModalAgenda extends React.Component {
                         <Form
                             ref={this.formRef}
                             layout="vertical"
-                            onSubmi={this.handlerCrearCita}
                         >
                             {Auth.isMedico() ? <Form.Item
                                 name="paciente"

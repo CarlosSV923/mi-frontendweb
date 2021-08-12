@@ -32,7 +32,7 @@ import AxiosSignosVitales from '../Services/AxiosSignosVitales';
 import AxiosCitas from '../Services/AxiosCitas';
 import AxiosEnfermedadesCitas from '../Services/AxiosEnfermedadesCitas';
 import AxiosUsers from '../Services/AxiosUsers';
-import AxiosSeguimientos2 from '../Services/AxiosSeguimientos2';
+import AxiosSeguimientos from '../Services/AxiosSeguimientos';
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -485,7 +485,7 @@ const AtenderCita = (props) => {
                 message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
                 if (seguimi===true){
                     
-                    AxiosSeguimientos2.crear_seguimiento({"fecha_inicio": moment(Date.now()).format('YYYY-MM-DD'), "paciente": cedulaPaciente, "medico": cedulaMedico}).then(res3 => {
+                    AxiosSeguimientos.crear_seguimiento({"fecha_inicio": moment(Date.now()).format('YYYY-MM-DD'), "paciente": cedulaPaciente, "medico": cedulaMedico}).then(res3 => {
                         console.log("SEGUIMIENTO: ",res3);
                         props.history.push('/medico/seguimiento/'+res3.data.id_seguimiento);
                     })

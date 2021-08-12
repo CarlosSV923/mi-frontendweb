@@ -35,4 +35,12 @@ export default class AxiosCitas {
         return AxiosCitas.instanceAxios.post(`/actualizar_cita`, informacion_cita);
     }
 
+    static agendarCitaAsociada = (cita) => {
+        return AxiosCitas.instanceAxios.post(`/agendarCitaAsociada`, cita);
+    }
+
+    static getCitasSeg = (filter) => {
+        return AxiosCitas.instanceAxios.post(`/getCitasSeg`, filter);
+    }
+
 }

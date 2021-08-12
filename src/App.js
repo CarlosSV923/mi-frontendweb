@@ -25,36 +25,21 @@ import FormularioMedicamentos from './Administrador/FormularioMedicamentos';
 import FormularioEnfermedades from './Administrador/FormularioEnfermedades';
 import HomeAdmin from './Administrador/initPage';
 import HomeCuidador from './Cuidador/initPage';
+import Index from './Seguimientos/index';
 import HomeEnfermedades from './Administrador/HomeEnfermedades';
 import HomeMedicamentos from './Administrador/HomeMedicamentos';
 import HomeDiscapacidades from './Administrador/HomeDiscapacidades';
 import HomeUsuarios from './Administrador/HomeUsuarios';
 import HomeRoles from './Administrador/HomeRoles';
 import FormularioPerfiles from './Administrador/FormularioPerfiles';
-import Seguimiento from './Citas/Seguimiento';
+import IndexTable from './Seguimientos/indexTable';
 import HomeCitasAtendidas from './Administrador/HomeCitasAtendidas';
 import HomePacientes from './Administrador/HomePacientes';
 import ExpedientePaciente from '../src/Administrador/ExpedientePaciente';
 import VisualizarCita from './Citas/VisualizarCita';
 import Adicional from './Administrador/Adicional';
 
-const perfil = () => {
-  console.log("PERFI: ", Auth.isAdmin());
-  if (Auth.isMedico()) {
-    return '/medico';
-  }
-  if (Auth.isPaciente()) {
-      return '/paciente';
-  }
-  if (Auth.isCuidador()) {
-      return '/cuidador';
-  }
-  return '/admin'
-  }
-
 function App() {
-
-  // localStorage.removeItem('userdata');
 
   return (
     <BrowserRouter>
@@ -68,18 +53,22 @@ function App() {
       {/* Routes Medicos */}
       <PrivateRouteMedico exact path='/medico' component={AgendaCitas} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/atenderCita' component={AtenderCita} layout={MedicoLayout} />
+      <PrivateRouteMedico exact path='/medico/seguimiento/:id' component={Index} layout={MedicoLayout} />
+      <PrivateRouteMedico exact path='/medico/seguimientos' component={IndexTable} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/atenderCita/:id' component={AtenderCita} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/perfil/:ced' component={FormularioPerfiles} layout={MedicoLayout} />
-      <PrivateRouteMedico exact path='/medico/seguimiento/:id' component={Seguimiento} layout={MedicoLayout} />
+      {/* <PrivateRouteMedico exact path='/medico/seguimiento/:id' component={Seguimiento} layout={MedicoLayout} /> */}
       <PrivateRouteMedico exact path='/medico/homecitasatentidas' component={HomeCitasAtendidas} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/homepacientes' component={HomePacientes} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/homepacientes/expedientepaciente/:ced' component={ExpedientePaciente} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/citaanterior/paciente/:id/:ced' component={VisualizarCita} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/adicional' component={Adicional} layout={MedicoLayout} />
 
-      {/* Routes Medicos */}
+      {/* Routes Paciente */}
       <PrivateRoutePaciente exact path='/paciente' component={AgendaCitas} layout={PacienteLayout} />
       <PrivateRoutePaciente exact path='/paciente/perfil/:ced' component={FormularioPerfiles} layout={PacienteLayout} />
+      <PrivateRoutePaciente exact path='/paciente/seguimiento/:id' component={Index} layout={PacienteLayout} />
+      <PrivateRoutePaciente exact path='/paciente/seguimientos' component={IndexTable} layout={PacienteLayout} />
 
       {/* Routes Admin */}
       <PrivateRouteAdmin exact path='/admin' component={HomeAdmin} layout={AdminLayout} />

@@ -30,7 +30,7 @@ export default class SiderPacienteComp extends React.Component{
                 <span>Citas
                 </span>
                 </span>
-                <Link to="/" />
+                <Link to="/paciente" />
               </Menu.Item>
               <Menu.Item
               icon={<HeartOutlined />}
@@ -40,7 +40,7 @@ export default class SiderPacienteComp extends React.Component{
                 <span>Seguimientos
                 </span>
                 </span>
-                <Link to="/" />
+                <Link to="/paciente/seguimientos" />
               </Menu.Item>
 
               
