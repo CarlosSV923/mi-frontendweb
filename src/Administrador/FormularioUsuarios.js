@@ -171,13 +171,9 @@ const FormularioUsuarios = (props) => {
     }, [cedula, form, usuario.cedula, usuario.nombre, usuario.correo, usuario.apellido, usuario.fecha_nacimiento, usuario.sexo, usuario.usuario, usuario.id_rol, usuario.estado]);
 
     const mostrar_roles = () => {
-
         AxiosRoles.mostrar_roles().then((res)=>{
           console.log(res.data);
           setListaRoles(res.data);
-          
-          
-
         })
     }
 

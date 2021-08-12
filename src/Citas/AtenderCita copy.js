@@ -32,7 +32,6 @@ import AxiosSignosVitales from '../Services/AxiosSignosVitales';
 import AxiosCitas from '../Services/AxiosCitas';
 import AxiosEnfermedadesCitas from '../Services/AxiosEnfermedadesCitas';
 import AxiosUsers from '../Services/AxiosUsers';
-import AxiosSeguimientos2 from '../Services/AxiosSeguimientos2';
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -127,7 +126,6 @@ const steps = [
     },      
 ];
 
-let seguimi = false;
 
 const { Panel } = Collapse;
 
@@ -280,7 +278,6 @@ const AtenderCita = (props) => {
     const iniciar_seguimiento = (e) => {
         setSeguimiento(e.target.checked);
         console.log(`checked = ${e.target.checked}`);
-        seguimi = e.target.checked;
       }
 
     function getBase64(file) {
@@ -483,12 +480,8 @@ const AtenderCita = (props) => {
                 setExito(exito + 1)
                 console.log("JLLLLLLLLLLLLLLLLLLLLLLLLLLLLL: ", segui);
                 message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
-                if (seguimi===true){
-                    
-                    AxiosSeguimientos2.crear_seguimiento({"fecha_inicio": moment(Date.now()).format('YYYY-MM-DD'), "paciente": cedulaPaciente, "medico": cedulaMedico}).then(res3 => {
-                        console.log("SEGUIMIENTO: ",res3);
-                        props.history.push('/medico/seguimiento/'+res3.data.id_seguimiento);
-                    })
+                if (seguimiento){
+                    props.history.push('/medico/seguimiento');
                 }else{
                     props.history.push('/medico');
                 }
@@ -651,6 +644,31 @@ const AtenderCita = (props) => {
             setCurrent(current + 1);
         }else if (current === 3) {
 
+            confirm({
+                title: 'La cita está a punto de finalizar. Si desea puede iniciar un seguimiento marcando la siguiente opción',
+                icon: <ExclamationCircleOutlined />,
+                content: <Checkbox onChange={ e => {iniciar_seguimiento(e)}}>Iniciar seguimiento</Checkbox>,
+                onOk() {
+                    console.log('OK000');
+                    console.log("El check: ",seguimiento);   
+                    console.log("El b: ", b);                     
+                    message.loading({ content: 'Guardando cita...', key, duration: 50});
+                
+
+                    enviar2(cita, listaDisc, temp_discapacidades,
+                        listaAler, temp_alergias,
+                        temp_enfermedades_hereditarias,
+                        temp_enfermedades_persistentes,
+                        signos_vitales_totales,
+                        medicamentos_nuevos_mod,
+                        temp_enfermedades_citas
+                    );
+                },
+            onCancel() {
+              console.log('Cancel');
+            },
+        });
+
             setListaMed(valores_agregados.lista_medicamentos);
             console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHH: ",valores_agregados.lista_medicamentos)
             console.log("fileList: ",fileList);
@@ -730,29 +748,8 @@ const AtenderCita = (props) => {
                 sintomas: diagnostico,
                 fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
                 seguimiento: ""}           
-                confirm({
-                    title: 'La cita está a punto de finalizar. Si desea puede iniciar un seguimiento marcando la siguiente opción',
-                    icon: <ExclamationCircleOutlined />,
-                    content: <Checkbox onChange={ e => {iniciar_seguimiento(e)}}>Iniciar seguimiento</Checkbox>,
-                    onOk() {
-                        console.log('OK000');
-                        console.log("El check: ",seguimiento);   
-                        message.loading({ content: 'Guardando cita...', key, duration: 50});
-                    
-
-                        enviar2(cita, listaDisc, temp_discapacidades,
-                            listaAler, temp_alergias,
-                            temp_enfermedades_hereditarias,
-                            temp_enfermedades_persistentes,
-                            signos_vitales_totales,
-                            medicamentos_nuevos_mod,
-                            temp_enfermedades_citas
-                        );
-                    },
-                onCancel() {
-                  console.log('Cancel');
-                },
-            });
+                let b = "";
+                
 
             // console.log("VALUEEEEEEEEEE: ", value);
         }

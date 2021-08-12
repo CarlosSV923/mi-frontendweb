@@ -36,6 +36,7 @@ import HomeCitasAtendidas from './Administrador/HomeCitasAtendidas';
 import HomePacientes from './Administrador/HomePacientes';
 import ExpedientePaciente from '../src/Administrador/ExpedientePaciente';
 import VisualizarCita from './Citas/VisualizarCita';
+import Adicional from './Administrador/Adicional';
 
 const perfil = () => {
   console.log("PERFI: ", Auth.isAdmin());
@@ -69,11 +70,12 @@ function App() {
       <PrivateRouteMedico exact path='/medico/atenderCita' component={AtenderCita} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/atenderCita/:id' component={AtenderCita} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/perfil/:ced' component={FormularioPerfiles} layout={MedicoLayout} />
-      <PrivateRouteMedico exact path='/medico/seguimiento' component={Seguimiento} layout={MedicoLayout} />
+      <PrivateRouteMedico exact path='/medico/seguimiento/:id' component={Seguimiento} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/homecitasatentidas' component={HomeCitasAtendidas} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/homepacientes' component={HomePacientes} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/homepacientes/expedientepaciente/:ced' component={ExpedientePaciente} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/citaanterior/paciente/:id/:ced' component={VisualizarCita} layout={MedicoLayout} />
+      <PrivateRouteMedico exact path='/medico/adicional' component={Adicional} layout={MedicoLayout} />
 
       {/* Routes Medicos */}
       <PrivateRoutePaciente exact path='/paciente' component={AgendaCitas} layout={PacienteLayout} />

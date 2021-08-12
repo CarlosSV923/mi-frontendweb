@@ -82,7 +82,6 @@ const FormularioMedicamentos = (props) => {
     }
 
     const obtener_medicamento_por_id = () => {
-
       AxiosMedicamentos.obtener_medicamento_por_id(id).then( response => {
         setMedicamento(response.data[0]);
         console.log("response: ", (response.data[0]).nombreLargo);
@@ -90,7 +89,6 @@ const FormularioMedicamentos = (props) => {
         setCodigo((response.data[0]).codigo);
         setDescrip((response.data[0]).descrip);
       });
-
     }
 
     React.useEffect(() =>{

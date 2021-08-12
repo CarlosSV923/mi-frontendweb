@@ -33,7 +33,7 @@ const ExpedientePaciente = () => {
     const [descripcion, setDiscripcion] = React.useState("");
     const [loading, setLoading] = React.useState(true);
     const [noData, setNoData] = React.useState(false);
-
+    const [observaciones, setObservaciones] = React.useState([]);
     
     const key = 'updatable';
     
@@ -58,7 +58,7 @@ const ExpedientePaciente = () => {
         message.loading({ content: 'Cargando expediente...', key, duration: 50});
 
         AxiosUsers.mostrar_informacion_expediente({cedula: ced}).then ( response => {
-            console.log("mostrar_informacion_expediente: ",response.data[6]);
+            console.log("mostrar_informacion_expediente: ",response.data[7]);
             let info_paciente = response.data[0][0];
             let alergias = response.data[1];
             let discapacidades = response.data[2];
@@ -86,6 +86,7 @@ const ExpedientePaciente = () => {
             setEnfermedadesPersistentes(response.data[3]);
             setEnfermedadesHereditarias(response.data[4]);
             setCitas(response.data[6]);
+            setObservaciones(response.data[7]);
             setLoading(false);
             message.success({ content: 'Mostrando expediente', key, duration: 3 });
 
@@ -421,7 +422,7 @@ const ExpedientePaciente = () => {
                                                                         <Col span = {12}>
                                                                             <Row>
                                                                                 <Col span = {24} className = "lead ms-5 mt-2 pt-4">
-                                                                                    {item.nombre} {item.apellido}
+                                                                                    Dr. {item.nombre} {item.apellido}
                                                                                 </Col>
                                                                             </Row>
                                                                             {/* <Row span = {24}>
@@ -485,6 +486,88 @@ const ExpedientePaciente = () => {
                             </Col>
 
                         </Row>
+
+                        <Row className = "mt-3">
+                            <Col span = {24}>
+                                <Card title = "Notas antecedentes " size = "small">
+
+                                    {
+                                        observaciones.length === 0? <>
+                                            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                                        </>:
+                                        <>
+
+                                                {observaciones.map( item => 
+
+
+                                                    <Tooltip title={`Nota antecedente cita ${item.id_cita}`}>
+                                                    <Link to = {`/medico/citaanterior/paciente/${item.id_cita}/${ced}`} className = "me-4">
+                                                        
+                                                        <Row>
+                                                            <Col span = {16} className = "ms-5 ps-5 text-center">
+                                                                <Card className = "ms-5 mt-2 text-center">
+                                                                    <Row className = "text-center">
+                                                                        <Col span = {12}>
+                                                                            <Row className = "text-center">
+                                                                                <Col span = {24} className = "lead text-center">
+                                                                                    {item.observRec}
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </Col>
+                                                                        <Col span = {2}>
+                                                                            <Row>
+                                                                                <Col className = "lead mt-3 ms-5 ps-5">
+                                                                                    <EyeOutlined />
+                                                                                </Col>
+                                                                            </Row>
+                                                                            {/* <Row span = {24}>
+                                                                                <Col>
+                                                                                    2020
+                                                                                </Col>
+                                                                            </Row> */}
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Card>
+                                                            </Col>
+                                                        </Row>
+                                                    </Link>
+                                                </Tooltip>
+
+
+
+                                                )
+
+                                                }
+                                        </>
+                                    }
+
+
+
+
+
+
+
+
+
+                                    {/* <Link to = "/medico/id">
+                                        <Descriptions title="">
+                                            <Descriptions.Item label="UserName">Zhou Maomao</Descriptions.Item>
+                                            <Descriptions.Item label="Telephone">1810000000</Descriptions.Item>
+                                            <Descriptions.Item label="Live">Hangzhou, Zhejiang</Descriptions.Item>
+                                            <Descriptions.Item label="Remark">empty</Descriptions.Item>
+                                            <Descriptions.Item label="Address">
+                                            No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China
+                                            </Descriptions.Item>
+                                        </Descriptions>                                    
+                                    </Link> */}
+
+
+                                </Card>
+
+                            </Col>
+
+                        </Row>
+
 
                     </Col>
 
