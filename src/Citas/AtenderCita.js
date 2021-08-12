@@ -1383,9 +1383,9 @@ const AtenderCita = (props) => {
                                                         </Col>
                                                     </Row>
 
-                                                    <Button type="primary" htmlType="submit">
+                                                    {/* <Button type="primary" htmlType="submit">
                                                         Guardar cita
-                                                    </Button>
+                                                    </Button> */}
 
 
                                                     {/* <Button type="primary" htmlType="submit">
@@ -1708,7 +1708,7 @@ const AtenderCita = (props) => {
                                                         </Modal>
                                                     </Col>
                                                 </Row>
-                                                <Button type="primary" onClick = {subir_imagenes}>Subir</Button>
+                                                {/* <Button type="primary" onClick = {subir_imagenes}>Subir</Button> */}
                                                 {/* <Button type="primary" onClick = {() => subir_imagenes()}>
                                                         Subir
                                                 </Button>
