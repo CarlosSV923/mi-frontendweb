@@ -209,7 +209,7 @@ const VisualizarCita = (props) => {
     const mostrar_informacion_cita_paciente = () => {
         message.loading({ content: 'Cargando cita...', key, duration: 50});
         AxiosUsers.mostrar_informacion_cita_paciente({cedula: ced, cita:id}).then( response => {
-            console.log("RESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: ", response.data[9]);
+            console.log("RESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: ", response.data[5]);
             let info_paciente = response.data[0][0];
             let alergias = response.data[1];
             let discapacidades2 = response.data[2];
@@ -277,6 +277,7 @@ const VisualizarCita = (props) => {
                 duracion: elemento.duracion,
               }));
             setLoading(false)
+            console.log("DATASPURCE: ",lista);
             setDataSource(lista);
             console.log("DIS: ", dis2);
             setInfoExpediente(response.data);
@@ -1201,7 +1202,7 @@ const VisualizarCita = (props) => {
                                                                     </Form.Item>
                                                                 </Col>
                                                             </Row>
-                                                            <Divider plain>Observaciones</Divider>
+                                                            <Divider plain>Notas antecedentes</Divider>
                                                             <Row>
                                                                 <Col span={24} className="">
                                                                     {/* <TextArea style={{ height: '200%' }} onChange = { observacion => campo_observacion(observacion) } showCount maxLength={100} /> */}
@@ -1218,14 +1219,6 @@ const VisualizarCita = (props) => {
                                                     {/* <Form className=""> */}
                                                         <Card type="inner" className="text-center" title="Signos vitales">
                                                             <div className="ms-5 ps-5">
-
-
-
-
-
-
-
-
                                                             {listaSignosVitales.map( item => 
                                                                 <Row className="mb-4 mt-3 ms-5">
                                                                     <Col span={1} className="">
@@ -1258,14 +1251,6 @@ const VisualizarCita = (props) => {
                                                                 </Row>
                                                                                                     
                                                             )}
-
-
-
-
-
-
-
-
 
                                                                 {/* <Form.List name="lista_signos">
                                                                     {(fields, { add, remove }) => (
