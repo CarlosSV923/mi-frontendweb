@@ -35,6 +35,8 @@ export default class AgendaCitas extends React.Component {
   }
 
   componentDidMount() {
+    // localStorage.getItem('userdata')
+    console.log('localStorage.getItem(userdata): ',localStorage.getItem('userdata'));
     this.setState({ userData: Auth.getDataUser() }, () => { this.preLoadCitas(); });
   }
 
