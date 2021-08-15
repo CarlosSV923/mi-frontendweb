@@ -8,15 +8,11 @@ import {
 } from 'antd'
 import {
     UserOutlined, InfoCircleOutlined, HeartOutlined,
-    SearchOutlined, DeleteOutlined, EyeOutlined
+    SearchOutlined
 } from '@ant-design/icons';
-import ModalSignoVital from './modalSignoVital';
-import AxiosSignosVitales from './../Services/AxiosSignosVitales';
+
 import AxiosSeguimientos from './../Services/AxiosSeguimientos';
-import AxiosExamenes from './../Services/AxiosExamenes';
-import AxiosCitas from '../Services/AxiosCitas';
-import moment from 'moment';
-import ModalExamAsociados from './modalExamAsociado';
+
 import Auth from './../Login/Auth';
 require('moment/locale/es-us.js');
 

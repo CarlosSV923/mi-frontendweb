@@ -49,13 +49,25 @@ export default class ModalAgenda extends React.Component {
     getPacientes = (value) => {
         this.setState({ fetchingPacientes: true, pacientes: [] });
         var filter = { filter: value };
-        AxiosPersonas.getPacientesFilter(filter).then(resp => {
-            console.log(resp);
-            this.setState({ fetchingPacientes: false, pacientes: resp.data });
-        }).catch(err => {
-            this.setState({ fetchingPacientes: false });
-            console.log(err);
-        });
+        if(Auth.isMedico()){
+            AxiosPersonas.getPacientesFilter(filter).then(resp => {
+                console.log(resp);
+                this.setState({ fetchingPacientes: false, pacientes: resp.data });
+            }).catch(err => {
+                this.setState({ fetchingPacientes: false });
+                console.log(err);
+            });
+        }
+        if(Auth.isCuidador()){
+            AxiosPersonas.getPacientesCuidadorFilter({...filter, cuidador: Auth.getDataUser().cedula}).then(resp => {
+                console.log(resp);
+                this.setState({ fetchingPacientes: false, pacientes: resp.data });
+            }).catch(err => {
+                this.setState({ fetchingPacientes: false });
+                console.log(err);
+            });
+        }
+        
     }
 
     getMedicos = (value) => {
@@ -134,7 +146,7 @@ export default class ModalAgenda extends React.Component {
         if (Auth.isCuidador()) {
             resp["paciente"] = values.paciente.value;
             resp["medico"] = values.medico.value;
-
+            resp["title"] = values.medico.label;
         }
         return resp;
     }
@@ -217,14 +229,14 @@ export default class ModalAgenda extends React.Component {
                 Guardar
             </Button>,
             <Button key="submit" type="primary">
-                <Link to={{ pathname: '/medico/atenderCita/' + this.state.event.id}} >
+                <Link to={{ pathname: '/medico/atenderCita/' + this.state.event.id }} >
                     Atender
                 </Link>
             </Button>
         ]
         return this.state.event && this.state.event.estado !== "C" ? [
             ...btnsBasic, ...btnsEdit
-        ] : [...btnsBasic]; 
+        ] : [...btnsBasic];
     }
 
     render() {
@@ -241,7 +253,7 @@ export default class ModalAgenda extends React.Component {
                             ref={this.formRef}
                             layout="vertical"
                         >
-                            {Auth.isMedico() ? <Form.Item
+                            {Auth.isMedico() || Auth.isCuidador() ? <Form.Item
                                 name="paciente"
                                 label="Seleccione o busque al Paciente"
                                 rules={[
@@ -263,7 +275,7 @@ export default class ModalAgenda extends React.Component {
                                     {this.state.pacientes.map(user => (<Select.Option key={user.cedula} value={user.cedula}>{user.cedula + " - " + user.nombre + " " + user.apellido}</Select.Option>))}
                                 </Select>
                             </Form.Item> : null}
-                            {Auth.isPaciente() ? <Form.Item
+                            {Auth.isPaciente() || Auth.isCuidador() ? <Form.Item
                                 name="medico"
                                 label="Seleccione o busque al Medico"
                                 rules={[

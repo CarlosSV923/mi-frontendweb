@@ -19,6 +19,10 @@ export default class AxiosCitas {
         return AxiosCitas.instanceAxios.post(`/getCitasMedico`, filter);
     }
 
+    static getCitasCuidador = (filter) => {
+        return AxiosCitas.instanceAxios.post(`/getCitasCuidador`, filter);
+    }
+
     static reangedarCancelarCita = (cita) => {
         return AxiosCitas.instanceAxios.post(`/reangedarCancelarCita`, cita);
     }

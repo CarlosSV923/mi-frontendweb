@@ -82,6 +82,25 @@ export default class AgendaCitas extends React.Component {
     });
   }
 
+  getCitasCuidador(filter, merge = true) {
+    AxiosCitas.getCitasCuidador(filter).then(resp => {
+      console.log(resp);
+      const citas = resp.data.map(cita => {
+        cita.title = cita.especialidad + " - " + cita.cedula + " - " + cita.nombre + " " + cita.apellido;
+        cita.bgColor = estadoCitaColor[cita.estado];
+        cita.start = new Date(cita.start);
+        cita.end = new Date(cita.end);
+        return cita;
+      });
+      console.log(citas);
+      this.setState({ events: merge ? [...this.state.events, ...citas] : citas });
+
+    }).catch(err => {
+      console.log(err);
+      message.error('No se cargar las citas actuales, intentelo mas tarde!');
+    });
+  }
+
   getFechasLimitesSemana(date, daysAdd = 7, daysLess = -7) {
     date.setHours(0);
     date.setMinutes(0);
@@ -103,8 +122,10 @@ export default class AgendaCitas extends React.Component {
     }
     if (Auth.isMedico()) {
       this.getCitasMedico(filter, merge);
-    } else {
+    } else if(Auth.isPaciente()){
       this.getCitasPaciente(filter, merge);
+    }else {
+      this.getCitasCuidador(filter, merge);
     }
   }
 

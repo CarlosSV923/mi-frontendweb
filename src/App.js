@@ -24,8 +24,8 @@ import FormularioRoles from './Administrador/FormularioRoles';
 import FormularioMedicamentos from './Administrador/FormularioMedicamentos';
 import FormularioEnfermedades from './Administrador/FormularioEnfermedades';
 import HomeAdmin from './Administrador/initPage';
-import HomeCuidador from './Cuidador/initPage';
 import Index from './Seguimientos/index';
+import PacienteTab from './Cuidador/pacienteTab';
 import HomeEnfermedades from './Administrador/HomeEnfermedades';
 import HomeMedicamentos from './Administrador/HomeMedicamentos';
 import HomeDiscapacidades from './Administrador/HomeDiscapacidades';
@@ -57,7 +57,6 @@ function App() {
       <PrivateRouteMedico exact path='/medico/seguimientos' component={IndexTable} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/atenderCita/:id' component={AtenderCita} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/perfil/:ced' component={FormularioPerfiles} layout={MedicoLayout} />
-      {/* <PrivateRouteMedico exact path='/medico/seguimiento/:id' component={Seguimiento} layout={MedicoLayout} /> */}
       <PrivateRouteMedico exact path='/medico/homecitasatentidas' component={HomeCitasAtendidas} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/homepacientes' component={HomePacientes} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/homepacientes/expedientepaciente/:ced' component={ExpedientePaciente} layout={MedicoLayout} />
@@ -90,7 +89,8 @@ function App() {
       <PrivateRouteAdmin exact path='/admin/perfil/:ced' component={FormularioPerfiles} layout={AdminLayout} />
 
       {/* Routes Admin */}
-      <PrivateRouteCuidador exact path='/cuidador' component={HomeCuidador} layout={CuidadorLayout} />
+      <PrivateRouteCuidador exact path='/cuidador' component={AgendaCitas} layout={CuidadorLayout} />
+      <PrivateRouteCuidador exact path='/cuidador/pacientesACargo' component={PacienteTab} layout={CuidadorLayout} />
 
     </BrowserRouter>
   );
