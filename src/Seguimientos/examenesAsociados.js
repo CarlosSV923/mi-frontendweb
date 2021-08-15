@@ -120,7 +120,7 @@ export default class CitasAsociadas extends React.Component {
 
     }
 
-    deleteExamenAsociado(examen){
+    deleteExamenAsociado(examen) {
         AxiosExamenes.deleteExamen(examen).then(resp => {
             console.log(resp);
             this.props.getSeguimientoId()
@@ -194,13 +194,13 @@ export default class CitasAsociadas extends React.Component {
                         <Button style={{ border: "none" }} onClick={e => { this.openEditModal(record) }} className="me-4">
                             <EyeOutlined />
                         </Button>
-                        <Popconfirm title="¿Quiere eliminar este registro?" onConfirm={(e) => { this.deleteExamenAsociado(record) }}>
+                        {Auth.isMedico() ? <Popconfirm title="¿Quiere eliminar este registro?" onConfirm={(e) => { this.deleteExamenAsociado(record) }}>
                             <Button
                                 type="link"
                             >
                                 <DeleteOutlined className="text-danger" />
                             </Button>
-                        </Popconfirm>
+                        </Popconfirm> : null}
 
                     </div>,
             }

@@ -82,9 +82,9 @@ export default class ModalExamAsociado extends React.Component {
             this.setState({ examen: this.props.examen }, () => {
                 if (this.state.examen) {
                     this.formRef.current.setFieldsValue({
-                        tipo_examen: this.state.examen.tipo_examen,
-                        comentario: this.state.examen.comentarios,
-                        diagnostico: this.state.examen.diagnostico,
+                        tipo_examen: this.state.examen.tipo_examen ? this.state.examen.tipo_examen : "",
+                        comentario: this.state.examen.comentarios ? this.state.examen.comentarios : "",
+                        diagnostico: this.state.examen.diagnostico ? this.state.examen.diagnostico : "",
                     });
                     this.generateFileList(this.state.examen.url_examen)
                 }

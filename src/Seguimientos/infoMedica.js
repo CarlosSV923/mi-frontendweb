@@ -81,13 +81,13 @@ export default class InfoMedica extends React.Component {
                         <Button style={{ border: "none" }} onClick={e => { this.openEditModal(record) }} className="me-4">
                             <EyeOutlined />
                         </Button>
-                        <Popconfirm title="¿Quiere eliminar este registro?" onConfirm={(e) => { this.deleteSignoVital(record) }}>
+                        {Auth.isMedico() ? <Popconfirm title="¿Quiere eliminar este registro?" onConfirm={(e) => { this.deleteSignoVital(record) }}>
                             <Button
                                 type="link"
                             >
                                 <DeleteOutlined className="text-danger" />
                             </Button>
-                        </Popconfirm>
+                        </Popconfirm> : null}
 
                     </div>,
             }
@@ -143,7 +143,7 @@ export default class InfoMedica extends React.Component {
 
     saveSignoVital(signo) {
         this.setState({ loadingSave: true });
-        AxiosSignosVitales.saveSignosVitales({...signo, paciente: this.state.paciente, medico: this.state.medico, isPaciente: Auth.isPaciente()}).then(resp => {
+        AxiosSignosVitales.saveSignosVitales({ ...signo, paciente: this.state.paciente, medico: this.state.medico, isPaciente: Auth.isPaciente() }).then(resp => {
             console.log(resp);
             this.setState({ loadingSave: false, signo: null, visibleModal: false, editSigno: false }, () => { this.props.getSeguimientoId() });
             message.success("Signo Vital Guardado Correctamente.");
@@ -195,7 +195,7 @@ export default class InfoMedica extends React.Component {
     render() {
         return (
             <div>
-                <Row justify="end">
+                {Auth.isMedico() ? <Row justify="end">
                     <Col style={{ textAlign: "end" }} span={24}>
                         {this.state.estado === "P" ? <Button
                             type="primary"
@@ -212,7 +212,7 @@ export default class InfoMedica extends React.Component {
                             Reabrir Seguimiento
                         </Button> : null}
                     </Col>
-                </Row>
+                </Row> : null}
                 <Row>
 
                     <Col className="text-center" span={24}>

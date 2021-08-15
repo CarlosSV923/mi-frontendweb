@@ -19,7 +19,7 @@ export default class SiderPacienteComp extends React.Component{
             <Sider
             breakpoint="lg"
             collapsible collapsed={this.state.collapsed} onCollapse={this.onCollapse}>
-            {this.state.collapsed ? <img className="App-logo" src={"espol2.png"} alt="icon" /> : <img className="App-logo" src={"./espol2.png"} alt="logo" />}
+            {this.state.collapsed ? <img className="App-logo" src={"./../espol2.png"} alt="icon" /> : <img className="App-logo" src={"../../espol2.png"} alt="logo" />}
             <br/>
             <br/>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>

@@ -143,7 +143,7 @@ export default class CitasAsociadas extends React.Component {
     }
 
     getColumnsFormat() {
-        return [
+        const cols =  [
             {
                 title: 'Estado Cita',
                 dataIndex: 'estado',
@@ -198,19 +198,23 @@ export default class CitasAsociadas extends React.Component {
                 key: 'instrucciones',
                 render: text => <div>{text ? text : "N/A"}</div>
             },
-            {
-                title: 'Acción',
-                dataIndex: 'accion',
-                fixed: 'right',
-                width: 140,
-                render: (_, record) =>
-                    <div className="text-center">
-                        <Link target="_blank" to = {record.estado === "P" ? `/medico/atenderCita/${record.id_cita}`:`/medico/citaanterior/paciente/${record.id_cita}/${record.paciente}`} className="me-4">
-                            {record.estado === "P" ? "Atender Cita" : "Ver Detalles"}
-                        </Link>
-                    </div>,
-            }
+            
         ];
+
+        const actions = {
+            title: 'Acción',
+            dataIndex: 'accion',
+            fixed: 'right',
+            width: 140,
+            render: (_, record) =>
+                <div className="text-center">
+                    <Link target="_blank" to = {record.estado === "P" ? `/medico/atenderCita/${record.id_cita}`:`/medico/citaanterior/paciente/${record.id_cita}/${record.paciente}`} className="me-4">
+                        {record.estado === "P" ? "Atender Cita" : "Ver Detalles"}
+                    </Link> 
+                </div>,
+        }
+
+        return Auth.isMedico() ? [...cols, actions] : cols;
     }
 
     render() {

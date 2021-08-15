@@ -72,14 +72,14 @@ export default class ModalSignoVital extends React.Component {
                 if (this.state.signo) {
                     this.formRef.current.setFieldsValue({
                         key: {
-                            key: this.state.signo.key,
-                            value: this.state.signo.key,
-                            label: this.state.signo.key
+                            key: this.state.signo.key ? this.state.signo.key : "",
+                            value: this.state.signo.key ? this.state.signo.key : "",
+                            label: this.state.signo.key ? this.state.signo.key : "",
                         }
                         ,
-                        value: this.state.signo.value,
-                        unidad: this.state.signo.unidad,
-                        descrip: this.state.signo.descrip,
+                        value: this.state.signo.value ? this.state.signo.value : null,
+                        unidad: this.state.signo.unidad ? this.state.signo.unidad : "",
+                        descrip: this.state.signo.descrip ? this.state.signo.descrip : "",
                     })
                 }
                 else {
