@@ -486,10 +486,28 @@ const AtenderCita = (props) => {
                 if (seguimi===true){
                     
                     AxiosSeguimientos.crear_seguimiento({"fecha_inicio": moment(Date.now()).format('YYYY-MM-DD'), "paciente": cedulaPaciente, "medico": cedulaMedico}).then(res3 => {
+                        let cita = { id_cita: id,
+                            estado:  "A",
+                            observRec: observaciones,
+                            planTratam: tratamiento,
+                            instrucciones: instrucciones,
+                            sintomas: diagnostico,
+                            fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+                            seguimiento: res3.data.id_seguimiento}
+                        actualizar_cita(cita);
                         console.log("SEGUIMIENTO: ",res3);
                         props.history.push('/medico/seguimiento/'+res3.data.id_seguimiento);
                     })
                 }else{
+                    let cita = { id_cita: id,
+                        estado:  "A",
+                        observRec: observaciones,
+                        planTratam: tratamiento,
+                        instrucciones: instrucciones,
+                        sintomas: diagnostico,
+                        fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+                        seguimiento: ""}
+                    actualizar_cita(cita);
                     props.history.push('/medico');
                 }
 
@@ -779,7 +797,6 @@ const AtenderCita = (props) => {
         console.log("temp_enfermedades_citas: ",temp_enfermedades_citas);
     
         
-        actualizar_cita(cita);
         // almacenar_cita(cita);
         almacenar_discapacidades_adicionales(listaDisc, temp_discapacidades);        
         almacenar_alergias_adicionales(listaAler, temp_alergias, seguimiento);
