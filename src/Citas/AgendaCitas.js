@@ -86,7 +86,7 @@ export default class AgendaCitas extends React.Component {
     AxiosCitas.getCitasCuidador(filter).then(resp => {
       console.log(resp);
       const citas = resp.data.map(cita => {
-        cita.title = cita.especialidad + " - " + cita.cedula + " - " + cita.nombre + " " + cita.apellido;
+        cita.title = cita.especialidad + " - " + cita.nombrePaciente + " " + cita.apellidoPaciente;
         cita.bgColor = estadoCitaColor[cita.estado];
         cita.start = new Date(cita.start);
         cita.end = new Date(cita.end);

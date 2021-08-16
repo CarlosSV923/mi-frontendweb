@@ -91,6 +91,8 @@ function App() {
       {/* Routes Admin */}
       <PrivateRouteCuidador exact path='/cuidador' component={AgendaCitas} layout={CuidadorLayout} />
       <PrivateRouteCuidador exact path='/cuidador/pacientesACargo' component={PacienteTab} layout={CuidadorLayout} />
+      <PrivateRouteCuidador exact path='/cuidador/seguimientos' component={IndexTable} layout={CuidadorLayout} />
+      <PrivateRouteCuidador exact path='/cuidador/seguimiento/:id' component={Index} layout={CuidadorLayout} />
 
     </BrowserRouter>
   );

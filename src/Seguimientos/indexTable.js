@@ -42,7 +42,8 @@ export default class IndexTable extends React.Component {
         if (Auth.isPaciente()) {
             return { paciente: Auth.getDataUser().cedula };
         }
-        return {};
+
+        return { cuidador: Auth.getDataUser().cedula };
     }
 
     getSeguimientos(filtro = {}) {
@@ -178,6 +179,7 @@ export default class IndexTable extends React.Component {
                 <Table columns={this.getColumnsFormat()} loading={this.state.isLoadingSeg} bordered={true} dataSource={this.state.seguimientos ? this.state.seguimientos : []} pagination={{ pageSize: 50 }} scroll={{ y: 300 }} rowKey={row => row.id_seguimiento} />
 
             </div>
+
         );
     }
 

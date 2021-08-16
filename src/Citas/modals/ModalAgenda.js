@@ -49,7 +49,7 @@ export default class ModalAgenda extends React.Component {
     getPacientes = (value) => {
         this.setState({ fetchingPacientes: true, pacientes: [] });
         var filter = { filter: value };
-        if(Auth.isMedico()){
+        if (Auth.isMedico()) {
             AxiosPersonas.getPacientesFilter(filter).then(resp => {
                 console.log(resp);
                 this.setState({ fetchingPacientes: false, pacientes: resp.data });
@@ -58,8 +58,8 @@ export default class ModalAgenda extends React.Component {
                 console.log(err);
             });
         }
-        if(Auth.isCuidador()){
-            AxiosPersonas.getPacientesCuidadorFilter({...filter, cuidador: Auth.getDataUser().cedula}).then(resp => {
+        if (Auth.isCuidador()) {
+            AxiosPersonas.getPacientesCuidadorFilter({ ...filter, cuidador: Auth.getDataUser().cedula }).then(resp => {
                 console.log(resp);
                 this.setState({ fetchingPacientes: false, pacientes: resp.data });
             }).catch(err => {
@@ -67,7 +67,7 @@ export default class ModalAgenda extends React.Component {
                 console.log(err);
             });
         }
-        
+
     }
 
     getMedicos = (value) => {
@@ -80,6 +80,41 @@ export default class ModalAgenda extends React.Component {
             this.setState({ fetchingMedicos: false });
             console.log(err);
         });
+    }
+
+    getDataPreload(event) {
+        if (Auth.isMedico()) {
+            return {
+                paciente: {
+                    label: event.title,
+                    value: event.cedula,
+                    key: event.cedula,
+                }
+            }
+        }
+        if (Auth.isPaciente()) {
+            return {
+                medico: {
+                    label: event.title,
+                    value: event.cedula,
+                    key: event.cedula,
+                },
+            }
+        }
+        if (Auth.isCuidador()) {
+            return {
+                medico: {
+                    label: event.especialidad + " - " + event.cedulaMedico + " - " + event.nombreMedico + " " + event.apellidoMedico,
+                    value: event.cedulaMedico,
+                    key: event.cedulaMedico,
+                },
+                paciente: {
+                    label: event.cedulaPaciente + " - " + event.nombrePaciente + " " + event.apellidoPaciente,
+                    value: event.cedulaPaciente,
+                    key: event.cedulaPaciente,
+                }
+            }
+        }
     }
 
     componentDidUpdate() {
@@ -111,16 +146,7 @@ export default class ModalAgenda extends React.Component {
                         start,
                         end,
                         comment: this.state.event.desc,
-                        paciente: {
-                            label: this.state.event.title,
-                            value: this.state.event.cedula,
-                            key: this.state.event.cedula,
-                        },
-                        medico: {
-                            label: this.state.event.title,
-                            value: this.state.event.cedula,
-                            key: this.state.event.cedula,
-                        }
+                        ...this.getDataPreload(this.state.event)
                         // rangeDate: [start, end]
                     })
                 }
@@ -221,6 +247,14 @@ export default class ModalAgenda extends React.Component {
             </Button>,
         ];
 
+        const btnMed = [
+            <Button key="submit" type="primary">
+                <Link to={{ pathname: '/medico/atenderCita/' + this.state.event.id }} >
+                    Atender
+                </Link>
+            </Button>
+        ]
+
         const btnsEdit = [
             <Button key="submit" type="primary" onClick={this.handlerCancelarCita}>
                 Cancelar
@@ -228,15 +262,17 @@ export default class ModalAgenda extends React.Component {
             <Button key="submit" type="primary" onClick={this.handlerEditarCita}>
                 Guardar
             </Button>,
-            <Button key="submit" type="primary">
-                <Link to={{ pathname: '/medico/atenderCita/' + this.state.event.id }} >
-                    Atender
-                </Link>
-            </Button>
+            
         ]
-        return this.state.event && this.state.event.estado !== "C" ? [
+        return this.state.event && this.state.event.estado !== "C" ? 
+        Auth.isMedico() ?
+        [
+            ...btnsBasic, ...btnsEdit, ...btnMed
+        ] : [
             ...btnsBasic, ...btnsEdit
-        ] : [...btnsBasic];
+        ]
+        
+        : [...btnsBasic];
     }
 
     render() {
