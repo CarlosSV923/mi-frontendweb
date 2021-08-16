@@ -12,14 +12,14 @@ import {
 } from '@ant-design/icons';
 
 import AxiosPersonas from '../Services/AxiosPersonas';
-import ModalPaciente from './modalPaciente';
+import ModalCuidador from './modalCuidador';
 import Auth from '../Login/Auth';
 require('moment/locale/es-us.js');
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
-export default class PacienteTab extends React.Component {
+export default class CuidadorTab extends React.Component {
 
     constructor(props) {
         super(props);
@@ -27,7 +27,7 @@ export default class PacienteTab extends React.Component {
         this.savePacienteAsociado = this.savePacienteAsociado.bind(this);
         this.state = {
             fetchingPacientes: true,
-            pacientes: []
+            cuidadores: []
         }
     }
 
@@ -94,11 +94,11 @@ export default class PacienteTab extends React.Component {
     }
 
     getPacientes = (value = null) => {
-        this.setState({ fetchingPacientes: true, pacientes: [] });
+        this.setState({ fetchingPacientes: true, cuidadores: [] });
         var filter = { filter: value };
-        AxiosPersonas.getPacientesCuidadorFilter({ ...filter, cuidador: Auth.getDataUser().cedula }).then(resp => {
+        AxiosPersonas.getCuidadoresPacienteFilter({ ...filter, paciente: Auth.getDataUser().cedula }).then(resp => {
             console.log(resp);
-            this.setState({ fetchingPacientes: false, pacientes: resp.data });
+            this.setState({ fetchingPacientes: false, cuidadores: resp.data });
         }).catch(err => {
             this.setState({ fetchingPacientes: false });
             console.log(err);
@@ -106,27 +106,27 @@ export default class PacienteTab extends React.Component {
         });
     }
 
-    savePacienteAsociado = (paciente) => {
+    savePacienteAsociado = (cuidador) => {
         this.setState({ loadingSave: true });
-        AxiosPersonas.savePacienteAsociadoCuidador({ ...paciente, cuidador: Auth.getDataUser().cedula }).then(resp => {
+        AxiosPersonas.savePacienteAsociadoCuidador({ ...cuidador, paciente: Auth.getDataUser().cedula }).then(resp => {
             console.log(resp);
-            this.setState({ loadingSave: false, visibleModal: false }, () => {this.getPacientes()});
-            message.success("Paciente registrado correctamente.");
+            this.setState({ loadingSave: false, visibleModal: false }, () => { this.getPacientes() });
+            message.success("Cuidador registrado correctamente.");
         }).catch(error => {
             console.log(error);
             this.setState({ loadingSave: false });
-            message.error("Error registrando pacientes a cargo. Intentelo mas tarde.");
+            message.error("Error registrando cuidador a cargo. Intentelo mas tarde.");
         });
     }
 
     deletePacienteAsociado = (reg) => {
-        AxiosPersonas.deletePacienteAsociadoCuidador({ paciente: reg.cedula, cuidador: Auth.getDataUser().cedula }).then(resp => {
+        AxiosPersonas.deletePacienteAsociadoCuidador({ cuidador: reg.cedula, paciente: Auth.getDataUser().cedula }).then(resp => {
             console.log(resp);
-            message.success("Paciente eliminado correctamente.");
+            message.success("Cuidador eliminado correctamente.");
             this.getPacientes();
         }).catch(error => {
             console.log(error);
-            message.error("Error eliminando pacientes a cargo. Intentelo mas tarde.");
+            message.error("Error eliminando cuidador a cargo. Intentelo mas tarde.");
         });
     }
 
@@ -135,7 +135,7 @@ export default class PacienteTab extends React.Component {
             <div>
                 <Row>
                     <Col className="text-center" span={24}>
-                        <Title level={4}>Pacientes a Cargo</Title>
+                        <Title level={4}>Cuidadores a Cargo</Title>
                     </Col>
                 </Row>
                 <br />
@@ -146,14 +146,14 @@ export default class PacienteTab extends React.Component {
                             type="primary"
                             onClick={(e) => { this.openModal() }}
                         >
-                            Agendar Paciente
+                            Agendar Cuidador
                         </Button>
                     </Col>
                 </Row>
                 <br />
-                <Table columns={this.getColumnsFormat()} loading={this.state.fetchingPacientes} bordered={true} dataSource={this.state.pacientes ? this.state.pacientes : []} pagination={{ pageSize: 50 }} scroll={{ y: 300 }} rowKey={row => row.id_seguimiento} />
+                <Table columns={this.getColumnsFormat()} loading={this.state.fetchingPacientes} bordered={true} dataSource={this.state.cuidadores ? this.state.cuidadores : []} pagination={{ pageSize: 50 }} scroll={{ y: 300 }} rowKey={row => row.id_seguimiento} />
 
-                <ModalPaciente
+                <ModalCuidador
                     visible={this.state.visibleModal}
                     close={this.closeModal}
                     savePacienteAsociado={this.savePacienteAsociado}

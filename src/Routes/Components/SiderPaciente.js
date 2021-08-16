@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu, Layout  } from 'antd';
 import { Link } from 'react-router-dom';
-import { FormOutlined, HeartOutlined } from '@ant-design/icons';
+import { FormOutlined, HeartOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Sider } = Layout; 
 
@@ -41,6 +41,17 @@ export default class SiderPacienteComp extends React.Component{
                 </span>
                 </span>
                 <Link to="/paciente/seguimientos" />
+              </Menu.Item>
+
+              <Menu.Item
+              icon={<UserOutlined />}
+              key="112">
+                <span>
+                
+                <span>Cuidadores
+                </span>
+                </span>
+                <Link to="/paciente/cuidadoresACargo" />
               </Menu.Item>
 
               

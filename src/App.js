@@ -38,6 +38,7 @@ import HomePacientes from './Administrador/HomePacientes';
 import ExpedientePaciente from '../src/Administrador/ExpedientePaciente';
 import VisualizarCita from './Citas/VisualizarCita';
 import Adicional from './Administrador/Adicional';
+import CuidadorTab from './Paciente/cuidadorTab';
 
 function App() {
 
@@ -68,6 +69,7 @@ function App() {
       <PrivateRoutePaciente exact path='/paciente/perfil/:ced' component={FormularioPerfiles} layout={PacienteLayout} />
       <PrivateRoutePaciente exact path='/paciente/seguimiento/:id' component={Index} layout={PacienteLayout} />
       <PrivateRoutePaciente exact path='/paciente/seguimientos' component={IndexTable} layout={PacienteLayout} />
+      <PrivateRoutePaciente exact path='/paciente/cuidadoresACargo' component={CuidadorTab} layout={PacienteLayout} />
 
       {/* Routes Admin */}
       <PrivateRouteAdmin exact path='/admin' component={HomeAdmin} layout={AdminLayout} />

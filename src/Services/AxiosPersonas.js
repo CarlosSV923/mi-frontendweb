@@ -18,6 +18,14 @@ export default class AxiosPersonas {
         return AxiosPersonas.instanceAxios.post(`/getMedicosFilter`, filtro);
     }
 
+    static getCuidadoresFilter = (filtro) => {
+        return AxiosPersonas.instanceAxios.post(`/getCuidadoresFilter`, filtro);
+    }
+
+    static getCuidadoresPacienteFilter = (filtro) => {
+        return AxiosPersonas.instanceAxios.post(`/getCuidadoresPacienteFilter`, filtro);
+    }
+
     static savePacienteAsociadoCuidador = (reg) => {
         return AxiosPersonas.instanceAxios.post(`/savePacienteAsociadoCuidador`, reg);
     }
