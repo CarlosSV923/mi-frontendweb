@@ -37,7 +37,6 @@ import HomeCitasAtendidas from './Administrador/HomeCitasAtendidas';
 import HomePacientes from './Administrador/HomePacientes';
 import ExpedientePaciente from '../src/Administrador/ExpedientePaciente';
 import VisualizarCita from './Citas/VisualizarCita';
-import Adicional from './Administrador/Adicional';
 import CuidadorTab from './Paciente/cuidadorTab';
 
 function App() {
@@ -47,9 +46,6 @@ function App() {
       {/* Routes Publicas */}
       <HomeRoute exact path='/' />
       <PublicRoute exact path='/login' component={Login} layout={PublicLayout} />
-      {/* <PublicRoute exact path='/perfil/:ced' component={FormularioPerfiles} layout={AdminLayout} /> */}
-      {/* <PublicRoute exact path={`${perfil()}/perfil/:ced`} component={FormularioPerfiles} layout={PublicLayout} /> */}
-      {/* <PublicRoute exact path='/cambiar_password' component={UpdatePass} layout={PublicLayout} /> */}
 
       {/* Routes Medicos */}
       <PrivateRouteMedico exact path='/medico' component={AgendaCitas} layout={MedicoLayout} />
@@ -62,7 +58,6 @@ function App() {
       <PrivateRouteMedico exact path='/medico/homepacientes' component={HomePacientes} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/homepacientes/expedientepaciente/:ced' component={ExpedientePaciente} layout={MedicoLayout} />
       <PrivateRouteMedico exact path='/medico/citaanterior/paciente/:id/:ced' component={VisualizarCita} layout={MedicoLayout} />
-      <PrivateRouteMedico exact path='/medico/adicional' component={Adicional} layout={MedicoLayout} />
 
       {/* Routes Paciente */}
       <PrivateRoutePaciente exact path='/paciente' component={AgendaCitas} layout={PacienteLayout} />
@@ -72,7 +67,7 @@ function App() {
       <PrivateRoutePaciente exact path='/paciente/cuidadoresACargo' component={CuidadorTab} layout={PacienteLayout} />
 
       {/* Routes Admin */}
-      <PrivateRouteAdmin exact path='/admin' component={HomeAdmin} layout={AdminLayout} />
+      <PrivateRouteAdmin exact path='/admin' component={HomeUsuarios} layout={AdminLayout} />
       <PrivateRouteAdmin exact path='/admin/formulariodiscapacidades' component={FormularioDiscapacidades} layout={AdminLayout} />
       <PrivateRouteAdmin exact path='/admin/formulariousuarios' component={FormularioUsuarios} layout={AdminLayout} />
       <PrivateRouteAdmin exact path='/admin/formularioroles' component={FormularioRoles} layout={AdminLayout} />
@@ -90,7 +85,8 @@ function App() {
       <PrivateRouteAdmin exact path='/admin/edit/roles/:id' component={FormularioRoles} layout={AdminLayout} />
       <PrivateRouteAdmin exact path='/admin/perfil/:ced' component={FormularioPerfiles} layout={AdminLayout} />
 
-      {/* Routes Admin */}
+      {/* Routes Cuidador */}
+      <PrivateRouteCuidador exact path='/cuidador/perfil/:ced' component={FormularioPerfiles} layout={AdminLayout} />
       <PrivateRouteCuidador exact path='/cuidador' component={AgendaCitas} layout={CuidadorLayout} />
       <PrivateRouteCuidador exact path='/cuidador/pacientesACargo' component={PacienteTab} layout={CuidadorLayout} />
       <PrivateRouteCuidador exact path='/cuidador/seguimientos' component={IndexTable} layout={CuidadorLayout} />

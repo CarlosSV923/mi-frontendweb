@@ -33,6 +33,7 @@ import AxiosCitas from '../Services/AxiosCitas';
 import AxiosEnfermedadesCitas from '../Services/AxiosEnfermedadesCitas';
 import AxiosUsers from '../Services/AxiosUsers';
 import AxiosSeguimientos from '../Services/AxiosSeguimientos';
+import AxiosPersonas from '../Services/AxiosPersonas';
 
 const { Option } = Select;
 const { confirm } = Modal;
@@ -220,7 +221,7 @@ const AtenderCita = (props) => {
                                                         paciente: "0954003067",
                                                         comentarios: "Comentarios",
                                                         cita: 89});
-
+    const [cuidadoresDePaciente, setCuidadoresDePaciente] = React.useState([]);
     const [nombre, setNombre] = React.useState("");
     const [apellido, setApellido] = React.useState("");
     const [paciente, setPaciente] = React.useState([]);
@@ -232,8 +233,15 @@ const AtenderCita = (props) => {
         mostrar_enfermedades();
         informacion();
         console.log(localStorage.getItem('userdata'),'hhh')
-
+        //cuidadores_de_paciente();
     }, []);
+
+    const cuidadores_de_paciente = () => {
+        console.log("LLMADA: ", paciente);
+        AxiosPersonas.cuidadores_de_paciente({"cedula_paciente": paciente}).then( res =>  {
+            console.log("CUI: ",res);
+        });
+    }
 
     const informacion = () => {
         AxiosUsers.informacion({id_cita: id}).then( response => {
@@ -243,8 +251,13 @@ const AtenderCita = (props) => {
             setNombre(response.data[0].nombre);
             setApellido(response.data[0].apellido);
             AxiosUsers.info_paciente(response.data[0].paciente).then( response2 => {
-                console.log("LLLLLLLLLLLLLLLLLLL: ",response2.data);
+                console.log("LLLLLLLLLLLLLLLLLLL888888: ",response2.data);
                 setPaciente(response2.data[0])
+                console.log("MMMMMMM: ", response2.data[0].cedula)
+                AxiosPersonas.cuidadores_de_paciente({"cedula_paciente": (response2.data[0]).cedula}).then( res =>  {
+                    console.log("CUI222: ",res.data);
+                    setCuidadoresDePaciente(res.data);
+                });
             });
         });
     }
@@ -494,6 +507,13 @@ const AtenderCita = (props) => {
                             sintomas: diagnostico,
                             fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
                             seguimiento: res3.data.id_seguimiento}
+                            for (let i = 0 ; i < cuidadoresDePaciente.length; i++){
+                                let item = cuidadoresDePaciente[i];
+                                AxiosPersonas.asignar_seguimiento_cuidador({cuidador: item.cedula, seguimiento: res3.data.id_seguimiento}).then( res6 => {
+                                    console.log("ASOCIADO");
+                                });
+                                data_modificada.push({"enfermedad":data[i]});
+                            }
                         actualizar_cita(cita);
                         console.log("SEGUIMIENTO: ",res3);
                         props.history.push('/medico/seguimiento/'+res3.data.id_seguimiento);

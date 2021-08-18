@@ -71,7 +71,7 @@ export default class Login extends React.Component {
         return (
             <div className="div-container-title">
                 <Row>
-                    <Col span={12}><Title level={2}>Iniciar Sesion</Title></Col>
+                    <Col span={12}><Title className = "lead" level={2}>Iniciar Sesión</Title></Col>
                 </Row>
                 <div className="div-miniborder-top" >
 
@@ -86,22 +86,16 @@ export default class Login extends React.Component {
                             ref={this.formRef}
                             
                         >
-
                             <Form.Item
                                 name={"username"}
                                 rules={[{ required: true, message: 'Debe ingresar un usuario valido' }]}
                             >
-
                                 <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Usuario" />
-
-
-
                             </Form.Item>
                             <Form.Item
                                 rules={[{ required: true, message: 'Debe ingresar una contraseña valida' }]}
                                 name="password"
                             >
-
                                 <Input
                                     prefix={<LockOutlined className="site-form-item-icon" />}
                                     type="password"
@@ -109,8 +103,6 @@ export default class Login extends React.Component {
                                 />
 
                             </Form.Item>
-
-
                             <Form.Item {...tailLayout}>
                                 <Button 
                                     style={{ marginRight: 7 }} 
@@ -126,6 +118,3 @@ export default class Login extends React.Component {
         );
     }
 }
-
-
-

@@ -33,4 +33,13 @@ export default class AxiosPersonas {
     static deletePacienteAsociadoCuidador = (reg) => {
         return AxiosPersonas.instanceAxios.post(`/deletePacienteAsociadoCuidador`, reg);
     }
+
+    static cuidadores_de_paciente = (info) => {
+        return AxiosPersonas.instanceAxios.post(`/cuidadores_de_paciente`, info);
+    }
+
+    static asignar_seguimiento_cuidador = (info) => {
+        return AxiosPersonas.instanceAxios.post(`/asignar_seguimiento_cuidador`, info);
+    }
+
 }
