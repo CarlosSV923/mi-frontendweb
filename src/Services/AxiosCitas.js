@@ -47,4 +47,17 @@ export default class AxiosCitas {
         return AxiosCitas.instanceAxios.post(`/getCitasSeg`, filter);
     }
 
+    static citas_recordatorios_medico = (cedula) => {
+        return AxiosCitas.instanceAxios.post(`/citas_recordatorios_medico`, cedula);
+    }
+
+    static citas_recordatorios_paciente = (cedula) => {
+        return AxiosCitas.instanceAxios.post(`/citas_recordatorios_paciente`, cedula);
+    }
+
+    static citas_recordatorios_cuidador = (cedula) => {
+        return AxiosCitas.instanceAxios.post(`/citas_recordatorios_cuidador`, cedula);
+    }
+
+
 }

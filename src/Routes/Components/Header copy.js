@@ -7,9 +7,6 @@ import moment from 'moment';
 import 'moment/locale/es';
 import Modal from 'antd/lib/modal/Modal';
 import { Link } from 'react-router-dom';
-import NotificacionesMedico from './NotificacionesMedico';
-import NotificacionesPaciente from './NotificacionesPaciente';
-import NotificacionesCuidador from './NotificacionesCuidador';
 const { Header } = Layout;
 const { SubMenu } = Menu;
 
@@ -79,9 +76,44 @@ export default class HeaderComp extends React.Component {
               cantidad: res.data.length,
               recordatorios: res.data
           });
-        //   this.setState({
-        //       contenido: data
-        //   });
+          let data = res.data.map( item => (
+                <div key = {item.id}>
+                    <Tooltip title="Notificación">
+                        {/* <Link onClick = {()=>this.setState({isModalVisible:true})}> */}
+                            <Card className = "mt-2">
+                                <Row>
+                                    {/* onClick = {this.setState({isModalVisible:true})}  */}
+                                    <Col span={24}>
+                                        <p className="">Paciente: {item.nombre} {item.apellido} {item.cedula}</p>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col span={24}>
+                                        <p className="">Hora atención: {moment(item.start).format('LT')}</p>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Button onClick={() => this.open_modal()}>Ver detalle</Button>
+                                </Row>              
+                            </Card>
+                        {/* </Link> */}
+                    </Tooltip>
+                    <Modal
+                        title="Title"
+                        visible={this.state.visible}
+                        // onOk={handleOk}
+                        
+                    >
+                        <p>{item.nombre}</p>
+                    </Modal>
+
+                    
+
+                </div>
+          ))
+          this.setState({
+              contenido: data
+          });
           this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
         });
     }
@@ -101,7 +133,7 @@ export default class HeaderComp extends React.Component {
     cargar_recordatorios_cuidador = () => {
         // setCargando(true);
         AxiosCitas.citas_recordatorios_cuidador({"cedula": Auth.getDataUser().cedula}).then( res => {
-          console.log("citas_recordatorios_cuidador: ",res.data);
+          console.log("citas_recordatorios_cuidador: ",(res.data).length);
           this.setState({
             cantidad: res.data.length,
             recordatorios: res.data
@@ -177,49 +209,7 @@ export default class HeaderComp extends React.Component {
                         <NotificationOutlined style = {{color : "#FFFFFF"}} />
                     </Badge>
                 </Button> */}
-                <Popover placement="bottomRight" title={"Notificaciones"} 
-                    content={
-                            Auth.isMedico()?
-                                this.state.recordatorios.map( item =>  (
-                                    <NotificacionesMedico key = {item.id}
-                                        nombre = {item.nombre}
-                                        apellido = {item.apellido}
-                                        cedula = {item.cedula}
-                                        start = {item.start}
-                                        end = {item.end}
-                                    />
-                                )):
-                            Auth.isPaciente()?
-                                this.state.recordatorios.map( item =>  (
-                                    <NotificacionesPaciente key = {item.id}
-                                        estado = {item.estado}
-                                        start = {item.start}
-                                        end = {item.end}
-                                        nombre = {item.nombre}
-                                        apellido = {item.apellido}
-                                        cedula = {item.cedula}
-                                        especialidad = {item.especialidad}
-                                    />
-                                )):
-                            Auth.isCuidador()?
-                                this.state.recordatorios.map( item =>  (
-                                    <NotificacionesCuidador key = {item.id}
-                                        estado = {item.estado}
-                                        start = {item.start}
-                                        end = {item.end}
-                                        nombre_medico = {item.nombreMedico}
-                                        apellido_medico = {item.apellidoMedico}
-                        
-                                        cedula_medico = {item.cedulaMedico}
-                                        nombre_paciente = {item.nombrePaciente}
-                                        apellido_paciente = {item.apellidoPaciente}
-                                        cedula_paciente = {item.cedulaPaciente}
-                                        especialidad = {item.especialidad}
-                                    />
-                                )):
-                        null
-                    } 
-                trigger="click">
+                <Popover placement="bottomRight" title={"Notificaciones"} content={this.state.contenido} trigger="click">
                     <Link className = "">
                         <Badge count={this.state.cantidad} showZero>
                             <NotificationOutlined style = {{color : "#FFFFFF"}} />
