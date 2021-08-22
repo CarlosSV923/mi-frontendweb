@@ -119,7 +119,7 @@ export default class IndexTable extends React.Component {
                 dataIndex: 'accion',
                 render: (_, record) =>
                     <div className="text-center">
-                        <a target="_blank" rel="noreferrer" href={(Auth.isPaciente() ? "/paciente/seguimiento/" : "/medico/seguimiento/") + record.id_seguimiento} className="me-4">
+                        <a target="_blank" rel="noreferrer" href={(Auth.isPaciente() ? "/paciente/seguimiento/" : Auth.isMedico() ? "/medico/seguimiento/": "/cuidador/seguimiento/") + record.id_seguimiento} className="me-4">
                             Ver Detalles
                         </a>
                     </div>,
