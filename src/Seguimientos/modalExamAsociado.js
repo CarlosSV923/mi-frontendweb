@@ -62,7 +62,7 @@ export default class ModalExamAsociado extends React.Component {
                 if(!this.state.visible){
                     this.formRef.current.setFieldsValue({
                         tipo_examen: null,
-                        comentario: null,
+                        comentarios: null,
                         diagnostico: null,
                     })
                     this.setState({ fileList: [], editFileList: [] })
@@ -83,7 +83,7 @@ export default class ModalExamAsociado extends React.Component {
                 if (this.state.examen) {
                     this.formRef.current.setFieldsValue({
                         tipo_examen: this.state.examen.tipo_examen ? this.state.examen.tipo_examen : "",
-                        comentario: this.state.examen.comentarios ? this.state.examen.comentarios : "",
+                        comentarios: this.state.examen.comentarios ? this.state.examen.comentarios : "",
                         diagnostico: this.state.examen.diagnostico ? this.state.examen.diagnostico : "",
                     });
                     this.generateFileList(this.state.examen.url_examen)
@@ -91,7 +91,7 @@ export default class ModalExamAsociado extends React.Component {
                 else {
                     this.formRef.current.setFieldsValue({
                         tipo_examen: null,
-                        comentario: null,
+                        comentarios: null,
                         diagnostico: null,
                     })
                     this.setState({ fileList: [], editFileList: [] })
@@ -106,7 +106,7 @@ export default class ModalExamAsociado extends React.Component {
             if (this.state.fileList && this.state.fileList.length > 0) {
                 let formData = new FormData();
                 formData.append("tipo_examen", values.tipo_examen);
-                formData.append("comentarios", values.comentario);
+                formData.append("comentarios", values.comentarios);
                 formData.append("diagnostico", values.diagnostico);
                 formData.append("seguimiento", this.state.idSeg);
 
@@ -220,8 +220,8 @@ export default class ModalExamAsociado extends React.Component {
 
                             </Form.Item>
                             <Form.Item
-                                name="comentario"
-                                label="Comentario"
+                                name="comentarios"
+                                label="Comentarios"
 
                             >
                                 <TextArea showCount maxLength={400} />
