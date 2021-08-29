@@ -25,7 +25,7 @@ export default class IndexTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: true,
+            isLoadingSeg: true,
             seguimientos: []
         }
     }
@@ -58,11 +58,11 @@ export default class IndexTable extends React.Component {
 
             });
 
-            this.setState({ seguimientos: segs, isLoading: false });
+            this.setState({ seguimientos: segs, isLoadingSeg: false });
 
         }).catch(error => {
             console.log(error);
-            this.setState({ isLoading: false });
+            this.setState({ isLoadingSeg: false });
             message.error("No se pudo obtener los seguimientos. Intentelo mas tarde.");
         });
     }
@@ -75,7 +75,7 @@ export default class IndexTable extends React.Component {
                 date_max: values.dateRange[1]._d,
                 ...this.getPersona(),
             }
-            this.getExamenesSeg(filter);
+            this.getSeguimientos(filter);
         }).catch(err => {
             console.log(err);
         });
@@ -119,7 +119,7 @@ export default class IndexTable extends React.Component {
                 dataIndex: 'accion',
                 render: (_, record) =>
                     <div className="text-center">
-                        <a target="_blank" rel="noreferrer" href={(Auth.isPaciente() ? "/paciente/seguimiento/" : "/medico/seguimiento/") + record.id_seguimiento} className="me-4">
+                        <a target="_blank" rel="noreferrer" href={(Auth.isPaciente() ? "/paciente/seguimiento/" : Auth.isMedico() ? "/medico/seguimiento/": "/cuidador/seguimiento/") + record.id_seguimiento} className="me-4">
                             Ver Detalles
                         </a>
                     </div>,
@@ -163,7 +163,7 @@ export default class IndexTable extends React.Component {
                                 <Button
                                     type="primary"
                                     icon={<SearchOutlined />}
-                                    loading={this.state.isLoadingExa}
+                                    loading={this.state.isLoadingSeg}
                                     onClick={(e) => this.getSegFilter(e)}
                                     placeholder="Buscar"
                                 >
