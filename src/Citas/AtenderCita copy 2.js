@@ -236,9 +236,7 @@ const AtenderCita = (props) => {
     const [nombre, setNombre] = React.useState("");
     const [apellido, setApellido] = React.useState("");
     const [paciente, setPaciente] = React.useState([]);
-    const [camposIncompletos, setCamposIncompletos] = React.useState(false);
-
-
+    
     React.useEffect(()=>{
         
         mostrar_discapacidades();
@@ -444,11 +442,10 @@ const AtenderCita = (props) => {
     const almacenar_discapacidades_adicionales = (lista, temp) => {
         let data = lista;
         let data_modificada = []
-        if(data!==undefined){
-            for (let i = 0 ; i < data.length; i++){
-                data_modificada.push({"nombre":data[i]});
-            }
-            let json ={"discapacidades":data_modificada};
+        for (let i = 0 ; i < data.length; i++){
+            data_modificada.push({"nombre":data[i]});
+        }
+        let json ={"discapacidades":data_modificada};
         console.log(json);
         AxiosDiscapacidades.almacenar_discapacidades(json).then(res =>{
             console.log("AxiosDiscapacidades.almacenar_discapacidades: ", res.data);
@@ -466,64 +463,38 @@ const AtenderCita = (props) => {
                 console.log('err.response.data', err.response.data);
             })
         })
-        }
-        
     }
 
     const almacenar_alergias_adicionales = (lista, temp, segui) => {
 
-        console.log("ALEREEEEEEEEEEEEE");
 
         let data = lista;
         let data_modificada = []
-        if (data!==undefined){
-
-            for (let i = 0 ; i < data.length; i++){
-                data_modificada.push({"nombre":data[i]});
+        for (let i = 0 ; i < data.length; i++){
+            data_modificada.push({"nombre":data[i]});
+        }
+        // discapacid
+        let json ={"alergias":data_modificada, "paciente":cedulaPaciente};
+        console.log(json);
+        console.log("data_modificado_alergia: ",json);
+        AxiosAlergias.almacenar_alergias(json).then(res =>{
+            console.log("AxiosAlergias.almacenar_alergias: ", res.data);
+            let array = Object.values(res.data);
+            let array_todas_alergias = [...array, ...temp];
+            let array_todas_alergias_mod = []
+            console.log("array_todas_alergias ",array_todas_alergias);
+            for (let i=0; i < array_todas_alergias.length; i++){
+                array_todas_alergias_mod.push({"medicamento":parseInt(array_todas_alergias[i])})
             }
-            // discapacid
-            let json ={"alergias":data_modificada, "paciente":cedulaPaciente};
-            console.log(json);
-            console.log("data_modificado_alergia: ",json);
-            AxiosAlergias.almacenar_alergias(json).then(res =>{
-                console.log("AxiosAlergias.almacenar_alergias: ", res.data);
-                let array = Object.values(res.data);
-                let array_todas_alergias = [...array, ...temp];
-                let array_todas_alergias_mod = []
-                console.log("array_todas_alergias ",array_todas_alergias);
-                for (let i=0; i < array_todas_alergias.length; i++){
-                    array_todas_alergias_mod.push({"medicamento":parseInt(array_todas_alergias[i])})
-                }
-                console.log("array_todas_alergias_mod ",array_todas_alergias_mod);
-                AxiosAlergias.almacenar_alergias_paciente({alergias_paciente: array_todas_alergias_mod, "paciente":cedulaPaciente}).then(res2 =>{
-                    console.log("AxiosAlergias.almacenar_alergias_paciente: ",res2);
-                    setExito(exito + 1)
-                    console.log("JLLLLLLLLLLLLLLLLLLLLLLLLLLLLL: ", segui);
-                    if (seguimi===true){
-                        
-                        message.success({ content: 'Cita guardada con éxito, en un momento será redirigido al seguimiento creado', key, duration: 20 });
-                        AxiosSeguimientos.crear_seguimiento({"fecha_inicio": moment(Date.now()).format('YYYY-MM-DD'), "paciente": cedulaPaciente, "medico": cedulaMedico}).then(res3 => {
-                            let cita = { id_cita: id,
-                                estado:  "A",
-                                observRec: observaciones,
-                                planTratam: tratamiento,
-                                instrucciones: instrucciones,
-                                sintomas: diagnostico,
-                                fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
-                                seguimiento: res3.data.id_seguimiento}
-                                for (let i = 0 ; i < cuidadoresDePaciente.length; i++){
-                                    let item = cuidadoresDePaciente[i];
-                                    AxiosPersonas.asignar_seguimiento_cuidador({cuidador: item.cedula, seguimiento: res3.data.id_seguimiento}).then( res6 => {
-                                        console.log("ASOCIADO");
-                                    });
-                                    data_modificada.push({"enfermedad":data[i]});
-                                }
-                            actualizar_cita(cita);
-                            console.log("SEGUIMIENTO: ",res3);
-                            props.history.push('/medico/seguimiento/'+res3.data.id_seguimiento);
-                        })
-                    }else{
-                        message.success({ content: 'Cita guardada con éxito', key, duration: 10 });
+            console.log("array_todas_alergias_mod ",array_todas_alergias_mod);
+            AxiosAlergias.almacenar_alergias_paciente({alergias_paciente: array_todas_alergias_mod, "paciente":cedulaPaciente}).then(res2 =>{
+                console.log("AxiosAlergias.almacenar_alergias_paciente: ",res2);
+                setExito(exito + 1)
+                console.log("JLLLLLLLLLLLLLLLLLLLLLLLLLLLLL: ", segui);
+                message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
+                if (seguimi===true){
+                    
+                    AxiosSeguimientos.crear_seguimiento({"fecha_inicio": moment(Date.now()).format('YYYY-MM-DD'), "paciente": cedulaPaciente, "medico": cedulaMedico}).then(res3 => {
                         let cita = { id_cita: id,
                             estado:  "A",
                             observRec: observaciones,
@@ -531,23 +502,41 @@ const AtenderCita = (props) => {
                             instrucciones: instrucciones,
                             sintomas: diagnostico,
                             fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
-                            seguimiento: ""}
-                        console.log("UPDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP: ",cita);
+                            seguimiento: res3.data.id_seguimiento}
+                            for (let i = 0 ; i < cuidadoresDePaciente.length; i++){
+                                let item = cuidadoresDePaciente[i];
+                                AxiosPersonas.asignar_seguimiento_cuidador({cuidador: item.cedula, seguimiento: res3.data.id_seguimiento}).then( res6 => {
+                                    console.log("ASOCIADO");
+                                });
+                                data_modificada.push({"enfermedad":data[i]});
+                            }
                         actualizar_cita(cita);
-                        props.history.push('/medico');
-                    }
-    
-    
-                }).catch(err => {
-                    console.log('err.response.data', err.response.data);
-                })
-                //console.log("array: ",Object.values(array));
-                // console.log("array: ",JSON.parse(array));
-                // for (let i = 0; i < array.length; i++){
-                //     console.log("Elem: ", array[i]);
-                // }
+                        console.log("SEGUIMIENTO: ",res3);
+                        props.history.push('/medico/seguimiento/'+res3.data.id_seguimiento);
+                    })
+                }else{
+                    let cita = { id_cita: id,
+                        estado:  "A",
+                        observRec: observaciones,
+                        planTratam: tratamiento,
+                        instrucciones: instrucciones,
+                        sintomas: diagnostico,
+                        fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+                        seguimiento: ""}
+                    actualizar_cita(cita);
+                    props.history.push('/medico');
+                }
+
+
+            }).catch(err => {
+                console.log('err.response.data', err.response.data);
             })
-        }
+            //console.log("array: ",Object.values(array));
+            // console.log("array: ",JSON.parse(array));
+            // for (let i = 0; i < array.length; i++){
+            //     console.log("Elem: ", array[i]);
+            // }
+        })
 
     //     AxiosDiscapacidades.almacenar_discapacidades(formData).then( res => {
 
@@ -570,7 +559,7 @@ const AtenderCita = (props) => {
             }
             console.log("AxiosEnfermedadesHereditarias.almacenar_enfermedades_hereditarias_paciente: ",res2);
         }).catch( err => {
-            console.log("err1111111111111: ",err);
+            console.log("err: ",err);
         } )
     }
 
@@ -590,17 +579,13 @@ const AtenderCita = (props) => {
                 // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
             }
         }).catch( err => {
-            console.log("err2222: ",err);
+            console.log("err: ",err);
         } )
     }
 
     const almacenar_signos_vitales_adicionales = (temp) => {
         
-        //let signos_vitales_predeterminados_mod = signos_vitales_predeterminados.filter( item => (item.value!==0 && item.unidad!== ""));
-
-        let temp2 = temp.filter( item => (item.value!==0 && item.unidad!== ""));
-
-        let json ={"signos_vitales_paciente":temp2, "cita":id, "seguimiento":2};
+        let json ={"signos_vitales_paciente":temp, "cita":id, "seguimiento":2};
         //console.log(json);
         console.log("almacenar_signos_vitales_adicionales: ",json);
         AxiosSignosVitales.almacenar_signos_vitales_paciente(json).then(res2 =>{
@@ -610,7 +595,7 @@ const AtenderCita = (props) => {
                 // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
             }
         }).catch( err => {
-            console.log("err33333: ",err);
+            console.log("err: ",err);
         } )
     }
 
@@ -625,7 +610,7 @@ const AtenderCita = (props) => {
                 // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
             }
         }).catch( err => {
-            console.log("err4444: ",err.response.data);
+            console.log("err: ",err.response.data);
         } )
     }
 
@@ -635,47 +620,12 @@ const AtenderCita = (props) => {
         console.log("enfermedades_cita_paciente: ",json);
         AxiosEnfermedadesCitas.almacenar_enfermedades_cita_paciente(json).then(res2 =>{
             console.log("AxiosEnfermedadesCitas.almacenar_enfermedades_cita_paciente: ",res2);
-            
-            if (seguimi===true){
-                
-                AxiosSeguimientos.crear_seguimiento({"fecha_inicio": moment(Date.now()).format('YYYY-MM-DD'), "paciente": cedulaPaciente, "medico": cedulaMedico}).then(res3 => {
-                    let cita = { id_cita: id,
-                        estado:  "A",
-                        observRec: observaciones,
-                        planTratam: tratamiento,
-                        instrucciones: instrucciones,
-                        sintomas: diagnostico,
-                        fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
-                        seguimiento: res3.data.id_seguimiento}
-                        for (let i = 0 ; i < cuidadoresDePaciente.length; i++){
-                            let item = cuidadoresDePaciente[i];
-                            AxiosPersonas.asignar_seguimiento_cuidador({cuidador: item.cedula, seguimiento: res3.data.id_seguimiento}).then( res6 => {
-                                console.log("ASOCIADO");
-                            });
-                            //data_modificada.push({"enfermedad":data[i]});
-                        }
-                    message.success({ content: 'Cita guardada con éxito, en un momento será redirigido al seguimiento creado', key, duration: 9 });
-                    actualizar_cita(cita);
-                    console.log("SEGUIMIENTO: ",res3);
-                    props.history.push('/medico/seguimiento/'+res3.data.id_seguimiento);
-                })
-            }else{
-                let cita = { id_cita: id,
-                    estado:  "A",
-                    observRec: observaciones,
-                    planTratam: tratamiento,
-                    instrucciones: instrucciones,
-                    sintomas: diagnostico,
-                    fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
-                    seguimiento: ""}
-                console.log("UPDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP: ",cita);
-                message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
-                actualizar_cita(cita);
-                props.history.push('/medico');
+            setExito(exito + 1)
+            if(exito === 9){
+                // message.success({ content: 'Cita guardada con éxito', key, duration: 3 });
             }
-
         }).catch( err => {
-            console.log("err555555: ",err.response.data);
+            console.log("err: ",err.response.data);
         } )
     }
 
@@ -735,17 +685,10 @@ const AtenderCita = (props) => {
             setCurrent(current + 1);
         }else if (current === 3) {
 
-
-
-
-
-
             setListaMed(valores_agregados.lista_medicamentos);
             console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHH: ",valores_agregados.lista_medicamentos)
             console.log("fileList: ",fileList);
             let temp_discapacidades = []
-            console.log("discapacidadesSeleccionadas: ", discapacidadesSeleccionadas);
-            console.log("discapacidadesSeleccionadas: ", discapacidadesSeleccionadas.length);
             for (let i = 0; i< discapacidadesSeleccionadas.length; i++ ){
                 let elem = discapacidadesSeleccionadas[i].split(",")
                 temp_discapacidades.push(elem[1]);
@@ -771,21 +714,15 @@ const AtenderCita = (props) => {
 
             console.log(valores_agregados);
             let medicamentos_nuevos = valores_agregados.lista_medicamentos;
-            let medicamentos_nuevos_mod = []
-            console.log("AQUIIIII");
-            
-            // console.log("medicamentos_nuevos: ",medicamentos_nuevos.length);
-            console.log("valores_agregados.lista_medicamentos: ",valores_agregados.lista_medicamentos);
-            if (medicamentos_nuevos!==undefined){
-                for (let i = 0; i < medicamentos_nuevos.length ; i++) {
-    
-                    medicamentos_nuevos_mod.push({medicamento: medicamentos_nuevos[i].medicina,
-                                                dosis: medicamentos_nuevos[i].dosis, 
-                                                frecuencia: medicamentos_nuevos[i].frecuencia, 
-                                                duracion: medicamentos_nuevos[i].duracion,
-                                                });
-    
-                }
+            let medicamentos_nuevos_mod = [] 
+            for (let i = 0; i < medicamentos_nuevos.length ; i++) {
+
+                medicamentos_nuevos_mod.push({medicamento: medicamentos_nuevos[i].medicina,
+                                            dosis: medicamentos_nuevos[i].dosis, 
+                                            frecuencia: medicamentos_nuevos[i].frecuencia, 
+                                            duracion: medicamentos_nuevos[i].duracion,
+                                            });
+
             }
 
             let temp_enfermedades_citas = [];
@@ -794,56 +731,19 @@ const AtenderCita = (props) => {
                 temp_enfermedades_citas.push({"enfermedad":elem[1]});
             }
 
-            let signos_vitales_predeterminados = [{key: 'Estatura', value: estatura, unidad: unidadEstatura},
-            {key: 'Peso', value: peso, unidad: unidadPeso},
-            {key: 'Masa Coporal', value: masaCorporal, unidad: unidadMasaCorporal},
-            {key: 'Porcentaje de grasa corporal', value: porcentaje, unidad: unidadPorcentaje},
-            {key: 'Masa muscular', value: masaMuscular, unidad: unidadMasaMuscular},
-            {key: 'Tensión arterial', value: tensionArterial, unidad: unidadTensionArterial},
-            {key: 'Frecuencia cardíaca', value: frecuenciaCardiaca, unidad: unidadFrecuenciaCardiaca},
-            {key: 'Frecuencia respiratoria', value: frecuenciaRespiratoria, unidad: unidadFrecuenciaRespiratoria},
-            {key: 'Saturación de oxígeno', value: saturacion, unidad: unidadSaturacion},
-            {key: 'Temperatura', value: temperatura, unidad: unidadTemperatura}]
-
             let signos_vitales_nuevos = listaSig;
-            console.log("signos_vitales_nuevos: ",signos_vitales_nuevos);
+
             let signos_vitales_nuevos_mod = [] 
+            for (let i = 0; i < signos_vitales_nuevos.length ; i++) {
 
-            let signos_existentes = false;
+                signos_vitales_nuevos_mod.push({key: signos_vitales_nuevos[i].nombre_signo_vital, 
+                                                value: signos_vitales_nuevos[i].valor_signo_vital, 
+                                                unidad: signos_vitales_nuevos[i].unidad});
 
-            if (signos_vitales_nuevos!==undefined){
-                
-            
-                signos_vitales_nuevos.map( (item) => {
-                    console.log("item00000: ",item);
-                    if (item.nombre_signo_vital !==undefined){
-                        signos_vitales_predeterminados.map ( item2 =>  {
-                            if (item.nombre_signo_vital.toLowerCase()===item2.key.toLowerCase()){
-                                message.warning("El signo vital "+item2.key+" que se quiere agregar ya se encuentra registrada y no podrá ser registrada nuevamente, revise la información por favor");
-                                signos_existentes = true;
-                            }
-                        })
-
-                    }
-                });
-
-                if (!signos_existentes){
-                    for (let i = 0; i < signos_vitales_nuevos.length ; i++) {
-        
-                        signos_vitales_nuevos_mod.push({key: signos_vitales_nuevos[i].nombre_signo_vital, 
-                                                        value: signos_vitales_nuevos[i].valor_signo_vital, 
-                                                        unidad: signos_vitales_nuevos[i].unidad});
-        
-                    }
-                }
             }
             console.log('signos_vitales_nuevos_mod:' , signos_vitales_nuevos_mod);
             console.log("signos_vitales_nuevos: ", signos_vitales_nuevos);
             
-            if (signos_existentes){
-                return;
-            }
-
             // let signos_vitales_predeterminados = [{key: 'Estatura', value: estatura, unidad: 'cm'},
             //                                     {key: 'Peso', value: peso, unidad: 'Kg'},
             //                                     {key: 'Masa Coporal', value: masaCorporal, unidad: 'Kg/m2'},
@@ -855,7 +755,16 @@ const AtenderCita = (props) => {
             //                                     {key: 'Saturación de oxígeno', value: saturacion, unidad: 'cm'},
             //                                     {key: 'Temperatura', value: temperatura, unidad: '°C'}]
 
-            
+            let signos_vitales_predeterminados = [{key: 'Estatura', value: estatura, unidad: unidadEstatura},
+                                                {key: 'Peso', value: peso, unidad: unidadPeso},
+                                                {key: 'Masa Coporal', value: masaCorporal, unidad: unidadMasaCorporal},
+                                                {key: 'Porcentaje de grasa corporal', value: porcentaje, unidad: unidadPorcentaje},
+                                                {key: 'Masa muscular', value: masaMuscular, unidad: unidadMasaMuscular},
+                                                {key: 'Tensión arterial', value: tensionArterial, unidad: unidadTensionArterial},
+                                                {key: 'Frecuencia cardíaca', value: frecuenciaCardiaca, unidad: unidadFrecuenciaCardiaca},
+                                                {key: 'Frecuencia respiratoria', value: frecuenciaRespiratoria, unidad: unidadFrecuenciaRespiratoria},
+                                                {key: 'Saturación de oxígeno', value: saturacion, unidad: unidadSaturacion},
+                                                {key: 'Temperatura', value: temperatura, unidad: unidadTemperatura}]
 
             let signos_vitales_totales = [...signos_vitales_nuevos_mod, ...signos_vitales_predeterminados];
             let cita = { id_cita: id,
@@ -865,16 +774,32 @@ const AtenderCita = (props) => {
                 instrucciones: instrucciones,
                 sintomas: diagnostico,
                 fecha_atencion: moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
-                seguimiento: ""}
+                seguimiento: ""}           
+                confirm({
+                    title: 'La cita está a punto de finalizar. Si desea puede iniciar un seguimiento marcando la siguiente opción',
+                    icon: <ExclamationCircleOutlined />,
+                    content: <Checkbox onChange={ e => {iniciar_seguimiento(e)}}>Iniciar seguimiento</Checkbox>,
+                    onOk() {
+                        console.log('OK000');
+                        console.log("El check: ",seguimiento);   
+                        message.loading({ content: 'Guardando cita...', key, duration: 50});
+                    
+                        // listaAler
+                        enviar2(cita, listaDisc, temp_discapacidades,
+                            listaAler, temp_alergias,
+                            temp_enfermedades_hereditarias,
+                            temp_enfermedades_persistentes,
+                            signos_vitales_totales,
+                            medicamentos_nuevos_mod,
+                            temp_enfermedades_citas
+                        );
+                    },
+                onCancel() {
+                  console.log('Cancel');
+                },
+            });
 
-
-            validar(cita, listaDisc, temp_discapacidades,
-                listaAler, temp_alergias,
-                temp_enfermedades_hereditarias,
-                temp_enfermedades_persistentes,
-                signos_vitales_totales,
-                medicamentos_nuevos_mod,
-                temp_enfermedades_citas);
+            // console.log("VALUEEEEEEEEEE: ", value);
         }
     }
 
@@ -885,7 +810,7 @@ const AtenderCita = (props) => {
         signos_vitales_totales,
         medicamentos_nuevos_mod,
         temp_enfermedades_citas) => {
-        message.loading({ content: 'Guardando cita...', key, duration: 50});
+
         console.log("ENNNNNNNNNNNNNNNNNNNNNNNNNNNNNN EJECUTAR");
         console.log("CITA: ",cita);
         console.log("listaDisc: ",listaDisc);
@@ -1134,92 +1059,6 @@ const AtenderCita = (props) => {
 
     const enviar = (e) => {
         console.log("medicamentos_agregados: ", e);
-    }
-
-    const validar = (cita, listaDisc, temp_discapacidades,
-        listaAler, temp_alergias,
-        temp_enfermedades_hereditarias,
-        temp_enfermedades_persistentes,
-        signos_vitales_totales,
-        medicamentos_nuevos_mod,
-        temp_enfermedades_citas) => {
-        console.log("INNNNNNNNNNNNNNNNNNNNN");
-        console.log("listaDisc: ",listaDisc)
-        console.log("listaAler: ",listaAler)
-        let discapacidades_existentes = false;
-
-        if(listaDisc!==undefined){
-            console.log("IMPRRRI: ",listaDisc);
-            console.log("DISSS: ",discapacidades);
-            listaDisc.map( (item) => {
-                discapacidades.map ( item2 =>  {
-                    if (item.toLowerCase()===item2.nombre.toLowerCase()){
-                        message.warning("La discapacidad "+item2.nombre+" que se quiere agregar ya se encuentra registrada y no podrá ser registrada nuevamente, revise la información por favor");
-                        discapacidades_existentes = true;
-                    }
-                })
-            });
-        }
-        let alergias_existentes = false;
-        if(listaAler!==undefined){
-                console.log("IMPRRRI2: ",listaAler);
-                console.log("MEDIII: ",medicamentos);
-                listaAler.map( (item) => {
-                    medicamentos.map ( item2 =>  {
-                        if (item.toLowerCase()===item2.nombre.toLowerCase()){
-                            message.warning("La alergia "+item2.nombre+" que se quiere agregar ya se encuentra registrada y no podrá ser registrada nuevamente, revise la información por favor");     
-                            alergias_existentes = true;                   
-                        }
-                    })
-                });
-        }
-        if (!alergias_existentes && !discapacidades_existentes){
-            if (enfermedadesDiagnostivoSeleccionadas.length === 0 || diagnostico === ""){
-                // setCamposIncompletos(true);
-                confirm({
-                    title: 'Faltan de ingresar datos, al menos debe ingresar información sobre el diagnóstico',
-                    icon: <ExclamationCircleOutlined />,
-                    // content: <Checkbox onChange={ e => {iniciar_seguimiento(e)}}>Iniciar seguimiento</Checkbox>,
-                    onOk() {   
-                    }
-            });
-            }else{
-                confirm({
-                    title: 'La cita está a punto de finalizar. Si desea puede iniciar un seguimiento marcando la siguiente opción',
-                    icon: <ExclamationCircleOutlined />,
-                    content: <Checkbox onChange={ e => {iniciar_seguimiento(e)}}>Iniciar seguimiento</Checkbox>,
-                    onOk() {
-                        console.log('OK000');
-                        console.log("El check: ",seguimiento);   
-                        message.loading({ content: 'Guardando cita...', key, duration: 50});
-                    
-                        // listaAler
-                        enviar2(cita, listaDisc, temp_discapacidades,
-                            listaAler, temp_alergias,
-                            temp_enfermedades_hereditarias,
-                            temp_enfermedades_persistentes,
-                            signos_vitales_totales,
-                            medicamentos_nuevos_mod,
-                            temp_enfermedades_citas
-                        );
-                    },
-                onCancel() {
-                  console.log('Cancel');
-                },
-            });
-        }
-
-
-
-            // enviar2(cita, listaDisc, temp_discapacidades,
-            //     listaAler, temp_alergias,
-            //     temp_enfermedades_hereditarias,
-            //     temp_enfermedades_persistentes,
-            //     signos_vitales_totales,
-            //     medicamentos_nuevos_mod,
-            //     temp_enfermedades_citas
-            // );
-        }
     }
 
     const signos_vitales = (valor, unidad, tipo) => {

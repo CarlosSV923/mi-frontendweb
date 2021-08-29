@@ -79,10 +79,16 @@ export default class HeaderComp extends React.Component {
               cantidad: res.data.length,
               recordatorios: res.data
           });
+
+        if (res.data.length>0){
+            this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
+          //setMostrarAlerta(true);
+        }
+
         //   this.setState({
         //       contenido: data
         //   });
-          this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
+        //   this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
         });
     }
 
@@ -94,19 +100,26 @@ export default class HeaderComp extends React.Component {
             cantidad: res.data.length,
             recordatorios: res.data
           });
-          this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
+          if (res.data.length>0){
+            this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
+          //setMostrarAlerta(true);
+          }
+        //   this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
         });
     }
 
     cargar_recordatorios_cuidador = () => {
         // setCargando(true);
         AxiosCitas.citas_recordatorios_cuidador({"cedula": Auth.getDataUser().cedula}).then( res => {
-          console.log("citas_recordatorios_cuidador: ",res.data);
           this.setState({
             cantidad: res.data.length,
             recordatorios: res.data
           });
-          this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
+          if (res.data.length>0){
+              this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
+            //setMostrarAlerta(true);
+          }
+          //this.openNotification(res.data.length>1?"Tiene citas pendientes, revisar por favor":"Tiene una cita pendiente, revisar por favor");
         });
       }
 

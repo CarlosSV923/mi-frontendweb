@@ -41,5 +41,5 @@ export default class AxiosPersonas {
     static asignar_seguimiento_cuidador = (info) => {
         return AxiosPersonas.instanceAxios.post(`/asignar_seguimiento_cuidador`, info);
     }
-
+// cuidadores_de_paciente
 }
